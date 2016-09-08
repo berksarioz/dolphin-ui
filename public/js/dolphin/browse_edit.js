@@ -232,7 +232,6 @@ function submitChanges(ele, event = event) {
 						element_parent_table_id = '';
 						element_parent_child = '';
 					}
-					updateEncodeSubmissions();
 				}
 			});
 		}else{
@@ -257,7 +256,6 @@ function submitChanges(ele, event = event) {
 					if (r == 1) {
 						successBool = true;
 					}
-					updateEncodeSubmissions();
 				}
 			});
 		}
@@ -282,21 +280,6 @@ function submitChanges(ele, event = event) {
 		
 		clearElementHighlighted();
 	}
-}
-
-function updateEncodeSubmissions(){
-	console.log(element_highlighted_table)
-	console.log(element_highlighted_type)
-	console.log(element_highlighted_id)
-	$.ajax({ type: "GET",
-		url: BASE_PATH+"/public/ajax/browse_edit.php",
-		data: { p: 'encodeSampleEdit', table: element_highlighted_table, field: element_highlighted_type, id:element_highlighted_id, sample_id:element_parent_table_id  },
-		async: false,
-		success : function(r)
-		{
-			console.log(r)
-		}
-	});
 }
 
 function deleteButton(){
@@ -480,8 +463,4 @@ function recheckChecksum() {
 
 function sendToEncode() {
 	window.location.href = BASE_PATH+"/public/encode"
-}
-
-function sendToEncodeSubmissions() {
-	window.location.href = BASE_PATH+"/public/encode/submissions"
 }
