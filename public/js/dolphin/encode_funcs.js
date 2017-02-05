@@ -1,18 +1,129 @@
-//	JSON Tables
-var donor_terms = ["award", "lab", "organism","life_stage", "age", "sex"];
-var experiment_terms = ["assay_term_name", "assay_term_id", "biosample_term_name", "biosample_term_id", "biosample_type", "description", "lab", "award"];
-var treatment_terms = ["treatment_term_name", "treatment_term_id", "treatment_type", "concentration", "concentration_units", "duration", "duration_units"];
-var biosample_terms = ["donor", "biosample_term_name", "biosample_term_id", "biosample_type", "source", "organism", "award", "lab", "treatments", "date_obtained"];
-var library_terms = ["biosample", "nucleic_acid_term_name", "nucleic_acid_term_id", "extraction_method", "crosslinking_method", "spike-ins", "fragmentation_method", "instrument_model", "award", "size_range", "lab"];
-var antibody_terms = ["source", "product_id", "lot_id", "host_organism", "lab", "award", "targets", "clonality", "isotype", "purifications", "url"];
-var replicate_terms = ["experiment", "biological_replicate_number", "technical_replicate_number", "library", "antibody"];
-//	Query data array arrays
-var sample_info = [];
-var lane_info = [];
-var protocol_info = [];
-var experiment_info = [];
-var treatment_info = [];
-var antibody_info = [];
+//	Info Tables
+sample_info = [];
+lane_info = [];
+protocol_info = [];
+experiment_info = [];
+treatment_info = [];
+antibody_info = [];
+
+/*	JSON Tables
+	For each term, sort objects based on which table to parse
+	The next object will display the JSON field on the left and the database variable on the right
+	
+	IE:
+	
+	<JSON TYPE> =
+		<INFO ARRAY TO GRAB DATA FROM>:
+				<JSON KEY> : <INFO ARRAY VALUE>,
+				<JSON KEY> : <INFO ARRAY VALUE>,
+				<JSON KEY> : <INFO ARRAY VALUE>
+		,
+		<INFO ARRAY TO GRAB DATA FROM>:
+				<JSON KEY> : <INFO ARRAY VALUE>,
+				<JSON KEY> : <INFO ARRAY VALUE>,
+				<JSON KEY> : <INFO ARRAY VALUE>
+*/
+var donor_terms = {
+		'experiment_info':{
+				"award":'grant',
+				"lab":'lab'
+		},
+		'sample_info':{
+				"organism":'organism',
+				"life_stage":'life_stage',
+				"age":'age',
+				"sex":'sex'
+		}
+};
+var experiment_terms = {
+		'experiment_info':{
+				"award":'grant',
+				"lab":'lab'
+		},
+		'protocol_info':{
+				"assay_term_name":'assay_term_name',
+				"assay_term_id":'assay_term_id'
+		},
+		'sample_info':{
+				"biosample_term_name":'biosample_term_name',
+				"biosample_term_id":'biosample_term_id',
+				"biosample_type":'biosample_type',
+				"description":'description'
+		}
+}
+var treatment_terms = {
+		'treatment_info':{
+				"treatment_term_name":'treatment_term_name',
+				"treatment_term_id":'treatment_term_id',
+				"treatment_type":'treatment_type',
+				"amount":'concentration',
+				"amount_units":'concentration_units',
+				"duration":'duration',
+				"duration_units":'duration_units'
+		}
+}
+var biosample_terms = {
+		'experiment_info':{
+				"award":'grant',
+				"lab":'lab'
+		},
+		'protocol_info':{
+				"starting_amount":'starting_amount',
+				"starting_amount_units":'starting_amount_units'
+		},
+		'sample_info':{
+				"biosample_term_name":'biosample_term_name',
+				"biosample_term_id":'biosample_term_id',
+				"biosample_type":'biosample_type',
+				"organism":'organism',
+				"derived_from":'biosample_derived_from',
+				"source":'source'
+		},
+		'lane_info':{
+				"date_obtained":'date_received'
+		}
+}
+var library_terms = {
+		'experiment_info':{
+				"award":'grant',
+				"lab":'lab'
+		},
+		'sample_info':{
+				"spike-ins":'spike_ins',
+				"size_range":'avg_insert_size'
+		},
+		'protocol_info':{
+				"nucleic_acid_term_name":'nucleic_acid_term_name',
+				"nucleic_acid_term_id":'nucleic_acid_term_id',
+				"extraction_method":'extraction_method',
+				"crosslinking_method":'crosslinking_method',
+				"fragmentation_method":'fragmentation_method'
+		}
+}
+var antibody_terms = {
+		'experiment_info':{
+				"award":'grant',
+				"lab":'lab'
+		},
+		'antibody_info':{
+				"source":'source',
+				"product_id":'product_id',
+				"lot_id":'lot_id',
+				"host_organism":'host_organism',
+				"targets":'targets',
+				"clonality":'clonality',
+				"isotype":'isotype',
+				"purifications":'purifications',
+				"url":'url'
+		}
+}
+var replicate_terms = {
+		'sample_info':{
+				"biological_replicate_number":'biological_replica',
+				"technical_replicate_number":'technical_replica'
+		}
+}
+
 //	IDs/accessions/uuid arrays
 var donor_ids = [];
 var donor_accs = [];
@@ -29,6 +140,7 @@ var antibody_accs = [];
 var replicate_ids = [];
 var replicate_uuids = [];
 var submission = true;
+var log_str = '';
 var id_hash = {
 		donor: 0,
 		experiment: 0,
@@ -38,9 +150,6 @@ var id_hash = {
 		antibody_lot: 0,
 		replicate: 0
 	}
-//	RNA, DNA
-var nucleic_acid_term_id = ['SO:0000356', 'SO:0000352'];
-var log_str = '';
 
 function resetGlobals(){
 	sample_info = [];
@@ -202,11 +311,6 @@ function checkForEncodeSubmission(type){
 				boolBreak = false;
 				errorMsg += '<b>Extraction</b> for <b>protocol id: ' + protocol_info[x].id + '</b> is not defined.<br>';
 			}
-			if (protocol_info[x].library_strategy == undefined) {
-				boolPass = false;
-				boolBreak = false;
-				errorMsg += '<b>Library strategy</b> for <b>protocol id: ' + protocol_info[x].id + '</b> is not defined.<br>';
-			}
 			if (!boolBreak) {
 				errorMsg += '<br>';
 			}
@@ -316,6 +420,7 @@ function encodeCheckForPatch(type){
 		}
 	}
 	
+	startLog();
 	if (boolPass) {
 		if (type == 'metadata') {
 			encodePost()
@@ -472,22 +577,34 @@ function createEncodeJson(json_type){
 		var json = {};
 		var post_bool = true;
 		//	Grab correct ids
-		var proto_lib_type = null;
+		var exp_index = null;
+		for(var y = 0; y < experiment_info.length; y++){
+			if (experiment_info[y].id == sample_info[x].series_id) {
+				exp_index = y;
+			}
+		}
+		var lane_index = null;
+		for(var y = 0; y < lane_info.length; y++){
+			if (lane_info[y].id == sample_info[x].lane_id) {
+				lane_index = y;
+			}
+		}
+		var proto_index = null;
 		for(var y = 0; y < protocol_info.length; y++){
 			if (protocol_info[y].id == sample_info[x].protocol_id) {
-				proto_lib_type = y;
+				proto_index = y;
 			}
 		}
-		var treatment_lib_type = null;
+		var treatment_index = null;
 		for(var y = 0; y < treatment_info.length; y++){
 			if (treatment_info[y].id == sample_info[x].treatment_id) {
-				treatment_lib_type = y;
+				treatment_index = y;
 			}
 		}
-		var antibody_lib_type = null;
+		var antibody_index = null;
 		for(var y = 0; y < antibody_info.length; y++){
 			if (antibody_info[y].id == sample_info[x].antibody_lot_id) {
-				antibody_lib_type = y;
+				antibody_index = y;
 			}
 		}
 		if (donors.indexOf(sample_info[x].donor) < 0 ){
@@ -501,291 +618,115 @@ function createEncodeJson(json_type){
 			if (donor_accs[x] != null) {
 				post_bool = false;
 			}
+			json = createJSON(json, x, donor_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'experiment') {
 			terms = experiment_terms;
 			if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
-				if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-					json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_RNA-seq'];
-				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-					json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_ChIP-seq'];
-				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-					json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_ATAC-seq'];
-				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
-					json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_MNase-seq'];
-				}
+				json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_'+protocol_info[proto_index].assay_term_name];
 			}
 			experiment_ids.push(sample_info[x].id);
 			experiment_accs.push(sample_info[x].experiment_acc);
 			if (sample_info[x].experiment_acc != null) {
 				post_bool = false;
 			}
+			json = createJSON(json, x, experiment_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'treatment') {
 			terms = treatment_terms;
-			json['aliases'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
+			json['aliases'] = [experiment_info[0].lab+':'+treatment_info[treatment_index].name+'_'+treatment_info[treatment_index].duration + treatment_info[treatment_index].duration_units.substring(0,1)];
 			treatment_ids.push(treatment_info[x].id);
 			treatment_uuid.push(treatment_info[x].uuid);
 			if (treatment_info[x].uuid != undefined) {
 				post_bool = false;
 			}
+			json = createJSON(json, x, treatment_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'biosample') {
 			terms = biosample_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename];
+			json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
+			json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_index].name+'_'+treatment_info[treatment_index].duration + treatment_info[treatment_index].duration_units.substring(0,1)];
 			biosample_ids.push(sample_info[x].id);
 			biosample_accs.push(sample_info[x].biosample_acc);
 			if (sample_info[x].biosample_acc != null) {
 				post_bool = false;
 			}
-			if (protocol_info[proto_lib_type].library_strategy != null) {
-				if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-					json['starting_amount'] = "2000000";
-					json['starting_amount_units'] = "cells";
-				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-					json['starting_amount'] = "1500000";
-					json['starting_amount_units'] = "cells";
-				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-					json['starting_amount'] = "50000";
-					json['starting_amount_units'] = "cells";
-				}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
-					json['starting_amount'] = "";
-					json['starting_amount_units'] = "cells";
-				}
-			}
+			json = createJSON(json, x, biosample_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'library') {
 			terms = library_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_lib'];
+			json['biosample'] = experiment_info[0].lab + ':' + sample_info[x].samplename;
 			library_ids.push(sample_info[x].id);
 			library_accs.push(sample_info[x].library_acc);
 			if (sample_info[x].library_acc != null) {
 				post_bool = false;
 			}
+			json = createJSON(json, x, library_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'antibody') {
 			terms = antibody_terms;
-			json['aliases'] = [experiment_info[0].lab + ':' + antibody_info[antibody_lib_type].product_id];
+			json['aliases'] = [experiment_info[0].lab + ':' + antibody_info[antibody_index].product_id];
 			antibody_ids.push(antibody_info[x].id);
 			antibody_accs.push(antibody_info[x].antibody_lot_uuid);
 			if (antibody_info[x].antibody_lot_uuid != null) {
 				post_bool = false;
 			}
+			json = createJSON(json, x, antibody_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}else if (json_type == 'replicate') {
 			terms = replicate_terms;
 			json['aliases'] = [experiment_info[0].lab +':'+sample_info[x].samplename+'_replica'];
+			json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_'+protocol_info[proto_index].assay_term_name;
+			json['library'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_lib';
+			if (sample_info[x].antibody_lot_id != null) {
+				json['antibody'] = antibody_info[antibody_index].antibody_lot_acc;
+			}
 			replicate_ids.push(sample_info[x].id);
 			replicate_uuids.push(sample_info[x].replicate_uuid);
 			if (sample_info[x].replicate_uuid != null) {
 				post_bool = false;
 			}
+			json = createJSON(json, x, replicate_terms, exp_index, lane_index, proto_index, treatment_index, antibody_index)
 		}
 		
-		//	Use specific terms array to generate the rest of the json
-		for (var y = 0; y < terms.length; y++) {
-			if (terms[y] == "award") {
-				json['award'] = experiment_info[0].grant;
-			}else if (terms[y] == "lab") {
-				json['lab'] = experiment_info[0].lab;
-			}else if (terms[y] == "organism" && json_type == 'donor') {
-				json['organism'] = organism[x];
-			}else if (terms[y] == "organism") {
-				json['organism'] = sample_info[x].organism;
-			}else if (terms[y] == "life_stage") {
-				if (sample_info[x].life_stage != null) {
-					json['life_stage'] = sample_info[x].life_stage;
-				}else{
-					json['life_stage'] = "unknown";
-				}
-			}else if (terms[y] == "age") {
-				if (sample_info[x].age != null) {
-					json['age'] = sample_info[x].age;
-				}else{
-					json['age'] = "unknown";
-				}
-			}else if (terms[y] == "sex") {
-				if (sample_info[x].sex != null) {
-					json['sex'] = sample_info[x].sex;
-				}else{
-					json['sex'] = "unknown";
-				}
-			}else if (terms[y] == "assay_term_name") {
-				if (protocol_info[proto_lib_type].library_strategy != null) {
-					if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-						json['assay_term_name'] = "RNA-seq";
-					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-						json['assay_term_name'] = "ChIP-seq";
-					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-						json['assay_term_name'] = "ATAC-seq";
-					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
-						json['assay_term_name'] = "MNase-seq";
-					}
-				}
-			}else if (terms[y] == "assay_term_id") {
-				if (protocol_info[proto_lib_type].library_strategy != null) {
-					if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-						json['assay_term_id'] = "OBI:0001271";
-					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-						json['assay_term_id'] = "OBI:0000716";
-					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-						json['assay_term_id'] = "OBI:0002039";
-					}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('mnase') > -1){
-						json['assay_term_id'] = "OBI:0001924";
-					}
-				}
-			}else if (terms[y] == "biosample_term_name") {
-				json['biosample_term_name'] = sample_info[x].biosample_term_name;
-			}else if (terms[y] == "biosample_term_id") {
-				json['biosample_term_id'] = sample_info[x].biosample_term_id;
-			}else if (terms[y] == "biosample_type") {
-				json['biosample_type'] = sample_info[x].biosample_type;
-			}else if (terms[y] == "description") {
-				json['description'] = sample_info[x].description;
-			}else if (terms[y] == "treatment_term_name") {
-				json['treatment_term_name'] = treatment_info[treatment_lib_type].treatment_term_name;
-			}else if (terms[y] == "treatment_term_id") {
-				json['treatment_term_id'] = treatment_info[treatment_lib_type].treatment_term_id;
-			}else if (terms[y] == "treatment_type") {
-				json['treatment_type'] = treatment_info[treatment_lib_type].treatment_type;
-			}else if (terms[y] == "concentration") {
-				json['amount'] = parseInt(treatment_info[treatment_lib_type].concentration);
-			}else if (terms[y] == "concentration_units") {
-				json['amount_units'] = treatment_info[treatment_lib_type].concentration_units;
-			}else if (terms[y] == "duration") {
-				json['duration'] = parseInt(treatment_info[treatment_lib_type].duration);
-			}else if (terms[y] == "duration_units") {
-				json['duration_units'] = treatment_info[treatment_lib_type].duration_units;
-			}else if (terms[y] == "donor") {
-				if(sample_info[x].donor == 'Generic-C57BL|6'){
-						json['donor'] = 'ENCODE:Generic-C57BL|6';
-				}else{
-						json['donor'] = experiment_info[0].lab +':'+sample_info[x].donor;
-				}
-			}else if (terms[y] == "source" && json_type == "antibody") {
-				if (antibody_info[x].source == undefined) {
-					json['source'] = "unknown";
-				}else{
-					json['source'] = antibody_info[x].source;
-				}
-			}else if (terms[y] == "source") {
-				if (sample_info[x].source == undefined) {
-					json['source'] = "unknown";
-				}else{
-					json['source'] = sample_info[x].source
-				}
-			}else if (terms[y] == "treatments") {
-				json['treatments'] = [experiment_info[0].lab+':'+treatment_info[treatment_lib_type].name+'_'+treatment_info[treatment_lib_type].duration + treatment_info[treatment_lib_type].duration_units.substring(0,1)];
-				if(sample_info[x].organism != 'human'){
-						json['derived_from']='manuel-garber:m1'
-				}
-			}else if (terms[y] == "date_obtained") {
-				var lane_id_pos = -1;
-				for(var z = 0; z < lane_info.length; z++){
-					if (lane_info[z].id == sample_info[x].lane_id) {
-						lane_id_pos = z;
-					}
-				}
-				json['date_obtained'] = lane_info[lane_id_pos].date_received.split(' ')[0];
-			}else if (terms[y] == "date_submitted") {
-				var lane_id_pos = -1;
-				for(var z = 0; z < lane_info.length; z++){
-					if (lane_info[z].id == sample_info[x].lane_id) {
-						lane_id_pos = z;
-					}
-				}
-				json['date_submitted'] = lane_info[lane_id_pos].date_received.split(' ')[0];
-			}else if (terms[y] == "biosample") {
-				json['biosample'] = experiment_info[0].lab + ':' + sample_info[x].samplename;
-			}else if (terms[y] == "nucleic_acid_term_name") {
-				if (sample_info[x].molecule != null) {
-					if (sample_info[x].molecule.toLowerCase().indexOf('rna') > -1) {
-						json['nucleic_acid_term_name'] = "RNA";
-					}else if(sample_info[x].molecule.toLowerCase().indexOf('dna') > -1){
-						json['nucleic_acid_term_name'] = "DNA";
-					}
-				}
-			}else if (terms[y] == "nucleic_acid_term_id") {
-				if (sample_info[x].molecule != null) {
-					if (sample_info[x].molecule.toLowerCase().indexOf('rna') > -1) {
-						json['nucleic_acid_term_id'] = "SO:0000356";
-					}else if(sample_info[x].molecule.toLowerCase().indexOf('dna') > -1){
-						json['nucleic_acid_term_id'] = "SO:0000352";
-					}
-				}
-			}else if (terms[y] == "extraction_method") {
-				if (protocol_info[proto_lib_type].extraction != null) {
-					json['extraction_method'] = protocol_info[proto_lib_type].extraction;
-				}
-			}else if (terms[y] == "size_range") {
-				json['size_range'] = sample_info[x].avg_insert_size;
-			}else if (terms[y] == "product_id") {
-				json['product_id'] = antibody_info[x].product_id;
-			}else if (terms[y] == "lot_id") {
-				json['lot_id'] = antibody_info[x].lot_id;
-			}else if (terms[y] == "host_organism") {
-				json['host_organism'] = antibody_info[x].host_organism;
-			}else if (terms[y] == "targets") {
-				json['targets'] = [antibody_info[x].target];
-			}else if (terms[y] == "clonality") {
-				if (antibody_info[x].clonality != null) {
-					json['clonality'] = antibody_info[x].clonality;
-				}
-			}else if (terms[y] == "isotype") {
-				if (antibody_info[x].isotype != null) {
-					json['isotype'] = antibody_info[x].isotype;
-				}
-			}else if (terms[y] == "purifications") {
-				if (antibody_info[x].purifications != null) {
-					json['purifications'] = [antibody_info[x].purifications];
-				}
-			}else if (terms[y] == "url") {
-				if (antibody_info[x].url != null) {
-					json['url'] = antibody_info[x].url;
-				}
-			}else if (terms[y] == "experiment") {
-				if (experiment_info[0].lab != null && sample_info[x].samplename != null) {
-					if (protocol_info[proto_lib_type].library_strategy != null) {
-						if (protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rna') > -1) {
-							json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_RNA-seq';
-						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('chip') > -1){
-							json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_ChIP-seq';
-						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('atac') > -1){
-							json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_ATAC-seq';
-						}else if(protocol_info[proto_lib_type].library_strategy.toLowerCase().indexOf('rnase') > -1){
-							json['experiment'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_RNase-seq';
-						}
-					}
-				}
-			}else if (terms[y] == "biological_replicate_number") {
-				if (sample_info[x].biological_replica == null || sample_info[x].biological_replica == '' || parseInt(sample_info[x].biological_replica) <= 1) {
-					json['biological_replicate_number'] = 1;
-				}else{
-					json['biological_replicate_number'] = parseInt(sample_info[x].biological_replica);
-				}
-			}else if (terms[y] == "technical_replicate_number") {
-				if (sample_info[x].technical_replica == null || sample_info[x].technical_replica == '' || parseInt(sample_info[x].technical_replica) <= 1) {
-					json['technical_replicate_number'] = 1;
-				}else{
-					json['technical_replicate_number'] = parseInt(sample_info[x].technical_replica);
-				}
-			}else if (terms[y] == "library") {
-				json['library'] = experiment_info[0].lab +':'+sample_info[x].samplename+'_lib';
-			}else if (terms[y] == "antibody") {
-				if (sample_info[x].antibody_lot_id != null) {
-					json['antibody'] = antibody_info[antibody_lib_type].antibody_lot_acc;
-				}
-			}
-		}
 		if (post_bool) {
 			post.push(json);
 		}else{
-			if (json_type != 'treatment') {
-				patch.push(json);
-			}
+		    patch.push(json);
 		}
 	}
-	/*
-	if (sample_info[x].molecule.toLowerCase().indexOf('rrna') > -1) {
-		lib_json += '"depleted_in_term_name":["rRNA"],';
-		lib_json += '"depleted_in_term_id":"SO:0000252",';
-	}
-	*/
 	return [post, patch];
+}
+
+function createJSON(json, sample, terms, exp, lane, proto, treatment, antibody){
+		for (var k in terms) {
+				for(var p in terms[k]){
+						if (k == 'experiment_info') {
+								if (experiment_info[exp][terms[k][p]] != undefined) {
+										json[p] = experiment_info[exp][terms[k][p]]
+								}
+						}else if (k == 'sample_info') {
+								if (sample_info[sample][terms[k][p]] != undefined) {
+										json[p] = sample_info[sample][terms[k][p]]
+								}
+						}else if (k == 'protocol_info') {
+								if (protocol_info[proto][terms[k][p]] != undefined) {
+										json[p] = protocol_info[proto][terms[k][p]]
+								}
+						}else if (k == 'treatment_info') {
+								if (treatment_info[treatment][terms[k][p]] != undefined) {
+										json[p] = treatment_info[treatment][terms[k][p]]
+								}
+						}else if (k == 'antibody_info') {
+								if (antibody_info[antibody][terms[k][p]] != undefined) {
+										json[p] = antibody_info[antibody][terms[k][p]]
+								}
+						}else if (k == 'lane_info') {
+								if (lane_info[lane][terms[k][p]] != undefined) {
+										json[p] = lane_info[lane][terms[k][p]]
+								}
+						}
+						
+				}
+		}
+		console.log(json)
+		return json
 }
 
 /*
@@ -953,6 +894,18 @@ function encodeSubmission(name, json, subType, type, table){
 	}
 	
 	return output;
+}
+
+function startLog(){
+    $.ajax({ type: "GET",
+		url: BASE_PATH + "/public/ajax/encode_data.php",
+		data: { p: 'startLog'},
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
 }
 
 function logResponse(){

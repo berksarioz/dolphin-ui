@@ -26,6 +26,8 @@ class Dolphin:
     cmd = 'python %(dolphin_tools_dir)s/runWorkflow.py -f %(params_section)s -i %(input_fn)s -w %(workflow)s -p %(dolphin_default_params)s -u %(username)s -o %(outdir)s %(runidstr)s %(wkeystr)s'
     config = ConfigParser.ConfigParser()
     params_section = ''
+    configsalt = ConfigParser.ConfigParser()
+    configsalt.readfp(open('../config/.salt'))
     
     def __init__(self, params_section):
         self.params_section = params_section
@@ -33,11 +35,11 @@ class Dolphin:
     def runSQL(self, sql):
       try:
         db = MySQLdb.connect(
-          host = self.config.get(self.params_section, "db_host"),
-          user = self.config.get(self.params_section, "db_user"),
-          passwd = self.config.get(self.params_section, "db_password"),
-          db = self.config.get(self.params_section, "db_name"),
-          port = int(self.config.get(self.params_section, "db_port")))
+          host = self.configsalt.get(self.params_section, "db_host"),
+          user = self.configsalt.get(self.params_section, "db_user"),
+          passwd = self.configsalt.get(self.params_section, "db_password"),
+          db = self.configsalt.get(self.params_section, "db_name"),
+          port = int(self.configsalt.get(self.params_section, "db_port")))
 
         cursor = db.cursor()
         cursor.execute(sql)

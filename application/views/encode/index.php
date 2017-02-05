@@ -100,6 +100,66 @@
 					  </div>
 					</div>
 				</div><!-- End Antibody modal -->
+				<div class="modal fade" id="linkBiosampleModal" tabindex="-1" role="dialog" aria-labelledby="myBiosampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myBiosampleModalLabel">Link Samples</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="selectBiosampleLabel">Select Samples to link to one another:</label>
+										<br>
+										<select id="selectBiosample" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
+										<br>
+										<label id="linkBiosampleLabel">Select link if any:</label>
+										<br>
+										<select id="linkBiosample" class="form-control" type="text" class="form-control"></select>
+										<br>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="biosampleConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createLink('Biosample')">Link</button>
+							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End biosample modal -->
+				<div class="modal fade" id="linkExperimentModal" tabindex="-1" role="dialog" aria-labelledby="myExperimentModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myExperimentModalLabel">Link Samples</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="selectExperimentLabel">Select Samples to link to one another:</label>
+										<br>
+										<select id="selectExperiment" class="form-control" type="select-multiple" multiple size="10" style="width:100%"></select>
+										<br>
+										<label id="linkExperimentLabel">Select link if any:</label>
+										<br>
+										<select id="linkExperiment" class="form-control" type="text" class="form-control"></select>
+										<br>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="experimentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createLink('Experiment')">Link</button>
+							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End experiment modal -->
 				<section class="content-header">
 					<h1>
 						Encode Viewin Feelin/Submission
@@ -150,7 +210,7 @@
 									<div class="tab-pane active" id="samples_tab">
 											<?php
 												echo $html->getRespBoxTable_ng("Selected Samples", "encode_selected_samples",
-																		   "<th>id</th><th>Sample Name</th><th>Donor</th><th>Source</th><th>Organism</th><th>Molecule</th><th>Lab</th><th>Grant</th><th>Removal</th><th>Selected</th>");
+																		   "<th>id</th><th>Sample Name</th><th>Donor</th><th>Organism</th><th>Molecule</th><th>Lab</th><th>Grant</th><th>Removal</th><th>Selected</th>");
 											?>
 												<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','sample',this,event)"/>
 												<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','sample',this,event)"/>
@@ -158,7 +218,7 @@
 												#Samples
 												echo $html->getRespBoxTableStreamNoExpand("Samples", "samples",
 																						  ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"],
-																						  ["id","name","title","source","organism","molecule","backup","total_reads"]);
+																						  ["id","name","title","organism","source","molecule","backup","total_reads"]);
 											?>
 									</div>
 									<div class="tab-pane" id="donors_tab">
@@ -174,16 +234,17 @@
 										<?php
 											#Experiments
 											echo $html->getRespBoxTable_ng("Experiments", "encode_experiments",
-																		   "<th>Sample</th><th>Assay Term Name</th><th>Source</th><th>Description</th><th>Experiment Acc</th><th>Experiment UUID</th><th>Selected</th>");
+																		   "<th>Sample</th><th>Assay Term Name</th><th>Assay Term ID</th><th>Description</th><th>Experiment Acc</th><th>Experiment UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','experiment',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','experiment',this,event)"/>
+										<input type="button" class="btn btn-primary margin pull-right" value="Link Experiments" onClick="linkExperiment()"/>
 									</div>
 									<div class="tab-pane" id="treatments_tab">
 										<?php
 											#Treatments
 											echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
-																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Selected</th>");
+																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Treatment UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','treatment',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','treatment',this,event)"/>
@@ -193,16 +254,17 @@
 										<?php
 											#Biosamples
 											echo $html->getRespBoxTable_ng("Biosamples", "encode_biosamples",
-																		   "<th>Sample</th><th>Treatment</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th><th>Selected</th>");
+																		   "<th>Sample</th><th>Derived From</th><th>Treatment</th><th>Duration</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Source</th><th>Starting Amount</th><th>Starting Amount Units</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','biosample',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','biosample',this,event)"/>
+										<input type="button" class="btn btn-primary margin pull-right" value="Link Biosamples" onClick="linkBiosample()"/>
 									</div>
 									<div class="tab-pane" id="libraries_tab">
 										<?php
 											#Libraries
 											echo $html->getRespBoxTable_ng("Libraries", "encode_libraries",
-																		   "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Read Size</th><th>Sequencing Platform</th><th>Machine Name</th><th>Flowcell</th><th>Flowcell Lane</th><th>Library Acc</th><th>Library UUID</th><th>Selected</th>");
+																		   "<th>Sample</th><th>Nucleic Acid Term Name</th><th>Nucleic Acid Term ID</th><th>Crosslinking Method</th><th>Spike-ins Used</th><th>Extraction Method</th><th>Fragmentation Method</th><th>Size Range</th><th>Read Size</th><th>Sequencing Platform</th><th>Machine Name</th><th>Flowcell</th><th>Flowcell Lane</th><th>Library Acc</th><th>Library UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','library',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','library',this,event)"/>

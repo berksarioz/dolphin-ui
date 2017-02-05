@@ -21,6 +21,8 @@ class botoSubmit:
     f=""
     config = ConfigParser.ConfigParser()
     params_section = ''
+    configsalt = ConfigParser.ConfigParser()
+    configsalt.readfp(open('../config/.salt'))
     
     def __init__(self, f, params_section):
         self.f = f
@@ -141,9 +143,7 @@ class botoSubmit:
     
     def uploadFile(self, amazon, amazon_bucket, fastq_dir, filename):
         try:
-            config = ConfigParser.ConfigParser()
-            config.readfp(open('../config/.salt'))
-            password = config.get('Dolphin','AMAZON')
+            password = self.configsalt.get('Dolphin','AMAZON')
             s3 = boto3.resource('s3', 'us-east-1',
             aws_access_key_id=decrypt(password, unhexlify(amazon['aws_access_key_id'])),
             aws_secret_access_key=decrypt(password, unhexlify(amazon['aws_secret_access_key'])))

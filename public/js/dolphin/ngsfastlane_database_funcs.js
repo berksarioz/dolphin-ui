@@ -7,8 +7,7 @@
 var bad_samples = [];
 var replaced_samples = [];
 var replaced_samples_ids = [];
-var id_array = ['genomebuild', 'barcode_sep', 'spaired', 'series_name', 'lane_name', 'input_dir', 'input_files', 'backup_dir', 'amazon_bucket',
-				'Barcode Definitions', 'groups', 'perms'];
+var id_array = ['genomebuild', 'barcode_sep', 'spaired', 'series_name', 'lane_name', 'input_dir', 'input_files', 'backup_dir', 'amazon_bucket', 'Barcode Definitions', 'groups', 'perms'];
 
 /*
  *	Checks fastlane input
@@ -168,11 +167,11 @@ function checkFastlaneInput(info_array){
 		//	Directory Checks
 		}else if (id_array[x] == 'input_dir' || id_array[x] == 'backup_dir'){
 			//	Check inputs that should not contain whitespace
-			if ((!/^[a-zA-Z0-9\_\.\/\-]*$/.test(info_array[x])) || info_array[x].indexOf("/") != 0) {
+			if ((!/^[a-zA-Z0-9\_\.\/\-:]*$/.test(info_array[x])) || info_array[x].indexOf("/") != 0) {
 				//	Contains whitespace
-				if (id_array[x] == 'input_dir') {
+				if (id_array[x] == 'input_dir' && info_array[x].indexOf("s3:") != 0) {
 					error_out.push("Input Directory must contain only alpha-numerics with dashes/periods/backslashes/underscores");
-				}else{
+				}else if (id_array[x] == 'backup_dir'){
 					error_out.push("Process Directory must contain only alpha-numerics with dashes/periods/backslashes/underscores");
 				}
 			}else{

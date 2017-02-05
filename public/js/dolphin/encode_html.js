@@ -33,7 +33,7 @@ function loadInEncodeSubmissions(){
 					s[x].id,
 					s[x].samples,
 					sub_status,
-					s[x].output_file,
+					"<button class=\"btn btn-primary pull-right\" onclick=\"viewEncodeLog('"+s[x].output_file+"')\">View Log</button>",
 					"<button class=\"btn btn-primary pull-right\" onclick=\"resubmitEncode('"+s[x].samples+"')\">Resubmit</button>",
 				]);
 			}
@@ -60,7 +60,7 @@ function loadInEncodeSubmissions(){
 					s[x].id,
 					s[x].samplename,
 					sub_status,
-					s[x].output_file
+					"<button class=\"btn btn-primary pull-right\" onclick=\"viewEncodeLog('"+s[x].output_file+"')\">View Log</button>",
 				]);
 			}
 		}
@@ -85,6 +85,22 @@ function loadInEncodeTables(){
 function loadSamples(){
 	var treatmentSelect = document.getElementById('addSampleTreatment')
 	var antibodySelect = document.getElementById('addSampleAntibody')
+	var biosampleSelect = document.getElementById('selectBiosample')
+	var experimentSelect = document.getElementById('selectExperiment')
+	
+	var linkBiosample = document.getElementById('linkBiosample')
+	var linkExperiment = document.getElementById('linkExperiment')
+	
+	var ret_biosample_accs = [];
+	var ret_experiment_accs = [];
+	
+	treatmentSelect.innerHTML = ''
+	antibodySelect.innerHTML = ''
+	biosampleSelect.innerHTML = ''
+	experimentSelect.innerHTML = ''
+	
+	linkBiosample.innerHTML = '<option value="none">* New Accession *</option>';
+	linkExperiment.innerHTML = '<option value="none">* New Accession *</option>';
 	
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
@@ -104,7 +120,6 @@ function loadSamples(){
 					s[x].sample_id,
 					s[x].samplename,
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].donor_id+"', 'donor', 'ngs_donor', this, 'ngs_samples', '"+s[x].sample_id+"', 'donor_id', 'donor')\">"+s[x].donor+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', "+s[x].sample_id+", 'source_id')\">"+s[x].source+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].organism_id+"', 'organism', 'ngs_organism', this, 'ngs_samples', '"+s[x].sample_id+"', 'organism_id')\">"+s[x].organism+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].sample_id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lab_id+"', 'lab', 'ngs_lab', this, 'ngs_experiment_series', '"+s[x].e_id+"', 'lab_id')\">"+s[x].lab+"</p>",
@@ -116,10 +131,25 @@ function loadSamples(){
 				//	Modal
 				treatmentSelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 				antibodySelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
+				biosampleSelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
+				experimentSelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
+				
+				if (ret_biosample_accs.indexOf(s[x].biosample_acc) == -1) {
+					ret_biosample_accs.push(s[x].biosample_acc)
+				}
+				if (ret_experiment_accs.indexOf(s[x].experiment_acc) == -1) {
+					ret_experiment_accs.push(s[x].experiment_acc)
+				}
 			}
 			
 		}
 	});
+	for(var x in ret_biosample_accs){
+		linkBiosample.innerHTML += '<option value="'+ret_biosample_accs[x]+'">'+ret_biosample_accs[x]+'</option>';
+	}
+	for(var x in ret_experiment_accs){
+		linkExperiment.innerHTML += '<option value="'+ret_experiment_accs[x]+'">'+ret_experiment_accs[x]+'</option>';
+	}
 }
 
 function loadDonors(){
@@ -139,8 +169,8 @@ function loadDonors(){
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'life_stage', 'ngs_donor', this, '', '', '')\">"+s[x].life_stage+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'age', 'ngs_donor', this, '', '', '')\">"+s[x].age+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'sex', 'ngs_donor', this, '', '', '')\">"+s[x].sex+"</p>",
-					s[x].donor_acc,
-					s[x].donor_uuid,
+					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor_acc', 'ngs_donor', this, '', '', '')\">"+s[x].donor_acc+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].donor_id+"', 'donor_uuid', 'ngs_donor', this, '', '', '')\">"+s[x].donor_uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].donor_id+", 'donor')\">"
 				]);
 			}
@@ -162,11 +192,11 @@ function loadExperiments(){
 				s[x] = responseCheck(s[x]);
 				experimenttable.fnAddData([
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].library_strategy_id+"', 'library_strategy', 'ngs_library_strategy', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'library_strategy_id')\">"+s[x].library_strategy+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].source_id+"', 'source', 'ngs_source', this, 'ngs_samples', '"+s[x].sample_id+"', 'source_id')\">"+s[x].source+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].assay_id+"', 'assay_term_name', 'ngs_assay_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'assay_term_id')\">"+s[x].assay_term_name+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].assay_id+"', 'assay_term_id', 'ngs_assay_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'assay_term_id')\">"+s[x].assay_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'description', 'ngs_samples', this, '', '', '')\">"+s[x].description+"</p>",
-					s[x].experiment_acc,
-					s[x].experiment_uuid,
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_acc', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_acc+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'experiment_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].experiment_uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'experiment')\">"
 				]);
 			}
@@ -195,6 +225,7 @@ function loadTreatments() {
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'concentration_units', 'ngs_treatment', this, '', '', '')\">"+s[x].concentration_units+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration', 'ngs_treatment', this, '', '', '')\">"+s[x].duration+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'duration_units', 'ngs_treatment', this, '', '', '')\">"+s[x].duration_units+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].id+"', 'uuid', 'ngs_treatment', this, '', '', '')\">"+s[x].uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].id+", 'treatment')\">"
 				]);
 			}
@@ -216,14 +247,19 @@ function loadBiosamples() {
 				s[x] = responseCheck(s[x]);
 				biosampletable.fnAddData([
 					s[x].samplename,
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_derived_from', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_derived_from+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].treatment_id+"', 'name', 'ngs_treatment', this, 'ngs_samples', '"+s[x].sample_id+"', 'treatment_id')\">"+s[x].name+"</p>",
+					s[x].duration + " " + s[x].duration_units,
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id', 'biosample')\">"+s[x].biosample_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'source', 'ngs_source', this, 'ngs_samples', '"+s[x].sample_id+"', 'source_id')\">"+s[x].source+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].starting_amount_id+"', 'starting_amount', 'ngs_starting_amount', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'starting_amount_id')\">"+s[x].starting_amount+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].starting_amount_id+"', 'starting_amount_units', 'ngs_starting_amount', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'starting_amount_id')\">"+s[x].starting_amount_units+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_submitted', 'ngs_lanes', this, '', '', '')\">"+s[x].date_submitted+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].lane_id+"', 'date_received', 'ngs_lanes', this, '', '', '')\">"+s[x].date_received+"</p>",
-					s[x].biosample_acc,
-					s[x].biosample_uuid,
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_acc', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_acc+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_uuid', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_uuid+"</p>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'biosample')\">"
 				]);
 			}
@@ -245,7 +281,8 @@ function loadLibraries() {
 				s[x] = responseCheck(s[x]);
 				librarytable.fnAddData([
 					s[x].samplename,
-					"<p onclick=\"editBox("+1+", '"+s[x].molecule_id+"', 'molecule', 'ngs_molecule', this, 'ngs_samples', '"+s[x].sample_id+"', 'molecule_id')\">"+s[x].molecule+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].nucleic_acid_id+"', 'nucleic_acid_term_name', 'ngs_nucleic_acid_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'nucleic_acid_term_id')\">"+s[x].nucleic_acid_term_name+"</p>",
+					"<p onclick=\"editBox("+1+", '"+s[x].nucleic_acid_id+"', 'nucleic_acid_term_id', 'ngs_nucleic_acid_term', this, 'ngs_protocols', '"+s[x].protocol_id+"', 'nucleic_acid_term_id')\">"+s[x].nucleic_acid_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'crosslinking_method', 'ngs_protocols', this, '', '', '')\">"+s[x].crosslinking_method+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'spike_ins', 'ngs_samples', this, '', '', '')\">"+s[x].spike_ins+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].protocol_id+"', 'extraction', 'ngs_protocols', this, '', '', '')\">"+s[x].extraction+"</p>",
@@ -665,28 +702,46 @@ function changeValuesEncode(type, table, ele, event = event){
 }
 
 function updateSingleTable(table){
-	if (table == "sample") {
+	if (table == "sample" || table == "SampleSelection") {
 		loadSamples();
-	}else if (table == "donor") {
+	}else if (table == "donor" || table == "Donors") {
 		loadDonors();
-	}else if (table == "experiment") {
+	}else if (table == "experiment" || table == "Experiments") {
 		loadExperiments();
-	}else if (table == "treatment") {
-		loadTreatments();
-	}else if (table == "biosample") {
+	}else if (table == "treatment" || table == "Treatments") {
 		loadBiosamples();
-	}else if (table == "library") {
+		loadTreatments();
+	}else if (table == "biosample" || table == "Biosamples") {
+		loadBiosamples();
+		loadTreatments();
+	}else if (table == "library" || table == "Libraries") {
 		loadLibraries();
-	}else if (table == "antibody") {
-		loadAntibodies();
-	}else if (table == "replicate") {
+	}else if (table == "antibody" || table == "Antibodies") {
 		loadReplicates();
+		loadAntibodies();
+	}else if (table == "replicate" || table == "Replicates") {
+		loadReplicates();
+		loadAntibodies();
 	}
 }
 
 function editEncodeBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child, encode_table){
 	singlecheck_table = encode_table;
 	editBox(uid, id, type, table, element, parent_table, parent_table_id, parent_child);
+}
+
+function linkBiosample() {
+	$('#linkBiosampleModal').modal({
+		show: true
+	});
+	addModalType = 'biosample'
+}
+
+function linkExperiment() {
+	$('#linkExperimentModal').modal({
+		show: true
+	});
+	addModalType = 'experiment'
 }
 
 function addTreatment(){
@@ -749,6 +804,50 @@ function createNewData(type){
 				loadReplicates();
 			}
 		}
+	});
+}
+
+function createLink(type) {
+	var selected = document.getElementById('select'+type)
+	var samples = []
+	for (var i = 0; i < selected.length; i++) {
+		if (selected.options[i].selected){
+			samples.push(selected.options[i].value);
+		}
+	}
+	var acc = document.getElementById('link'+type).value
+	if (acc == undefined || acc == '') {
+		acc == 'none';
+	}
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "linkSamples", type:type, samples:samples.toString(), acc:acc },
+		async: false,
+		success : function(s)
+		{
+			
+		}
+	});
+	
+}
+
+function viewEncodeLog(log){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "viewLog", log:log },
+		async: false,
+		success : function(s)
+		{
+			console.log(s)
+			if (s != false) {
+				document.getElementById('log_content').innerHTML = s.replace(/\n/g,"<br><br>");
+			}else{
+				document.getElementById('log_content').innerHTML = "Log file not found";
+			}
+		}
+	});
+	$('#logModal').modal({
+		show: true
 	});
 }
 

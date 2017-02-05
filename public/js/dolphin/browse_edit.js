@@ -369,6 +369,10 @@ function updateEncodeSubmissions(type){
 			console.log(r)
 		}
 	});
+	if (window.location.href.split("/").indexOf('encode') > -1) {
+		var table = $('.nav-tabs .active').text().replace(/[\s\t\n\r]/g,'');
+		updateSingleTable(table);
+	}
 }
 
 function deleteButton(){

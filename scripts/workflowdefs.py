@@ -1,5 +1,5 @@
+stepCheck='stepCheck%(sep)s@RUNCHECK -c @CONFIG -i @INPUT -u @USERNAME -b @BARCODES -w @WKEY -p %(runparamsid)s -d @DOWNLOADS3 -a @ADAPTER -t @TRIM -o @OUTDIR -r %(resume)s -s stepCheck -j @JOB%(sep)s60'
 stepDownload='stepDownload%(sep)s@RUNDOWNLOAD -c @CONFIG -f @FASTQDUMP -u @USERNAME -r %(runparamsid)s -o @OUTDIR -j @JOB%(sep)s60'
-stepCheck='stepCheck%(sep)s@RUNCHECK -c @CONFIG -i @INPUT -u @USERNAME -b @BARCODES -w @WKEY -p %(runparamsid)s -d @DBCOMMCMD -a @ADAPTER -t @TRIM -o @OUTDIR -r %(resume)s -s stepCheck -j @JOB%(sep)s60'
 stepSeqMapping='stepSeqMapping%(indexname)s%(sep)s@RUNSEQMAPPING -i @INPUT -a @DOLPHIN -d @SPAIRED -m @SAMTOOLS -o @OUTDIR -b @PARAM%(indexname)s -c @BOWTIE2CMD -s stepSeqMapping%(indexname)s -r @ADVPARAMS -j @JOB%(sep)s60'
 stepBarcode='stepBarcode%(sep)s@RUNBARCODE -c @CONFIG -i @INPUT -d @SPAIRED -b @BARCODES -o @OUTDIR -c @SINGLEBSPLITTERCMD:@PAIREDBSPLITTERCMD -s stepBarcode -j @JOB%(sep)s60'
 stepGetTotalReads='stepGetTotalReads%(sep)s@RUNGETTOTALREADS -c @CONFIG -b @BARCODES -r %(runparamsid)s -p @SPAIRED -o @OUTDIR -u @USERNAME -j @JOB%(sep)s60'

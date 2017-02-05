@@ -1,3 +1,6 @@
+VERSION:	0.9.6
+DETAILS:	-S3 download functionality
+
 VERSION:	0.9.5
 DETAILS:	-Moved additional pipeline related javascript functions to a seperate file for specifically additional pipeline related functions
 		-Added atacseq to the chip pipeline within the ui

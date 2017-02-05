@@ -14,7 +14,7 @@ $data = '';
 if ($p == 'getSubmissions')
 {
 	$data=$query->queryTable("
-		SELECT encode_submissions.id, sub_status, output_file, ngs_samples.samplename
+		SELECT ngs_samples.id, sub_status, output_file, ngs_samples.samplename
 		FROM encode_submissions
 		LEFT JOIN ngs_samples
 		ON encode_submissions.sample_id = ngs_samples.id
@@ -39,7 +39,8 @@ else if ($p == 'getSamples')
 		SELECT ngs_samples.id AS sample_id, ngs_samples.samplename, ngs_samples.source_id,
 		ngs_samples.organism_id, ngs_samples.molecule_id, source, organism, molecule,
 		ngs_samples.donor_id, ngs_donor.donor, ngs_experiment_series.id as e_id,
-		ngs_experiment_series.`grant`, ngs_experiment_series.lab_id, ngs_lab.lab		
+		ngs_experiment_series.`grant`, ngs_experiment_series.lab_id, ngs_lab.lab,
+		ngs_biosample_acc.biosample_acc, ngs_experiment_acc.experiment_acc
 		FROM ngs_samples
 		LEFT JOIN ngs_donor
 		ON ngs_samples.donor_id = ngs_donor.id
@@ -53,6 +54,10 @@ else if ($p == 'getSamples')
 		ON ngs_samples.organism_id = ngs_organism.id
 		LEFT JOIN ngs_molecule
 		ON ngs_samples.molecule_id = ngs_molecule.id
+		LEFT JOIN ngs_biosample_acc
+		ON ngs_samples.biosample_acc = ngs_biosample_acc.id
+		LEFT JOIN ngs_experiment_acc
+		ON ngs_samples.experiment_acc = ngs_experiment_acc.id
 		WHERE ngs_samples.id IN ($samples);
 	");
 }
@@ -77,9 +82,10 @@ else if($p == 'getExperiments')
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	$data=$query->queryTable("
 		SELECT DISTINCT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_protocols.id as protocol_id,
-		ngs_samples.description, ngs_samples.experiment_acc, ngs_samples.experiment_uuid,
+		ngs_samples.description, ngs_experiment_acc.experiment_acc, ngs_samples.experiment_uuid,
 		ngs_library_strategy.id as library_strategy_id, ngs_library_strategy.library_strategy,
-		ngs_samples.source_id as source_id, ngs_source.source
+		ngs_samples.source_id as source_id, ngs_source.source, ngs_protocols.assay_term_id AS assay_id,
+		assay_term_name, ngs_assay_term.assay_term_id
 		FROM ngs_samples
 		LEFT JOIN ngs_protocols
 		ON ngs_protocols.id = ngs_samples.protocol_id
@@ -87,6 +93,10 @@ else if($p == 'getExperiments')
 		ON ngs_library_strategy.id = ngs_protocols.library_strategy_id
 		LEFT JOIN ngs_source
 		ON ngs_source.id = ngs_samples.source_id
+		LEFT JOIN ngs_assay_term
+		ON ngs_assay_term.id = ngs_protocols.assay_term_id
+		LEFT JOIN ngs_experiment_acc
+		ON ngs_samples.experiment_acc = ngs_experiment_acc.id
 		WHERE ngs_samples.id in ($samples)
 		");
 }
@@ -109,7 +119,9 @@ else if($p == 'getBiosamples')
 	$data=$query->queryTable("
 		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_biosample_term.biosample_term_name, ngs_biosample_term.biosample_term_id,
 		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
-		ngs_treatment.id as treatment_id, ngs_lanes.date_submitted, ngs_samples.biosample_acc, ngs_samples.biosample_uuid, ngs_treatment.name
+		ngs_treatment.id as treatment_id, ngs_lanes.date_submitted, ngs_biosample_acc.biosample_acc, ngs_samples.biosample_uuid, ngs_treatment.name,
+		biosample_derived_from, starting_amount, starting_amount_units, ngs_protocols.id as protocol_id, ngs_protocols.starting_amount_id, source,
+		ngs_treatment.duration, ngs_treatment.duration_units
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
 		ON ngs_samples.biosample_id = ngs_biosample_term.id
@@ -117,6 +129,14 @@ else if($p == 'getBiosamples')
 		ON ngs_samples.treatment_id = ngs_treatment.id
 		LEFT JOIN ngs_lanes
 		ON ngs_samples.lane_id = ngs_lanes.id
+		LEFT JOIN ngs_protocols
+		ON ngs_samples.protocol_id = ngs_protocols.id
+		LEFT JOIN ngs_starting_amount
+		ON ngs_protocols.starting_amount_id = ngs_starting_amount.id
+		LEFT JOIN ngs_biosample_acc
+		ON ngs_samples.biosample_acc = ngs_biosample_acc.id
+		LEFT JOIN ngs_source
+		ON ngs_source.id = ngs_samples.source_id
 		WHERE ngs_samples.id in ($samples)
 		");
 }
@@ -127,7 +147,8 @@ else if($p == 'getLibraries')
 		SELECT ngs_samples.id as sample_id, ngs_samples.samplename, ngs_molecule.molecule, ngs_protocols.extraction, ngs_samples.avg_insert_size,
 		ngs_molecule.id as molecule_id, ngs_protocols.id as protocol_id, ngs_samples.instrument_model_id as imid, instrument_model,
 		ngs_samples.spike_ins, ngs_protocols.crosslinking_method, ngs_protocols.fragmentation_method, ngs_samples.library_acc,
-		ngs_samples.library_uuid, ngs_samples.flowcell_id, machine_name, flowcell, ngs_flowcell.lane, ngs_samples.read_length
+		ngs_samples.library_uuid, ngs_samples.flowcell_id, machine_name, flowcell, ngs_flowcell.lane, ngs_samples.read_length,
+		nucleic_acid_term_name, ngs_nucleic_acid_term.nucleic_acid_term_id, ngs_protocols.nucleic_acid_term_id as nucleic_acid_id
 		FROM ngs_samples
 		LEFT JOIN ngs_molecule
 		ON ngs_samples.molecule_id = ngs_molecule.id
@@ -137,6 +158,8 @@ else if($p == 'getLibraries')
 		ON ngs_samples.protocol_id = ngs_protocols.id
 		LEFT JOIN ngs_flowcell
 		ON ngs_samples.flowcell_id = ngs_flowcell.id
+		LEFT JOIN ngs_nucleic_acid_term
+		ON ngs_protocols.nucleic_acid_term_id = ngs_nucleic_acid_term.id
 		WHERE ngs_samples.id in ($samples)
 		");
 }
@@ -185,6 +208,11 @@ else if ($p == 'createEncodeRow')
 		($rowname)
 		VALUES
 		('$name')
+		WHERE NOT EXISTS(
+			SELECT 1
+			FROM $table
+			WHERE $rowname = '$name'
+		)
 	");
 	$typeID=json_decode($query->queryTable("
 		SELECT id
@@ -382,6 +410,49 @@ else if ($p == 'enterFileSubmission')
 			");
 		$data = json_encode("insert occured");
 	}
+}
+else if ($p == 'linkSamples')
+{
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
+	if (isset($_GET['acc'])){$acc = $_GET['acc'];}
+	if($acc == 'none' || $acc == ''){
+		$data=json_decode($query->runSQL("
+		INSERT INTO ngs_" . strtolower($type) . "_acc
+		(" . strtolower($type) . "_acc) VALUES ('insert')
+		"));
+		$accid=json_decode($query->queryTable("
+		SELECT *
+		FROM ngs_" . strtolower($type) . "_acc
+		WHERE " . strtolower($type) . "_acc = 'insert'
+		"));
+		$data=json_decode($query->runSQL("
+		UPDATE ngs_samples
+		SET ". strtolower($type) . "_acc = ".$accid[0]->id."
+		WHERE id in ($samples)
+		"));
+		$data=json_decode($query->runSQL("
+		UPDATE ngs_" . strtolower($type) . "_acc
+		SET ". strtolower($type) . "_acc = NULL
+		WHERE id = ".$accid[0]->id
+		));
+	}else{
+		$accid=json_decode($query->queryTable("
+		SELECT *
+		FROM ngs_".strtolower($type)."_acc
+		WHERE ".strtolower($type)."_acc = '$acc'
+		"));
+		$data=json_decode($query->runSQL("
+		UPDATE ngs_samples
+		SET ". strtolower($type) . "_acc = ".$accid[0]->id."
+		WHERE id in ($samples)
+		"));
+	}
+}
+else if ($p == 'viewLog')
+{
+	if (isset($_GET['log'])){$log = $_GET['log'];}
+	$data=json_encode(file_get_contents("../../tmp/encode/$log"));
 }
 
 

@@ -17,11 +17,11 @@ if($p == 'getSampleDataInfo')
 	$data=$query->queryTable("SELECT ngs_samples.id, ngs_samples.name, ngs_samples.samplename, ngs_samples.title, concentration,
 							 avg_insert_size, biological_replica, technical_replica, spike_ins, read_length,
 							 molecule, genotype, treatment_manufacturer, instrument_model, adapter,
-							 time, ngs_donor.id as did, donor, life_stage, age, sex, donor_acc, donor_uuid, series_id,
-							 protocol_id, lane_id, organism, source,
-							 biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
-							 experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
-							 biosample_term_name, biosample_term_id, biosample_type, ngs_samples.description
+							 time, ngs_donor.id AS did, donor, life_stage, age, sex, donor_acc, donor_uuid, series_id,
+							 protocol_id, lane_id, organism, source, biosample_derived_from, 
+							 ngs_biosample_acc.biosample_acc, biosample_uuid, library_acc, library_uuid, replicate_uuid,
+							 ngs_experiment_acc.experiment_acc, experiment_uuid, treatment_id, antibody_lot_id, biosample_id,
+							 biosample_term_name, biosample_term_id, biosample_type, ngs_samples.description, ngs_samples.time
 							 FROM ngs_samples
 							 LEFT JOIN ngs_donor
 							 ON ngs_donor.id = ngs_samples.donor_id
@@ -39,6 +39,10 @@ if($p == 'getSampleDataInfo')
 							 ON ngs_genotype.id = ngs_samples.genotype_id
 							 LEFT JOIN ngs_source
 							 ON ngs_source.id = ngs_samples.source_id
+							 LEFT JOIN ngs_experiment_acc
+							 ON ngs_samples.experiment_acc = ngs_experiment_acc.id
+							 LEFT JOIN ngs_biosample_acc
+							 ON ngs_samples.biosample_acc = ngs_biosample_acc.id
 							 WHERE ngs_samples.id IN ( $samples )");
 }
 else if($p == "getLaneDataInfo")
@@ -68,10 +72,18 @@ else if ($p == 'getProtocolDataInfo')
 	if (isset($_GET['protocols'])){$protocols = $_GET['protocols'];}
 	$data=$query->queryTable("SELECT ngs_protocols.id, name, growth, treatment,
 							 extraction, library_construction, crosslinking_method, fragmentation_method,
-							 strand_specific, library_strategy
+							 strand_specific, library_strategy, assay_term_name, ngs_assay_term.assay_term_id,
+							 nucleic_acid_term_name, ngs_nucleic_acid_term.nucleic_acid_term_id, starting_amount,
+							 starting_amount_units, ngs_protocols.assay_term_id AS assay_id
 							 FROM ngs_protocols
 							 LEFT JOIN ngs_library_strategy
 							 ON ngs_protocols.library_strategy_id = ngs_library_strategy.id
+							 LEFT JOIN ngs_assay_term
+							 ON ngs_protocols.assay_term_id = ngs_assay_term.id
+							 LEFT JOIN ngs_nucleic_acid_term
+							 ON ngs_protocols.nucleic_acid_term_id = ngs_nucleic_acid_term.id
+							 LEFT JOIN ngs_starting_amount
+							 ON ngs_protocols.starting_amount_id = ngs_starting_amount.id
 							 WHERE ngs_protocols.id in ( $protocols )");
 }
 else if ($p == 'getTreatmentDataInfo')
@@ -95,11 +107,53 @@ else if ($p == 'submitAccessionAndUuid')
 		$data=$query->runSQL("UPDATE $table
 							SET ".$type."_uuid = '$uuid'
 							WHERE id = $item");	
+	}else if($type == 'biosample' || $type == 'experiment'){
+		$acc_link=json_decode($query->queryTable("
+							SELECT ".$type."_acc
+							FROM $table
+							WHERE id = $item"
+							));
+		$typeacc = $type . '_acc';
+		if($acc_link[0]->$typeacc == NULL){
+			$data=json_decode($query->runSQL("
+				INSERT INTO ngs_" . $type . "_acc
+				(" . $type . "_acc) VALUES ('insert')
+				"));
+			$accid=json_decode($query->queryTable("
+				SELECT *
+				FROM ngs_" . $type . "_acc
+				WHERE " . $type . "_acc = 'insert'
+				"));
+			$data=json_decode($query->runSQL("
+				UPDATE ngs_samples
+				SET ". $type . "_acc = ".$accid[0]->id."
+				WHERE id = $item
+				"));
+		}
+		$data=$query->runSQL("UPDATE ngs_".$type."_acc
+							SET ".$type."_acc = '$accession'
+							WHERE id = (
+								SELECT ".$type."_acc
+								FROM ngs_samples
+								WHERE id = $item)");	
+		$data=$query->runSQL("UPDATE $table
+							SET ".$type."_uuid = '$uuid'
+							WHERE id = $item");
 	}else{
 		$data=$query->runSQL("UPDATE $table
 							SET ".$type."_acc = '$accession', ".$type."_uuid = '$uuid'
 							WHERE id = $item");	
 	}
+}
+else if ($p == 'startLog')
+{
+	if(!isset($_SESSION['encode_log'])){
+		$_SESSION['encode_log'] = "../../tmp/encode/".$_SESSION['user']."_".date('Y-m-d-H-i-s').".log";
+	}
+	$logloc = $_SESSION['encode_log'];
+	$logfile = fopen($logloc, "a") or die("Unable to open file!");
+	fwrite($logfile, "Metadata Submission\n######################################################\n");
+	fclose($logfile);	
 }
 else if ($p == 'endLog')
 {
@@ -118,30 +172,34 @@ else if ($p == 'endLog')
 	if(count($current_samps) > 0){
 		$query->runSQL("
 			UPDATE encode_submissions
-			SET sub_status = '1', output_file = '$file'
+			SET sub_status = '1', output_file = '$file', last_modified_user = ".$_SESSION['uid'].", date_modified = NOW()
 			WHERE sample_id in (".implode(",",$current_samps).")
 		");
 	}
 	$new_samps = array_diff($sample_ids, $current_samps);
 	foreach($new_samps as $ns){
-		array_push($push_new_samps, "( $ns, '1', '$file' )");
+		array_push($push_new_samps, "( $ns, '1', '$file', ".$_SESSION['uid'].", NOW(), NOW(), ".$_SESSION['uid']." )");
 	}
 	if(count($push_new_samps) > 0){
 		$query->runSQL("
 			INSERT INTO `encode_submissions`
-			(sample_id, sub_status, output_file)
+			(sample_id, sub_status, output_file, original_submission_user, date_created, date_modified, last_modified_user)
 			VALUES
 			".implode(",",$push_new_samps)."
 		");
 	}
+	$logloc = $_SESSION['encode_log'];
+	$logfile = fopen($logloc, "a") or die("Unable to open file!");
+	fwrite($logfile, "Submission End\n######################################################\n");
+	fclose($logfile);
 	unset($_SESSION['encode_log']);
 	
 	//batch submissions
 	$query->runSQL("
 		INSERT INTO encode_batch_submissions
-		(samples, output_file)
+		(samples, output_file, original_submission_user, date_created, date_modified, last_modified_user)
 		VALUES
-		('".implode(",",$sample_ids)."', '$file')
+		('".implode(",",$sample_ids)."', '$file', ".$_SESSION['uid'].", NOW(), NOW(), ".$_SESSION['uid'].")
 		ON DUPLICATE KEY UPDATE output_file = '$file';
 	");
 	
