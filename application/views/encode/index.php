@@ -102,7 +102,7 @@
 				</div><!-- End Antibody modal -->
 				<section class="content-header">
 					<h1>
-						Encode Viewing/Submission
+						Encode Viewin Feelin/Submission
 						<small>Projects and experiments submitted to Encode</small>
 					</h1>
 					<ol class="breadcrumb">
