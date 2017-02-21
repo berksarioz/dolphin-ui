@@ -18,7 +18,7 @@ function removeTableSamples(id, button){
 
 function manageCreateChecklists(id, tablerow){
 	var table = $('#jsontable_selected_samples').dataTable();
-	
+
 	var run_ids = [];
 	var ids = [];
 	if (getBasketInfo() != undefined) {
@@ -60,7 +60,7 @@ function manageCreateChecklists(id, tablerow){
 							run_select += '<option id="' + run_ids[s[i].id][x]+ '_' + run_ids[s[i].id][x+1] + '" value="'+ run_ids[s[i].id][x+2] + '">Run ' + run_ids[s[i].id][x] + ': ' + run_ids[s[i].id][x+1] + '</option>'
 						}
 						run_select += '</form></select>';
-						
+
 						table.fnAddData([
 							s[i].id,
 							s[i].samplename,
@@ -103,7 +103,7 @@ function reportSelection(){
 	}
 	console.log(wkeys);
 	var wkey_count = wkeys.length;
-	
+
 	$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/tablegenerator.php",
 			data: { p: "getTableReportsList", wkey: wkeys.toString() },
@@ -113,9 +113,11 @@ function reportSelection(){
 				reports = s;
 			}
 	});
-	
+
 	var multi_box = document.getElementById('report_multi_box');
-	multi_box.innerHTML = '';
+	if(multi_box){
+		multi_box.innerHTML = '';
+	}
 	var run_cohesion_check = [];
 	var run_cohesion_count_check = [];
 	var genome_check = '';
@@ -138,7 +140,9 @@ function reportSelection(){
 					option.disabled = false;
 					option.style.opacity = 1;
 				}
-				multi_box.add(option);
+				if(multi_box){
+					multi_box.add(option);
+				}
 			}else{
 				run_cohesion_count_check[run_cohesion_check.indexOf(reports[y].file)]++;
 				if (wkey_count != run_cohesion_count_check[run_cohesion_check.indexOf(reports[y].file)] || genome_check != reports[y].json_parameters.split(",")[0]) {
@@ -176,12 +180,12 @@ function sendToTableGen(){
 	}
 	console.log(samples_send);
 	samples_send = samples_send.substring(0, samples_send.length - 1);
-	
+
 	var format_send = '&format=json';
-	
+
 	var files_selected = $('#report_multi_box').val();
 	var file_send = '&file=' + files_selected.toString();
-	
+
 	var type_send = '';
 	console.log(file_send);
 	if (file_send.indexOf('summary.') > -1) {
@@ -222,9 +226,9 @@ function sendToTableGen(){
 			key_send = '&key=metric';
 		}
 	}
-	
+
 	var filter_send = '';
-	
+
 	return samples_send + file_send +
 		common_send + keepcols_send + key_send + type_send + format_send + filter_send;
 }
@@ -235,14 +239,14 @@ function tableCreatorPage(){
 	var empty_ids = [];
 	if (getBasketInfo() != undefined) {
 		ids = getBasketInfo().split(",");
-		var runparams = $('#jsontable_selected_samples')	
+		var runparams = $('#jsontable_selected_samples')
 		for (var x = 0; x < ids.length; x++) {
 			if (runIDHelper[ids[x]] == undefined) {
 				empty_ids.push(ids[x]);
 			}
 		}
 	}
-	
+
 	if(file_values == null){
 		$('#errorModal').modal({
 			show: true
@@ -323,7 +327,7 @@ function saveTable() {
 	}
 	var file_name = '';
 	var beforeFormat = parameters.split('format=')[0];
-		
+
 	$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/tablegenerator.php",
 			data: { p: "createTableFile", url: BASE_PATH+"/public/api/getsamplevals.php?" + beforeFormat + 'format=json' },
@@ -350,7 +354,7 @@ function saveTable() {
 
 function downloadCreatedTSV(file_name){
 	if (file_name != '') {
-		var URL = BASE_PATH + '/public/tmp/files/' + file_name; 
+		var URL = BASE_PATH + '/public/tmp/files/' + file_name;
 		window.open(URL, '_blank');
 	}
 }
@@ -367,7 +371,7 @@ function downloadGeneratedTSV(beforeFormat, format){
 			{
 				file_name = s;
 				if (file_name != '') {
-					var URL = BASE_PATH + '/public/tmp/files/' + file_name; 
+					var URL = BASE_PATH + '/public/tmp/files/' + file_name;
 					window.open(URL, '_blank');
 				}
 			}
@@ -489,7 +493,7 @@ function changeTableData(id){
 			{
 				console.log(s);
 				perms = s;
-			}	
+			}
 		});
 		if (perms == 3) {
 			$('#only_me').iCheck('check');
@@ -502,7 +506,7 @@ function changeTableData(id){
 		}else{
 			$('#only_me').iCheck('check');
 		}
-		
+
 		if (document.getElementById('permsOwnerSelect').innerHTML != '') {
 			document.getElementById('confirmTablePermsButton').setAttribute('style', 'display:show');
 			document.getElementById('cancelTablePermsButton').innerHTML = 'Cancel';
@@ -591,8 +595,8 @@ $(function() {
 		var runparams = $('#jsontable_selected_samples').dataTable({ autoFill: true });
 		var run_ids = [];
 		var samples_with_runs =[];
-		
-		
+
+
 		$.ajax({ type: "GET",
 				url: BASE_PATH+"/public/ajax/tablegenerator.php",
 				data: { p: "getTableRuns", search: sample_ids },
@@ -625,9 +629,12 @@ $(function() {
 		}
 		sample_ids = getBasketInfo();
 		console.log(sample_ids);
+		if(typeof sample_ids == "undefined"){
+			sample_ids = "";
+		}
 		var sample_ids_array_int = sample_ids.split(',').map(Number);
 		var sample_ids_array = sample_ids_array_int.map(String);
-		
+
 		sample_ids_array.sort(function(a, b){return a-b});
 		$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/tablegenerator.php",
@@ -695,7 +702,7 @@ $(function() {
 					'<li><a onclick="sendTableToDebrowser(\''+BASE_PATH+'/public/api/getsamplevals.php?'+beforeFormat+'format=json\')" style="cursor:pointer">Send to DEBrowser</a></li>';
 			}
 		}
-		
+
 		var ul = createElement('ul', ['class','role'],['dropdown-menu','menu']);
 		var li = '<li><a onclick="changeTableType(\'json\', \''+beforeFormat+'\')" style="cursor:pointer">JSON link</a></li>';
 		li += '<li><a onclick="changeTableType(\'json2\', \''+beforeFormat+'\')" style="cursor:pointer">JSON2 link</a></li>';
@@ -704,10 +711,10 @@ $(function() {
 		li += debrowser_string;
 		li += '<li class="divider"></li>';
 		li += '<li><a value="Download TSV" onclick="downloadGeneratedTSV(\''+beforeFormat+'\', \'&format=json\')" style="cursor:pointer">Download TSV</a></li>';
-		
+
 		ul.innerHTML = li;
 		export_table.appendChild(ul);
-		
+
 		if (table_params.from_table_list == 'true') {
 			document.getElementById('permissions_group').remove();
 			document.getElementById('save_table').remove();
@@ -756,10 +763,10 @@ $(function() {
 								splitParameters[1].split('file=')[1].split(',').join(', '),
 								'<div class="btn-group pull-right">' +
 									'<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Options <span class="fa fa-caret-down"></span></button>' +
-									'<ul class="dropdown-menu" role="menu">' + 
+									'<ul class="dropdown-menu" role="menu">' +
 										'<li><a id="' + s[x].id+'" onclick="sendToSavedTable(this.id)">View</a></li>' +
 										'<li><a id="' + s[x].id+'" onclick="sendTableToPlot(\''+s[x].file+'\')">Plot Table</a></li>' +
-										file_str + 
+										file_str +
 										'<li class="divider"></li>' +
 										debrowser_string +
 										'<li><a id="' + s[x].id+'" onclick="changeTableData(this.id)">Change Table Permissions</a></li>' +

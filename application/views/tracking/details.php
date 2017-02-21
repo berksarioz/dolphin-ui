@@ -14,7 +14,7 @@
 										<br>
 										<p id="deleteAreas"></p>
 									</div>
-								</fieldset>
+								</fieldset>   
 							</div>
 							<div class="modal-footer">
 							  <button type="button" id="confirmDeleteButton" class="btn btn-danger" data-dismiss="modal" onclick="confirmDeletePressed()">Confirm</button>
@@ -40,7 +40,7 @@
 										<p id="fileAreas">Please make sure that the changes being made to either the directory location or the file names are accurate before submission.</p>
 										<p id="fileAreas2">Once completed, please visit the NGS Run Status page and resubmit the initial run to make sure that all file information is correct and secure.</p>
 									</div>
-								</fieldset>
+								</fieldset>   
 							</div>
 							<div class="modal-footer">
 							  <button type="button" id="confirmFileButton" class="btn btn-danger" data-dismiss="modal" onclick="">Confirm</button>
@@ -107,7 +107,7 @@
 							echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Lab","Organization","Grant", "Selected"], ["id","experiment_name","summary","design", "lab","organization","grant", ""]);
 						}
 					}
-
+					
 					if ($table=="experiments" || $table=="samples"){
 						echo $html->getBrowserPanelMore($experiments, $experiment_fields, "Import", 'name', $lane_file, 'lanes', NULL, NULL, $dir_array);
 					}else{
@@ -120,7 +120,7 @@
 															  ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""]);
 						}
 					}
-
+					
 					if ($table=="samples"){
 						echo $html->getBrowserPanelMore($samples, $sample_fields, "Sample",'name', $sample_file, $sample_fastq_file, $sample_runs, $sample_tables, $dir_array);
 					}else{
@@ -129,7 +129,7 @@
 						}else if($_SESSION['ngs_samples'] == ''){
 							echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
 						}else{
-							echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Backup", "Barcode", "Description", "Avg Insert Size", "Read Length",
+							echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
 																					"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
 																					"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
 																					["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
@@ -144,3 +144,6 @@
 						</div><!-- /.col (RIGHT) -->
 					</div><!-- /.row -->
 				</section><!-- /.content -->
+
+
+

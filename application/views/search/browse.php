@@ -14,7 +14,7 @@
 										<br>
 										<p id="deleteAreas"></p>
 									</div>
-								</fieldset>   
+								</fieldset>
 							</div>
 							<div class="modal-footer">
 							  <button type="button" id="confirmDeleteButton" class="btn btn-danger" data-dismiss="modal" onclick="confirmDeletePressed()">Confirm</button>
@@ -88,7 +88,7 @@
 							}else if($_SESSION['ngs_samples'] == ''){
 								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
 							}else{
-								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
+								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Backup", "Barcode", "Description", "Avg Insert Size", "Read Length",
 																						"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
 																						"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
 																						["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
@@ -98,6 +98,3 @@
 						</div><!-- /.col (RIGHT) -->
 					</div><!-- /.row -->
 				</section><!-- /.content -->
-
-
-

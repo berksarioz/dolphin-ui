@@ -8,15 +8,15 @@ class HTML {
 		return $data;
 	}
 
-	private function _fetchTinyUrl($url) { 
-		$ch = curl_init(); 
-		$timeout = 5; 
-		curl_setopt($ch,CURLOPT_URL,'http://tinyurl.com/api-create.php?url='.$url[0]); 
-		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1); 
-		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout); 
-		$data = curl_exec($ch); 
-		curl_close($ch); 
-		return '<a href="'.$data.'" target = "_blank" >'.$data.'</a>'; 
+	private function _fetchTinyUrl($url) {
+		$ch = curl_init();
+		$timeout = 5;
+		curl_setopt($ch,CURLOPT_URL,'http://tinyurl.com/api-create.php?url='.$url[0]);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+		$data = curl_exec($ch);
+		curl_close($ch);
+		return '<a href="'.$data.'" target = "_blank" >'.$data.'</a>';
 	}
 
 	function sanitize($data) {
@@ -28,7 +28,7 @@ class HTML {
 		if ($prompt) {
 			$data = '<a href="javascript:void(0);" onclick="javascript:jumpTo(\''.BASE_PATH.'/'.$path.'\',\''.$confirmMessage.'\')">'.$text.'</a>';
 		} else {
-			$data = '<a href="'.BASE_PATH.'/'.$path.'">'.$text.'</a>';	
+			$data = '<a href="'.BASE_PATH.'/'.$path.'">'.$text.'</a>';
 		}
 		return $data;
 	}
@@ -59,20 +59,20 @@ class HTML {
 				</section>';
 	return $html;
 	}
-	
+
 	function getDataTableFooterContent($fields, $table)
 	{
 	 $html='</aside><!-- /.right-side -->
 		</div><!-- ./wrapper -->
 
 
-		<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script> 
+		<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 		<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js" type="text/javascript"></script>
 	<script src="//code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 		<script src="'.BASE_PATH.'/js/dataTables/jquery.dataTables.min.js"></script>
 		<script src="'.BASE_PATH.'/js/dataTables/dataTables.bootstrap.js"></script>
 		<script src="'.BASE_PATH.'/js/dataTables/dataTables.tableTools.min.js"></script>
-		
+
 		<!-- AdminLTE App -->
 		<script src="'.BASE_PATH.'/js/AdminLTE/app.js" type="text/javascript"></script>
 
@@ -81,12 +81,12 @@ class HTML {
 		<script type="text/javascript" language="javascript" class="init">
 
 	var editor; // use a global for the submit and return data rendering in the examples
-	
+
 	function toggleTable() {
 		var lTable = document.getElementById("descTable");
 		lTable.style.display = (lTable.style.display == "table") ? "none" : "table";
 	}
-	
+
 	$(document).ready(function() {
 		editor = new $.fn.dataTable.Editor( {
 			"ajax": "'.BASE_PATH.'/public/php/ajax/ajax.php?t='.$table[0]['tablename'].'",
@@ -106,14 +106,14 @@ class HTML {
 			endforeach;
 	$html.=']
 		} );
-	
+
 		$("#'.$table[0]['tablename'].'").DataTable( {
 			dom: "Tfrtip",
 			ajax: "'.BASE_PATH.'/public/php/ajax/ajax.php?t='.$table[0]['tablename'].'",
 			columns: [';
 			foreach ($fields as $field):
 			$datafield=($field['joinedtablename']!="")? $field['joinedtablename'].'.'.$field['joinedtargetfield']:$usetablename.$field['fieldname'];
-			
+
 			$render = ( $field['render']!='' ) ? ",".$field['render']:'';
 			$html.='	{ data: "'.$datafield.'"'.$render.' },
 			';
@@ -137,20 +137,20 @@ class HTML {
 					';
 					}
 				endforeach;
-			
+
 			$html.='}';
 			}
 	$html.='	} );';
-			
+
 	$html.='} );
-	
+
 		</script>
 		</body>
 	</html>
 	';
 	return $html;
 	}
-	
+
 	function getSideMenuItem($obj )
 	{
 	$html="";
@@ -159,7 +159,7 @@ class HTML {
 	endforeach;
 	return $html;
 	}
-	
+
 	function getDataTableContent($fields, $tablename)
 	{
 	$html='	<div class="container">
@@ -192,13 +192,13 @@ class HTML {
 		 $html.='								</tr>
 								</thead>
 						</table>
-			
+
 					</div><!-- /.row -->
 				</section><!-- /.content -->
 		</div>';
 	return $html;
 	}
-	
+
  function getRespBoxTable_ng($title, $table, $fields)
 	{
 	$geo_search_button = '';
@@ -221,8 +221,8 @@ class HTML {
 				'.$geo_search_button.'
 				</div><!-- /.box-body -->
 			</div><!-- /.box -->
-				
-				
+
+
 	';
 	return $html;
 	}
@@ -254,10 +254,10 @@ class HTML {
 								</table>
 						</div><!-- /.box-body -->
 				</div><!-- /.box -->';
-		
+
 		return $html;
 	}
-	
+
 	function getRespBoxTableStream($title, $table, $fields, $tableKeys){
 		$html = '';
 		$html.= '<div class="box">
@@ -270,7 +270,7 @@ class HTML {
 										<span class="fa fa-arrows-h"></span>
 										</button>
 								</div>';
-		}						
+		}
 		$html.=			'</div><!-- /.box-head -->
 						<div id="table_div_'.$table.'" class="box-body table-responsive">
 								<table id="jsontable_'.$table.'" class="table table-hover table-striped table-condensed table-scrollable">
@@ -292,28 +292,68 @@ class HTML {
 								</table>
 						</div><!-- /.box-body -->
 				</div><!-- /.box -->';
-		
+
 		return $html;
 	}
-	
+
+	function getRespBoxTableStream2($title, $table, $fields, $tableKeys){
+
+		$html = '';
+		$html.= '<div class="box">
+						<div class="box-header">
+								<h3 class="box-title">'.$title.'</h3>';
+		$html.= $this->getInfoBox($table);
+		if(!isset($_SESSION['tablecreatorcheck'])){
+			$html.=				'<div class="pull-right">
+										<button class="btn btn-default margin" value="'.$table.'" onclick="expandTable(this.value)">
+										<span class="fa fa-arrows-h"></span>
+										</button>
+								</div>';
+		}
+		$html.=			'</div><!-- /.box-head -->
+						<div id="table_div_'.$table.'" class="box-body table-responsive">
+								<table id="jsontable_'.$table.'" class="table table-hover table-striped table-condensed table-scrollable">
+										<thead>
+										<tr>';
+										for($x = 0; $x < count($tableKeys); $x++){
+												if($tableKeys[$x] == "id" || $tableKeys[$x] == "total_reads" || $tableKeys[$x] == "total_samples"){
+		$html.=									'<th data-sort="'.$tableKeys[$x].'::number" onclick="shiftColumns(this)">'
+												.$fields[$x].'<i id="'.$tableKeys[$x].'" class="pull-right fa fa-unsorted"></i></th>';
+												}else{
+		$html.=									'<th data-sort="'.$tableKeys[$x].'::string" onclick="shiftColumns(this)">'
+												.$fields[$x].'<i id="'.$tableKeys[$x].'" class="pull-right fa fa-unsorted"></i></th>';
+												}
+										}
+		$html.=							'</tr>
+										</thead>
+										<tbody>
+										</tbody>
+								</table>
+						</div><!-- /.box-body -->
+				</div><!-- /.box -->';
+
+		return $html;
+	}
+
+
 	function getBoxTable_ng($title, $table, $fields)
 	{
 	$html='				<style>
-				 
+
 				 .table {margin:0 auto; border-collapse:separate;}
 				 .table thead {}
-				 
+
 				 .table tbody {height:300px;overflow-y:scroll;}
 
 				</style>
-			
+
 							<div class="box">
 								<div class="box-header">
 									<h3 class="box-title">'.$title.' Table</h3>
 									<div class="pull-right box-tools">
 									<button class="btn btn-primary btn-sm pull-right" data-widget="collapse" data-toggle="tooltip" title="Col
 lapse" style="margin-right: 5px;"><i class="fa fa-minus"></i></button>
-									<button class="btn btn-primary btn-sm daterange_'.$table.' pull-right" data-toggle="tooltip" title="Date 
+									<button class="btn btn-primary btn-sm daterange_'.$table.' pull-right" data-toggle="tooltip" title="Date
 range"><i class="fa fa-calendar"></i></button>
 									</div><!-- /. tools -->
 								</div><!-- /.box-header -->
@@ -328,8 +368,8 @@ range"><i class="fa fa-calendar"></i></button>
 								 </table>
 							</div><!-- /.box-body -->
 							</div><!-- /.box -->
-				
-				
+
+
 	';
 	return $html;
 	}
@@ -392,7 +432,7 @@ e range"><i class="fa fa-calendar"></i></button>
 				else
 				{
 				$selectChk = explode('$', $search);
-				
+
 				foreach ($object as $obj):
 					$modSearch = strtolower($adjName)."=".$obj['name'];
 					if(in_array($modSearch, $selectChk))
@@ -410,9 +450,9 @@ e range"><i class="fa fa-calendar"></i></button>
 							$modSearch = implode('$',$tmpSelectCheck);
 							$html.='<li><a href="'.BASE_PATH.'/search/browse/'
 								.$name."/".$obj['name']."/".$modSearch.
-								'">'.$obj['name'].' ('.$obj['count'].') +</a></li>';	
+								'">'.$obj['name'].' ('.$obj['count'].') +</a></li>';
 						}
-						
+
 					}
 					else{
 						$html.='<li><a href="'.BASE_PATH.'/search/browse/'
@@ -448,7 +488,7 @@ e range"><i class="fa fa-calendar"></i></button>
 		<dt>Design</dt>
 		<dd>'.$obj['design'].'</dd>
 		</dl>
-		</div> 
+		</div>
 		</div>';
 	endforeach;
 	return $html;
@@ -492,12 +532,12 @@ e range"><i class="fa fa-calendar"></i></button>
 		}
 		endforeach;
 	$html.=	'</dl>
-		</div> 
+		</div>
 		</div>';
 	endforeach;
 	return $html;
 	}
-	
+
 	function getBrowserPanelMore($objects, $fields, $header ,$name, $files, $fastq_files, $sample_runs, $sample_tables, $dir_array)
 	{
 	foreach ($objects as $obj):
@@ -522,7 +562,7 @@ e range"><i class="fa fa-calendar"></i></button>
 							</li>';
 	}
 	if($header == 'Sample'){
-		
+
 		$html .=			'<li class>
 								<a href="#runs" data-toggle="tab" aria-expanded="true">Runs</a>
 							</li>
@@ -589,7 +629,7 @@ e range"><i class="fa fa-calendar"></i></button>
 						if($fastq_files == 'lanes'){
 								$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $f['id'].', \'file_name\', \'ngs_temp_lane_files\', this)">'.$f['file_name'].'</td></tr>';
 						}else{
-								$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $f['id'].', \'file_name\', \'ngs_temp_sample_files\', this)">'.$f['file_name'].'</td></tr>';	
+								$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $f['id'].', \'file_name\', \'ngs_temp_sample_files\', this)">'.$f['file_name'].'</td></tr>';
 						}
 					}
 				}
@@ -619,8 +659,8 @@ e range"><i class="fa fa-calendar"></i></button>
 			$html.= 	'<div class="box-body tab-pane" id="runs">
 							<div class="box-body margin" style="overflow-y:scroll">';
 			foreach($sample_runs as $sr){
-				$html.=				'<p>'.$sr->id.' -- '.$sr->run_name.' 
-									<a href="#" id="'.$sr->id.'" onclick="reportSelected(this.id,1)">Reports</a> | 
+				$html.=				'<p>'.$sr->id.' -- '.$sr->run_name.'
+									<a href="#" id="'.$sr->id.'" onclick="reportSelected(this.id,1)">Reports</a> |
 									<a href="#" id="'.$sr->id.'" onclick="sendToAdvancedStatus(this.id)">Status</a>
 									</p>';
 			}
@@ -642,7 +682,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	endforeach;
 	return $html;
 	}
-	
+
 	function getDolphinBasket(){
 	$html = '';
 	$html.= '<div class="small box">
@@ -665,7 +705,7 @@ e range"><i class="fa fa-calendar"></i></button>
 		</div>';
 	return $html;
 	}
-	
+
 	function getQCPanel()
 	{
 	$html='
@@ -680,7 +720,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	';
 	return $html;
 	}
-	
+
 	function getMultipleSelectBox($options, $id, $field, $idfield)
 	{
 	$html='<select class="form-control" id="'.$id.'" name="'.$id.'">';
@@ -749,9 +789,9 @@ e range"><i class="fa fa-calendar"></i></button>
 	}
 	else
 	{
-		
+
 		$html.= '<div class="col-md-12">';
-		
+
 		$html.=		'<label>' .$title. '</label>
 					<select id="'.$title.'_val" class="form-control"';
 		if($selection[0] == "ONCHANGE"){
@@ -795,14 +835,14 @@ e range"><i class="fa fa-calendar"></i></button>
 		}
 		$html.=						'<form role="form">
 										<textarea id="'.$id.'" type="text" class="form-control" rows="5" placeholder="'.$placeholder.'"></textarea>
-									</form>';	
+									</form>';
 	}else{
 		$html.=							'<select class="form-control" id="'.$id.'">
 									'.$selection.'
 								</select>
 							</form>';
-	}	
-	
+	}
+
 	$html.= 		'</div>
 				</div><!-- /.box-body -->
 			</div><!-- /.box -->
@@ -859,7 +899,7 @@ e range"><i class="fa fa-calendar"></i></button>
 						<div class="box-header with-border">
 							<h3 class="box-title">Input File Selection</h3>';
 		$html.= $this->getInfoBox('input_file_fastlane');
-						
+
 		$html.= 	'</div>
 						<div class="box-body">
 							<div class="input-group col-md-12">
@@ -932,7 +972,7 @@ e range"><i class="fa fa-calendar"></i></button>
 		$html.=			'<select class="form-control" id="'.$id.'">
 							'.$selection.'
 						</select>';
-	}	
+	}
 	$html.= 		'<br>
 					<button id="'.$title.'_button" type="button" class="btn btn-primary" onclick="'.$button_function.'">'.$button_title.'</button>
 					</form>
@@ -969,7 +1009,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	}
 	else if ($fieldTitles[0] == "Add new Custom Sequence Set")
 	{
-		$html.= $this->getCustomButton();	
+		$html.= $this->getCustomButton();
 	}
 	else
 	{
@@ -1006,7 +1046,7 @@ e range"><i class="fa fa-calendar"></i></button>
 		$html.= $this->getInfoBox($id);
 		$html.= '</div><!-- /.box-header -->
 				<div id="'.$id.'_exp_body" class="box-body compact" style="display: none;" onchange="">';
-	
+
 	$html.= 			'<div class="input-group col-md-12">
 						<form role="form">';
 	for($y = 0; $y < $numFields; $y++){
@@ -1023,7 +1063,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	$html.=					'<div class="input-group margin">
 							<div class="input-group margin">
 								<div id="change_params_outer"></div>
-								<input id="change_params_btn" class="btn btn-primary" type="button" value="Change Parameters" onclick="changeRNAParamsBtn()"/> 
+								<input id="change_params_btn" class="btn btn-primary" type="button" value="Change Parameters" onclick="changeRNAParamsBtn()"/>
 							</div>
 						</div>
 						</form>
@@ -1044,7 +1084,7 @@ e range"><i class="fa fa-calendar"></i></button>
 		$exp_btn = 'fa fa-plus';
 		$exp_body = 'display: none';
 	}
-	
+
 	$html = '<div class="col-md-12">
 			<div id="'.$id.'_exp" class="'.$exp.' box">
 				<div class="box-header with-border">
@@ -1055,11 +1095,11 @@ e range"><i class="fa fa-calendar"></i></button>
 		$html.= '	</div><!-- /.box-tools -->
 				</div><!-- /.box-header -->
 				<div id="'.$id.'_exp_body" class="box-solid box-body" style="'.$exp_body.'">';
-				
+
 				if($id == "initial_mapping"){
 					$html.= $this->getInitialMapping();
 				}else if ($id == 'table_create'){
-					if(!isset($_SESSION['ngs_samples'])){	
+					if(!isset($_SESSION['ngs_samples'])){
 						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
 					}else if($_SESSION['ngs_samples'] == ''){
 						$html .= $this->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
@@ -1072,7 +1112,7 @@ e range"><i class="fa fa-calendar"></i></button>
 																				"notebook_ref","notes","genotype","library_type","biosample_type","instrument_model","treatment_manufacturer"]);
 					}
 				}
-				
+
 	$html.= 		'</div><!-- /.box-body -->
 			</div><!-- /.box -->
 		</div><!-- /.col -->';
@@ -1088,7 +1128,7 @@ e range"><i class="fa fa-calendar"></i></button>
 			</tr>
 			</thead>
 		</table>';
-		
+
 	return $html;
 	}
 	function getInitialMapping(){
@@ -1104,7 +1144,7 @@ e range"><i class="fa fa-calendar"></i></button>
 					</ul>
 					<div class="tab-content">
 						<div class="tab-pane active" id="table">';
-		$html.= $this->getInitialMappingTable();				
+		$html.= $this->getInitialMappingTable();
 		$html.= ' 		</div>
 						<div class="tab-pane active" id="plots">
 							<div id="plot_container" style="min-width: 310px;margin: 0 auto">

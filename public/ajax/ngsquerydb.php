@@ -39,10 +39,10 @@ $innerJoin = "LEFT JOIN ngs_source
                 ON ngs_samples.instrument_model_id = ngs_instrument_model.id
                 LEFT JOIN ngs_treatment_manufacturer
                 ON ngs_samples.treatment_manufacturer_id = ngs_treatment_manufacturer.id";
-                
+
 $sampleJoin = "LEFT JOIN ngs_fastq_files
                 ON ngs_samples.id = ngs_fastq_files.sample_id";
-                
+
 $laneJoin = "LEFT JOIN ngs_facility
                 ON ngs_lanes.facility_id = ngs_facility.id";
 
@@ -82,7 +82,7 @@ else if ($p == 'getReportNames')
     if (isset($_GET['samp'])){$samp = $_GET['samp'];}
 	$sampleQuery = '';
     $samples = explode(",", $samp);
-    
+
 	foreach($samples as $s){
 		$sampleQuery.= 'ngs_runlist.sample_id = '+ $s;
 		if($s != end($samples)){
@@ -100,6 +100,33 @@ else if ($p == 'getReportNames')
             $andPerms;
 	");
 }
+else if ($p == 'getSampleTracking')
+{
+	if (isset($_GET['runid'])){$runid = $_GET['runid'];}
+    if (isset($_GET['samp'])){$samp = $_GET['samp'];}
+	$sampleQuery = '';
+    $samples = explode(",", $samp);
+
+	foreach($samples as $s){
+		$sampleQuery.= 'ngs_runlist.sample_id = '+ $s;
+		if($s != end($samples)){
+			$sampleQuery.= ' OR ';
+		}
+	}
+
+	$data=$query->queryTable("SELECT ngs_samples.name AS sample,
+      ngs_lanes.name AS lane, ngs_experiment_series.experiment_name
+      AS experiment, ngs_fastq_files.file_name, ngs_dirs.backup_dir,
+      ngs_dirs.amazon_bucket
+    FROM ngs_samples
+    LEFT JOIN ngs_lanes ON ngs_samples.lane_id = ngs_lanes.id
+    LEFT JOIN ngs_experiment_series
+      ON ngs_samples.series_id = ngs_experiment_series.id
+    LEFT JOIN ngs_fastq_files ON ngs_samples.id = ngs_fastq_files.sample_id
+    LEFT JOIN ngs_dirs ON ngs_dirs.id = ngs_fastq_files.dir_id");
+}
+
+
 else if ($p == 'lanesToSamples')
 {
 	if (isset($_GET['lane'])){$lane = $_GET['lane'];}
@@ -180,7 +207,7 @@ else if ($p == 'checkMatePaired')
 		SELECT json_parameters
 		FROM ngs_runparams
 		where id = $runid $andPerms
-	"); 
+	");
 }
 else if ($p == 'getSampleNames')
 {
@@ -189,7 +216,7 @@ else if ($p == 'getSampleNames')
 		SELECT name, samplename
 		FROM ngs_samples
 		where id in ($samples) $andPerms
-	");  
+	");
 }
 else if ($p == 'getWKey')
 {
@@ -264,12 +291,12 @@ else if($p == 'getSamplesFromName')
         if($n != end($names)){
             $sqlnames.= "'".$n."',";
         }else{
-            $sqlnames.= "'".$n."'";    
+            $sqlnames.= "'".$n."'";
         }
     }
     $data=$query->queryTable("
     SELECT DISTINCT ns.id
-    FROM ngs_samples ns, ngs_lanes nl, ngs_experiment_series ne 
+    FROM ngs_samples ns, ngs_lanes nl, ngs_experiment_series ne
     WHERE ns.name in ($sqlnames)
     AND ns.lane_id IN (SELECT id from ngs_lanes where name in ($lane))
     AND ns.series_id IN (SELECT id from ngs_experiment_series where experiment_name = '$experiment');
@@ -352,7 +379,7 @@ else if ($p == 'changeDataGroup')
 {
 	if (isset($_GET['group_id'])){$group_id = $_GET['group_id'];}
 	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
-	
+
 	//	EXPERIMENT SERIES
 	$ES_UPDATE=$query->runSQL("
 	UPDATE ngs_experiment_series
@@ -446,7 +473,7 @@ else if ($p == "changeOwnerExperiment")
 {
 	if (isset($_GET['owner_id'])){$owner_id = $_GET['owner_id'];}
 	if (isset($_GET['experiment'])){$experiment = $_GET['experiment'];}
-	
+
 	//	EXPERIMENT SERIES
 	$ES_UPDATE=$query->runSQL("
 	UPDATE ngs_experiment_series

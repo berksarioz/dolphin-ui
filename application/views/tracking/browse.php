@@ -14,10 +14,9 @@
 										<br>
 										<p id="deleteAreas"></p>
 									</div>
-								</fieldset>
+								</fieldset>   
 							</div>
 							<div class="modal-footer">
-							  <button type="button" id="confirmPatchButton" class="btn btn-success" data-dismiss="modal" onclick="" style="display:none">Confirm</button>
 							  <button type="button" id="confirmDeleteButton" class="btn btn-danger" data-dismiss="modal" onclick="confirmDeletePressed()">Confirm</button>
 							  <button type="button" id="cancelDeleteButton" class="btn btn-default" data-dismiss="modal" onclick="cancelDeletePressed()">Cancel</button>
 							</div>
@@ -25,33 +24,6 @@
 					  </div>
 					</div>
 				</div><!-- End Delete modal -->
-				<div class="modal fade" id="permsModal" tabindex="-1" role="dialog" aria-labelledby="myPermsModal" aria-hidden="true">
-					<div class="modal-dialog">
-					  <div class="modal-content">
-						<div class="modal-header">
-						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  <h4 class="modal-title" id="myPermsModal">Change the Data's Group</h4>
-						</div>
-						<form name="editForm" role="form" method="post">
-							<div class="modal-body">
-								<fieldset>
-									<div class="form-group" style="overflow:scroll">
-										<label id="permsLabel"></label>
-										<br>
-										<div id="permsDiv">
-
-										</div>
-									</div>
-								</fieldset>
-							</div>
-							<div class="modal-footer">
-							  <button type="button" id="confirmPermsButton" class="btn btn-primary" onclick="confirmPermsPressed()">Confirm</button>
-							  <button type="button" id="cancelPermsButton" class="btn btn-default" data-dismiss="modal">Cancel</button>
-							</div>
-						</form>
-					  </div>
-					</div>
-				</div><!-- End Perms modal -->
 				<section class="content-header">
 					<h1>
 						NGS Browser
@@ -59,8 +31,8 @@
 					</h1>
 					<ol class="breadcrumb">
 						<li><a href="<?php echo BASE_PATH?>"><i class="fa fa-dashboard"></i> Home</a></li>
-			<li><a href="<?php echo BASE_PATH."/search"?>">NGS Browser</a></li>
-			<li class="active"><?php echo $field?></li
+						<li><a href="<?php echo BASE_PATH."/search"?>">NGS Browser</a></li>
+			<li class="active"><?php echo $field?></li>
 					</ol>
 				</section>
 				<!-- Main content -->
@@ -71,7 +43,7 @@
 			<div class="box box-solid">
 				<div class="box-header with-border">
 				<h3 class="box-title">Browse</h3>
-			<div class="panel-tools pull-right">
+		<div class="panel-tools pull-right">
 			<button class="btn btn-primary" onclick="returnToIndex();">
 				<i class="fa fa-fast-backward"></i>
 			</button>
@@ -80,12 +52,12 @@
 				<div class="box-body">
 				<div class="box-group" id="accordion">
 					<!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
-					<?php echo $html->sendJScript("index", "", "", "", $uid, $gids); ?>
-					<?php echo $html->getAccordion("Assay", $assay, "")?>
-					<?php echo $html->getAccordion("Organism", $organism, "")?>
-					<?php echo $html->getAccordion("Molecule", $molecule, "")?>
-					<?php echo $html->getAccordion("Source", $source, "")?>
-					<?php echo $html->getAccordion("Genotype", $genotype, "")?>
+					<?php echo $html->sendJScript($segment, $table, $value, $search, $uid, $gids); ?>
+					<?php echo $html->getAccordion("Assay", $assay, $search)?>
+					<?php echo $html->getAccordion("Organism", $organism, $search)?>
+					<?php echo $html->getAccordion("Molecule", $molecule, $search)?>
+					<?php echo $html->getAccordion("Source", $source, $search)?>
+					<?php echo $html->getAccordion("Genotype", $genotype, $search)?>
 				</div>
 				</div><!-- /.box-body -->
 		</div><!-- /.box -->
@@ -104,9 +76,9 @@
 								echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Lab","Organization","Grant", "Selected"], ["id","experiment_name","summary","design", "lab","organization","grant", ""]);
 							}?>
 							<?php if(!isset($_SESSION['ngs_lanes'])){
-								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples",""]);
+								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples"]);
 							}else if($_SESSION['ngs_lanes'] == ''){
-								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples",""]);
+								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples"]);
 							}else{
 								echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"],
 																  ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""]);
@@ -116,7 +88,7 @@
 							}else if($_SESSION['ngs_samples'] == ''){
 								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
 							}else{
-								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Backup", "Barcode", "Description", "Avg Insert Size", "Read Length",
+								echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
 																						"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
 																						"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
 																						["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
@@ -126,3 +98,6 @@
 						</div><!-- /.col (RIGHT) -->
 					</div><!-- /.row -->
 				</section><!-- /.content -->
+
+
+
