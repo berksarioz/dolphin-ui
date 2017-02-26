@@ -135,7 +135,7 @@ $(function() {
 				} // End For
 				console.log("now all arrays:");
 				console.log(all_objects);
-				createStreamTable('berk_yarak_kurek', all_objects, "", true, [10,20,50,100], 20, true, true);
+				createStreamTable('run_status_stream', all_objects, "", true, [10,20,50,100], 20, true, true);
 			}
 		});
 

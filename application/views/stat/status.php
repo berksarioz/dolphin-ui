@@ -182,7 +182,7 @@
 
 						<div id="all_tracking_data_table" class="margin">
 		          <?php echo $html->getRespBoxTableStreamNoExpand("Current Run Status",
-		            "berk_yarak_kurek", ["ID","Run Name","Output Directory", "Description", "Status", "Owner", "Options"],
+		            "run_status_stream", ["ID","Run Name","Output Directory", "Description", "Status", "Owner", "Options"],
 								["id","run_name","outdir", "run_description", "status", "owner", "options"]); ?>
 		        </div>
 
