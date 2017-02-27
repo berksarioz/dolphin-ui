@@ -9,7 +9,7 @@ $(function() {
 
     /* Morris.js Charts */
      var responseTopGalaxyUsers = '';
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getTopUsers", type:"Galaxy" },
                      async: false,
@@ -64,7 +64,7 @@ $(function() {
 
     /* Morris.js Charts */
      var responseDaily = '';
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getDailyRuns" },
                      async: false,
@@ -72,7 +72,7 @@ $(function() {
                      {
                          responseDaily = text;
                      }
-            }); 
+            });
 
     /*Bar chart*/
     var bar = new Morris.Bar({
@@ -85,24 +85,22 @@ $(function() {
         labels: ['Galaxy Runs'],
         hideHover: 'auto'
     });
-    
-    
-     var userTable = $('#jsontable_User').dataTable();
-     
-        $.ajax({ type: "GET",   
+
+
+
+        $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getUsersTime", type:"Galaxy"},
                      async: false,
                      success : function(s)
                      {
-                        userTable.fnClearTable();
+                        var all_objects = [];
                         for(var i = 0; i < s.length; i++) {
-                        userTable.fnAddData([
-                        s[i].name,
-                        s[i].lab,
-                        s[i].count                      
-                        ]);
+                        all_objects.push({name:s[i].name, lab:s[i].lab,
+                          count:s[i].count });
                         } // End For
+                        createStreamTable('galaxy_user_stream', all_objects, "",
+                          true, [10,20,50,100], 10, true, true);
                      }
             });
 
@@ -122,41 +120,32 @@ $(function() {
                 endDate: moment()
             },
             function(start, end) {
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getUsersTime", type:"Galaxy", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
                      async: false,
                      success : function(s)
                      {
-                        userTable.fnClearTable();
                         for(var i = 0; i < s.length; i++) {
-                        userTable.fnAddData([
-                        s[i].name,
-                        s[i].lab,
-                        s[i].count                      
-                        ]);
                         } // End For
                      }
             });
 
     });
-    userTable.fnSort( [ [2,'desc'] ] );
-   
-    
-    var labTable = $('#jsontable_Lab').dataTable();
-                $.ajax({ type: "GET",   
+
+
+                $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getLabsTime", type:"Galaxy" },
                      async: false,
                      success : function(s)
                      {
-                        labTable.fnClearTable();
+                       var all_objects = [];
                         for(var i = 0; i < s.length; i++) {
-                        labTable.fnAddData([
-                        s[i].lab,
-                        s[i].count                      
-                        ]);
+                        all_objects.push({lab:s[i].lab, count:s[i].count });
                         } // End For
+                        createStreamTable('galaxy_lab_stream', all_objects, "",
+                          true, [10,20,50,100], 10, true, true);
                      }
             });
     $('.daterange_Lab').daterangepicker(
@@ -175,41 +164,34 @@ $(function() {
                 endDate: moment()
             },
             function(start, end) {
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getLabsTime", type:"Galaxy", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
                      async: false,
                      success : function(s)
                      {
-                        labTable.fnClearTable();
                         for(var i = 0; i < s.length; i++) {
-                        labTable.fnAddData([
-                        s[i].lab,
-                        s[i].count                      
-                        ]);
                         } // End For
                      }
             });
-        
+
     });
-    
-    labTable.fnSort( [ [1,'desc'] ] );
-    
-    var toolTable = $('#jsontable_Tool').dataTable();
-    $.ajax({ type: "GET",   
+
+
+    $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getToolTime", type:"Galaxy"},
                      async: false,
                      success : function(s)
                      {
-                        toolTable.fnClearTable();
+                        var all_objects = [];
                         for(var i = 0; i < s.length; i++) {
-                        toolTable.fnAddData([
-                        s[i].tool_name,
-                        s[i].count                      
-                        ]);
+
+                        all_objects.push({tool_name:s[i].tool_name,
+                          count:s[i].count });
                         } // End For
-                     }
+                        createStreamTable('galaxy_tool_stream', all_objects, "",
+                          true, [10,20,50,100], 10, true, true);                     }
             });
     $('.daterange_Tool').daterangepicker(
             {
@@ -227,22 +209,17 @@ $(function() {
                 endDate: moment()
             },
     function(start, end) {
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getToolTime", type:"Galaxy", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
                      async: false,
                      success : function(s)
                      {
-                        toolTable.fnClearTable();
                         for(var i = 0; i < s.length; i++) {
-                        toolTable.fnAddData([
-                        s[i].tool_name,
-                        s[i].count                      
-                        ]);
+
                         } // End For
                      }
             });
     });
-    
-    toolTable.fnSort( [ [1,'desc'] ] );
+
 });

@@ -25,8 +25,16 @@
                                     <div class="chart" id="daily-bar-chart" style="height: 300px;"></div>
                                 </div><!-- /.box-body -->
                             </div><!-- /.box -->
-                             <?php echo $html->getBoxTable_stat("User", "Galaxy", "<th>Name</th><th>Lab</th><th>Count</th>"); ?>
-                             <?php echo $html->getBoxTable_stat("Tool", "Galaxy", "<th>Tool Name</th><th>Count</th>"); ?>
+                             <?php $html->getBoxTable_stat("User", "Galaxy", "<th>Name</th><th>Lab</th><th>Count</th>"); ?>
+                             <?php echo $html->getRespBoxTableStreamNoExpand("Galaxy User Table",
+               		            "galaxy_user_stream", ["Name", "Lab", "Count"],
+               								["name", "lab", "count"]); ?>
+
+                             <?php $html->getBoxTable_stat("Tool", "Galaxy", "<th>Tool Name</th><th>Count</th>"); ?>
+                             <?php echo $html->getRespBoxTableStreamNoExpand("Galaxy Tool Table",
+                              "galaxy_tool_stream", ["Tool Name", "Count"],
+                              ["tool_name", "count"]); ?>
+
                         </div><!-- /.col (LEFT) -->
                         <div class="col-md-6">
                             <!-- BAR CHART -->
@@ -43,8 +51,10 @@
                                     <div class="chart" id="top-users-bar-chart" style="height: 300px;"></div>
                                 </div><!-- /.box-body -->
                             </div><!-- /.box -->
-                            <?php echo $html->getBoxTable_stat("Lab", "Galaxy", "<th>Lab</th><th>Count</th>"); ?>
-
+                            <?php $html->getBoxTable_stat("Lab", "Galaxy", "<th>Lab</th><th>Count</th>"); ?>
+                            <?php echo $html->getRespBoxTableStreamNoExpand("Galaxy Lab Table",
+                             "galaxy_lab_stream", ["Lab", "Count"],
+                             ["lab", "count"]); ?>
                         </div><!-- /.col (RIGHT) -->
                     </div><!-- /.row -->
 
