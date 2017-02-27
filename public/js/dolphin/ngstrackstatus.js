@@ -127,9 +127,9 @@ $(function() {
 						s[i].username,
             s[i].options
 					];
-					all_objects[i] = {id:s[i].id, run_name:s[i].run_name, outdir:s[i].outdir,
+					all_objects.unshift({id:s[i].id, run_name:s[i].run_name, outdir:s[i].outdir,
 					  run_description:s[i].run_description, runstat_html:s[i].runstat_html,
-					  username:s[i].username, options:s[i].options};
+					  username:s[i].username, options:s[i].options});
 						runparams.fnAddData(data_to_add);
 					}
 				} // End For

@@ -173,18 +173,19 @@
 					<div class="row">
 						<div class="col-md-12 margin">
 						<?php echo $html->sendJScript('status', "", "", "", $uid, $gids); ?>
-						<?php echo $html->getRespBoxTable_ng("Current Run Status", "runparams", "<th>ID</th><th>Name</th><th>Output Directory</th><th>Description</th><th>Status</th><th>Owner</th><th>Options</th>"); ?>
+						<div id="all_tracking_data_table" class="margin">
+		          <?php echo $html->getRespBoxTableStreamNoExpand("Current Run Status",
+		            "run_status_stream", ["ID","Run Name","Output Directory", "Description", "Status", "Owner", "Options"],
+								["id","run_name","outdir", "run_description", "status", "owner", "options"]); ?>
+		        </div>
+						<?php $html->getRespBoxTable_ng("Current Run Status", "runparams", "<th>ID</th><th>Name</th><th>Output Directory</th><th>Description</th><th>Status</th><th>Owner</th><th>Options</th>"); ?>
 						</div>
 						<div class="col-md-12">
 						<?php echo $html->getStaticSelectionBox("View which runs?", "run_types", "<option value=\"0\">All Runs</option>
 																		<option value=\"1\">Initial Runs</option>
 																		<option value=\"2\">Normal Runs</option>", 4)?>
 
-						<div id="all_tracking_data_table" class="margin">
-		          <?php echo $html->getRespBoxTableStreamNoExpand("Current Run Status",
-		            "run_status_stream", ["ID","Run Name","Output Directory", "Description", "Status", "Owner", "Options"],
-								["id","run_name","outdir", "run_description", "status", "owner", "options"]); ?>
-		        </div>
+
 
 
 						</div>
