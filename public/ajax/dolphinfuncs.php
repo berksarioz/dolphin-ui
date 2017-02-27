@@ -9,8 +9,6 @@ require_once("../../includes/dbfuncs.php");
 $query = new dbfuncs();
 
 if (isset($_GET['p'])){$p = $_GET['p'];}
-
-
 if($p == "getFileList")
 {
     $owner_sql = "";

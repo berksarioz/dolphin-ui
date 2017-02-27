@@ -11,3 +11,4 @@ password = config.get('Dolphin', salt_type)
 
 encrypted = hexlify(encrypt(password, item))
 print encrypted
+
