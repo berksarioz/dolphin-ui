@@ -25,7 +25,7 @@ else if ($p == 'getBatchSubmissions')
 	$data=$query->queryTable("
 		SELECT encode_batch_submissions.id, encode_batch_submissions.samples, encode_batch_submissions.output_file,
 		CASE
-			WHEN (SELECT COUNT(encode_submissions.id) FROM encode_submissions LEFT JOIN encode_batch_submissions ON encode_batch_submissions.id = encode_submissions.batch_submission 
+			WHEN (SELECT COUNT(encode_submissions.id) FROM encode_submissions LEFT JOIN encode_batch_submissions ON encode_batch_submissions.id = encode_submissions.batch_submission
 				  WHERE encode_submissions.batch_submission = encode_batch_submissions.id AND encode_submissions.sub_status = 2) > 0 THEN 2
 			ELSE 1
 		END AS sub_status
@@ -77,6 +77,15 @@ else if($p == 'getDonors')
 		)
 		");
 }
+else if($p =='getTreatmentsForGivenBiosample'){
+	"
+		SELECT ngs_conds.id, ngs_conds.condition
+		FROM ngs_treatments_per_sample
+		LEFT JOIN ngs_conds
+		ON ngs_conds.id = ngs_treatments_per_sample.treatment_id
+		WHERE ngs_treatments_per_sample.sample_id = 319"
+}
+
 else if($p == 'getExperiments')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
@@ -121,7 +130,9 @@ else if($p == 'getBiosamples')
 		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
 		ngs_treatment.id as treatment_id, ngs_lanes.date_submitted, ngs_biosample_acc.biosample_acc, ngs_samples.biosample_uuid, ngs_treatment.name,
 		biosample_derived_from, starting_amount, starting_amount_units, ngs_protocols.id as protocol_id, ngs_protocols.starting_amount_id, source,
-		ngs_treatment.duration, ngs_treatment.duration_units
+		ngs_treatment.duration, ngs_treatment.duration_units,
+		GROUP_CONCAT(ngs_treatments_per_sample.treatment_id SEPARATOR ', ') as treatment_list,
+		GROUP_CONCAT(ngs_treatments_per_sample.concentration SEPARATOR ', ') as concentration_list
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
 		ON ngs_samples.biosample_id = ngs_biosample_term.id
@@ -137,7 +148,10 @@ else if($p == 'getBiosamples')
 		ON ngs_samples.biosample_acc = ngs_biosample_acc.id
 		LEFT JOIN ngs_source
 		ON ngs_source.id = ngs_samples.source_id
+		LEFT JOIN ngs_treatments_per_sample
+		ON ngs_samples.id = ngs_treatments_per_sample.sample_id
 		WHERE ngs_samples.id in ($samples)
+		GROUP BY ngs_samples.id
 		");
 }
 else if($p == 'getLibraries')
@@ -202,7 +216,7 @@ else if ($p == 'createEncodeRow')
 		$update = 'antibody_lot_id';
 		$rowname = 'target';
 	}
-	
+
 	$data=$query->runSQL("
 		INSERT INTO $table
 		($rowname)
@@ -273,7 +287,7 @@ else if ($p == 'enterFileSubmission')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	if (isset($_GET['ordertable'])){$ordertable = $_GET['ordertable'];}
-	
+
 	$submissions=json_decode($query->queryTable("
 		SELECT ngs_file_submissions.sample_id, ngs_file_submissions.dir_id, ngs_file_submissions.run_id, ngs_file_submissions.parent_file,
 		ngs_file_submissions.file_type, ngs_file_submissions.file_name, ngs_samples.samplename
@@ -292,7 +306,7 @@ else if ($p == 'enterFileSubmission')
 		FROM ngs_fastq_files
 		WHERE sample_id IN (".implode(",",array_keys($samples)).")
 	"));
-	
+
 	$insertString = '';
 	foreach($ordertable as $step => $subdata){
 		foreach($samples as $id => $sample){
@@ -316,7 +330,7 @@ else if ($p == 'enterFileSubmission')
 			}else{
 				$sub_d = "'".$subdata['d']."'";
 			}
-			
+
 			if($subdata['t'] == 'fastq' && $subdata['p'] == 0){
 				$filename = "";
 				foreach($fastq_files as $fqf){

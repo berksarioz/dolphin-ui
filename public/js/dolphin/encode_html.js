@@ -3,6 +3,21 @@ var sampleRuns = {};
 var runParams = {};
 var active_runs = [];
 
+function selectizeTreatmentsFromDatabase() {
+	$('.treatments_from_database').selectize({
+		create: false,
+		sortField: {
+			field: 'text',
+			direction: 'asc'
+		},
+		dropdownParent: 'body'
+	});
+	var $select = $(document.getElementById('treatments_from_database')).selectize(options);
+  var selectized = $select[0].selectize;
+  selectized.addOption({value:'IL',text:'Illinois'});
+}
+selectizeTreatmentsFromDatabase();
+
 function responseCheck(data) {
 	for(var x = 0; x < Object.keys(data).length; x++){
 		if (data[Object.keys(data)[x]] == null) {
@@ -39,7 +54,7 @@ function loadInEncodeSubmissions(){
 			}
 		}
 	});
-	
+
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
 		data: { p: "getSubmissions" },
@@ -71,6 +86,7 @@ function loadInEncodeTables(){
 	basket_info = getBasketInfo();
 	if (basket_info != '') {
 		loadSamples();
+		loadSamplesNew();
 		loadDonors();
 		loadExperiments();
 		loadTreatments();
@@ -82,26 +98,31 @@ function loadInEncodeTables(){
 	}
 }
 
+function loadSamplesNew(){
+	var treatmentsToAdd = document.getElementById('chooseTreatments')
+
+}
+
 function loadSamples(){
 	var treatmentSelect = document.getElementById('addSampleTreatment')
 	var antibodySelect = document.getElementById('addSampleAntibody')
 	var biosampleSelect = document.getElementById('selectBiosample')
 	var experimentSelect = document.getElementById('selectExperiment')
-	
+
 	var linkBiosample = document.getElementById('linkBiosample')
 	var linkExperiment = document.getElementById('linkExperiment')
-	
+
 	var ret_biosample_accs = [];
 	var ret_experiment_accs = [];
-	
+
 	treatmentSelect.innerHTML = ''
 	antibodySelect.innerHTML = ''
 	biosampleSelect.innerHTML = ''
 	experimentSelect.innerHTML = ''
-	
+
 	linkBiosample.innerHTML = '<option value="none">* New Accession *</option>';
 	linkExperiment.innerHTML = '<option value="none">* New Accession *</option>';
-	
+
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
 		data: { p: "getSamples", samples:basket_info },
@@ -127,13 +148,13 @@ function loadSamples(){
 					"<button id=\"sample_removal_"+s[x].sample_id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].sample_id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'sample')\">"
 				]);
-				
+
 				//	Modal
 				treatmentSelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 				antibodySelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 				biosampleSelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 				experimentSelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
-				
+
 				if (ret_biosample_accs.indexOf(s[x].biosample_acc) == -1) {
 					ret_biosample_accs.push(s[x].biosample_acc)
 				}
@@ -141,7 +162,7 @@ function loadSamples(){
 					ret_experiment_accs.push(s[x].experiment_acc)
 				}
 			}
-			
+
 		}
 	});
 	for(var x in ret_biosample_accs){
@@ -233,6 +254,8 @@ function loadTreatments() {
 	});
 }
 
+
+
 function loadBiosamples() {
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
@@ -248,8 +271,8 @@ function loadBiosamples() {
 				biosampletable.fnAddData([
 					s[x].samplename,
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_derived_from', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_derived_from+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].treatment_id+"', 'name', 'ngs_treatment', this, 'ngs_samples', '"+s[x].sample_id+"', 'treatment_id')\">"+s[x].name+"</p>",
-					s[x].duration + " " + s[x].duration_units,
+					s[x].treatment_list + "<input style=\"display:inline;\" type=\"button\" class=\"btn btn-primary margin pull-right\" value=\"Edit\" onClick=\"linkBiosample()\"/>",
+					s[x].concentration_list + "<input type=\"button\" class=\"btn btn-primary margin pull-right\" value=\"Edit\" onClick=\"linkBiosample()\"/>",
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id', 'biosample')\">"+s[x].biosample_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",
@@ -393,7 +416,7 @@ function loadFiles() {
 			}
 		}
 	});
-	
+
 	var runtable = $('#jsontable_encode_runs').dataTable();
 	var keys = Object.keys(sampleRuns)
 	runtable.fnClearTable();
@@ -416,11 +439,11 @@ function loadFiles() {
 			"<select id=\""+keys[x]+"_dirselect\" style=\"display:none\">"+directories+"</select><p id=\""+keys[x]+"_dirvalue\">"+runParams[runs[0]].outdir+"</p>",
 		]);
 	}
-	
+
 	if (keys.length > 0) {
 		runSelectionEncode(document.getElementById(keys[0]+'_select'))
 	}
-	
+
 	var selectLength = keys.length
 	console.log(selectLength)
 	if (selectLength == 0) {
@@ -432,7 +455,7 @@ function loadFiles() {
 	}else{
 		document.getElementById("addSampleFiles").size = ((509)/18);
 	}
-	
+
 }
 
 function loadPreviousFiles(){
@@ -519,7 +542,7 @@ function createRunOptions(active_runs) {
 	console.log(active_runs)
 	var options_parse = {};
 	var options_select = "";
-	
+
 	for(var x = 0; x < active_runs.length; x++){
 		options_parse = JSONOptionParse(active_runs[x], options_parse)
 	}
@@ -587,7 +610,7 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 			options_parse = optionsCheck(options_parse, '/seqmapping/'+split_common[x].toLowerCase()+'/', run_id, "fastq")
 		}
 	}
-	
+
 	if (dedup && merged) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id, "bam")
@@ -704,6 +727,7 @@ function changeValuesEncode(type, table, ele, event = event){
 function updateSingleTable(table){
 	if (table == "sample" || table == "SampleSelection") {
 		loadSamples();
+		loadSamplesNew();
 	}else if (table == "donor" || table == "Donors") {
 		loadDonors();
 	}else if (table == "experiment" || table == "Experiments") {
@@ -749,6 +773,13 @@ function addTreatment(){
 		show: true
 	});
 	addModalType = 'treatment'
+}
+
+function createTreatment(){
+	$('#createTreatmentModal').modal({
+		show: true
+	});
+	addModalType = 'create_treatment'
 }
 
 function addAntibody(){
@@ -825,10 +856,10 @@ function createLink(type) {
 		async: false,
 		success : function(s)
 		{
-			
+
 		}
 	});
-	
+
 }
 
 function viewEncodeLog(log){
