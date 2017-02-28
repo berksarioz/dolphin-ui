@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="<?php echo BASE_PATH?>/css/selectize/selectize.css">
 				<style>
 					.warning {
 						background-color: #F99 !important;
@@ -31,7 +32,7 @@
 										<br>
 										<p id="deleteAreas"></p>
 									</div>
-								</fieldset>   
+								</fieldset>
 							</div>
 							<div class="modal-footer">
 							  <button type="button" id="confirmPatchButton" class="btn btn-success" data-dismiss="modal" onclick="" style="display:none">Confirm</button>
@@ -61,7 +62,7 @@
 										<br>
 										<input id="addNameTreatment" type="text" class="form-control">
 									</div>
-								</fieldset>   
+								</fieldset>
 							</div>
 							<div class="modal-footer">
 							  <button type="button" id="treatmentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createNewData('Treatment')">Add</button>
@@ -71,6 +72,32 @@
 					  </div>
 					</div>
 				</div><!-- End Treatment modal -->
+
+				<div class="modal fade" id="createTreatmentModal" tabindex="-1" role="dialog" aria-labelledby="createTreatmentModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="createTreatmentModalLabel">Create New Treatment</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="createTreatmentLabel">Enter Treatment Details:</label>
+										<div id="createTreatment"></div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="treatmentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createNewTreatment();">Add</button>
+							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End Select Treatment modal -->
+
 				<div class="modal fade" id="addAntibodyModal" tabindex="-1" role="dialog" aria-labelledby="myAntibodyModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 					  <div class="modal-content">
@@ -90,7 +117,7 @@
 										<br>
 										<input id="addNameAntibody" class="form-control" type="text" class="form-control">
 									</div>
-								</fieldset>   
+								</fieldset>
 							</div>
 							<div class="modal-footer">
 							  <button type="button" id="antibodyConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createNewData('Antibody')">Add</button>
@@ -120,7 +147,7 @@
 										<select id="linkBiosample" class="form-control" type="text" class="form-control"></select>
 										<br>
 									</div>
-								</fieldset>   
+								</fieldset>
 							</div>
 							<div class="modal-footer">
 							  <button type="button" id="biosampleConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createLink('Biosample')">Link</button>
@@ -130,6 +157,44 @@
 					  </div>
 					</div>
 				</div><!-- End biosample modal -->
+				<div class="modal fade" id="editConditionsModal" tabindex="-1" role="dialog" aria-labelledby="conditionModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="conditionModalLabel">Edit Conditions(Treatment)</h4>
+						</div>
+						
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+
+									<div id="addConditionsSampleName"></div>
+
+									<div class="form-group" style="overflow:scroll">
+
+
+
+											<div class="control-group" id="add_conditions_from_database">
+											</div>
+
+
+
+										<br>
+										<label id="editConditionsLabel">Edit Condition Details:</label>
+										<br>
+										<div id="editConditionDetails"></div>
+										<br>
+									</div>
+								</fieldset>
+							</div>
+							<div class="modal-footer" id="editConditionsFooter">
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End condition modal -->
+
 				<div class="modal fade" id="linkExperimentModal" tabindex="-1" role="dialog" aria-labelledby="myExperimentModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 					  <div class="modal-content">
@@ -150,7 +215,7 @@
 										<select id="linkExperiment" class="form-control" type="text" class="form-control"></select>
 										<br>
 									</div>
-								</fieldset>   
+								</fieldset>
 							</div>
 							<div class="modal-footer">
 							  <button type="button" id="experimentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createLink('Experiment')">Link</button>
@@ -214,7 +279,7 @@
 											?>
 												<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','sample',this,event)"/>
 												<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','sample',this,event)"/>
-											<?php	
+											<?php
 												#Samples
 												echo $html->getRespBoxTableStreamNoExpand("Samples", "samples",
 																						  ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"],
@@ -243,18 +308,24 @@
 									<div class="tab-pane" id="treatments_tab">
 										<?php
 											#Treatments
-											echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
-																		   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Treatment UUID</th><th>Selected</th>");
+											echo $html->getRespBoxTableStreamNoExpand("Treatments(Conditions)",
+				                "encode_stream_conditions", ["ID", "Treatment Symbol",
+												"Treatment Details"], ["id", "cond_symbol", "condition"]);
+											// echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
+											// 								 "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Treatment UUID</th><th>Selected</th>");
+											// echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
+											// 							   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Treatment UUID</th><th>Selected</th>");
 										?>
-										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','treatment',this,event)"/>
-										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','treatment',this,event)"/>
-										<input type="button" class="btn btn-primary margin pull-right" value="Add Treatment" onClick="addTreatment()"/>
+										<!-- <input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','treatment',this,event)"/>
+										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','treatment',this,event)"/> -->
+										<input type="button" class="btn btn-success margin pull-right" value="Create Treatment" onClick="createTreatment()"/>
+										<!-- <input type="button" class="btn btn-primary margin pull-right" value="Add Treatment" onClick="addTreatment()"/> -->
 									</div>
 									<div class="tab-pane" id="biosamples_tab">
 										<?php
 											#Biosamples
 											echo $html->getRespBoxTable_ng("Biosamples", "encode_biosamples",
-																		   "<th>Sample</th><th>Derived From</th><th>Treatment</th><th>Duration</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Source</th><th>Starting Amount</th><th>Starting Amount Units</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th><th>Selected</th>");
+																		   "<th>Sample</th><th>Derived From</th><th>Treatment</th><th>Treatment Details</th><th>Biosample Term Name</th><th>Biosample Term Id</th><th>Biosample Type</th><th>Source</th><th>Starting Amount</th><th>Starting Amount Units</th><th>Date Submitted</th><th>Date Received</th><th>Biosample Acc</th><th>Biosample UUID</th><th>Selected</th>");
 										?>
 										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','biosample',this,event)"/>
 										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','biosample',this,event)"/>
@@ -335,4 +406,3 @@
 						<input type="button" class="btn btn-primary pull-right" value="View Encode Submissions" onClick="toEncodeSubmissions()"/>
 					</div>
 				</section>
-				

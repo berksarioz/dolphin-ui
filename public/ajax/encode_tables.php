@@ -9,7 +9,16 @@ if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 $query = new dbfuncs();
 
 if (isset($_GET['p'])){$p = $_GET['p'];}
+if (isset($_POST['p'])){$p = $_POST['p'];}
+
 $data = '';
+
+if ($p == 'getConditionData')
+{
+	$data=$query->queryTable("
+	  SELECT * FROM `ngs_conds` ORDER BY id DESC
+	");
+}
 
 if ($p == 'getSubmissions')
 {
@@ -20,12 +29,80 @@ if ($p == 'getSubmissions')
 		ON encode_submissions.sample_id = ngs_samples.id
 	");
 }
+else if ($p == 'getConditionsForSample')
+{
+	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
+	$data=$query->queryTable("
+		SELECT sample_id, ngs_conds.condition, ngs_samples.samplename, cond_symbol,
+		ngs_sample_conds.concentration, ngs_sample_conds.duration, ngs_conds.id
+		AS cond_id, ngs_sample_conds.concentration_unit,
+		ngs_sample_conds.duration_unit
+		FROM ngs_sample_conds
+		LEFT JOIN ngs_conds
+		ON ngs_conds.id = cond_id
+		LEFT JOIN ngs_samples
+		ON ngs_samples.id = ngs_sample_conds.sample_id
+		WHERE sample_id=$sample_id
+	");
+}
+else if ($p == 'getConditionsDetailsWithID')
+{
+	if (isset($_GET['new_cond_id'])){$new_cond_id = $_GET['new_cond_id'];}
+	$data=$query->queryTable("
+    SELECT * FROM ngs_conds WHERE id=$new_cond_id
+	");
+}
+else if ($p == 'addOrUpdateCondSample')
+{
+	if (isset($_POST['sample_id'])){$sample_id = $_POST['sample_id'];}
+	if (isset($_POST['new_cond_id'])){$new_cond_id = $_POST['new_cond_id'];}
+	if (isset($_POST['concentration'])){$concentration = $_POST['concentration'];}
+	if (isset($_POST['duration'])){$duration = $_POST['duration'];}
+	if (isset($_POST['concentration_unit'])){$concentration_unit = $_POST['concentration_unit'];}
+	if (isset($_POST['duration_unit'])){$duration_unit = $_POST['duration_unit'];}
+
+  $query_str = "
+		INSERT INTO ngs_sample_conds (sample_id, cond_id, concentration, duration, concentration_unit, duration_unit)
+		VALUES ($sample_id, $new_cond_id, $concentration, $duration, '" . $concentration_unit ."', '" . $duration_unit ."')
+		ON DUPLICATE KEY
+		    UPDATE concentration=\"$concentration\", duration=\"$duration\", concentration_unit='" . $concentration_unit ."', duration_unit='" . $duration_unit ."';
+	";
+
+
+	$data=$query->queryTable($query_str);
+}
+
+else if ($p == 'removeCondSample')
+{
+	if (isset($_POST['sample_id'])){$sample_id = $_POST['sample_id'];}
+	if (isset($_POST['cond_id'])){$cond_id = $_POST['cond_id'];}
+
+  $query_str = "
+	DELETE FROM ngs_sample_conds WHERE sample_id=$sample_id AND cond_id=$cond_id
+	";
+
+	$data=$query->queryTable($query_str);
+}
+
+else if ($p == 'createTreatmentWithSelection')
+{
+	if (isset($_POST['new_treatment_name'])){$new_treatment_name = $_POST['new_treatment_name'];}
+	if (isset($_POST['new_treatment_symbol'])){$new_treatment_symbol = $_POST['new_treatment_symbol'];}
+
+  $query_str = "
+    INSERT INTO `ngs_conds`(`cond_symbol`, `condition`) VALUES ('$new_treatment_symbol', '$new_treatment_name')
+    ";
+
+	$data=$query->queryTable($query_str);
+}
+
+
 else if ($p == 'getBatchSubmissions')
 {
 	$data=$query->queryTable("
 		SELECT encode_batch_submissions.id, encode_batch_submissions.samples, encode_batch_submissions.output_file,
 		CASE
-			WHEN (SELECT COUNT(encode_submissions.id) FROM encode_submissions LEFT JOIN encode_batch_submissions ON encode_batch_submissions.id = encode_submissions.batch_submission 
+			WHEN (SELECT COUNT(encode_submissions.id) FROM encode_submissions LEFT JOIN encode_batch_submissions ON encode_batch_submissions.id = encode_submissions.batch_submission
 				  WHERE encode_submissions.batch_submission = encode_batch_submissions.id AND encode_submissions.sub_status = 2) > 0 THEN 2
 			ELSE 1
 		END AS sub_status
@@ -121,7 +198,8 @@ else if($p == 'getBiosamples')
 		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
 		ngs_treatment.id as treatment_id, ngs_lanes.date_submitted, ngs_biosample_acc.biosample_acc, ngs_samples.biosample_uuid, ngs_treatment.name,
 		biosample_derived_from, starting_amount, starting_amount_units, ngs_protocols.id as protocol_id, ngs_protocols.starting_amount_id, source,
-		ngs_treatment.duration, ngs_treatment.duration_units
+		GROUP_CONCAT(ngs_sample_conds.cond_id SEPARATOR ', ') as treatment_list,
+		GROUP_CONCAT(ngs_sample_conds.concentration SEPARATOR ', ') as concentration_list
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
 		ON ngs_samples.biosample_id = ngs_biosample_term.id
@@ -137,7 +215,10 @@ else if($p == 'getBiosamples')
 		ON ngs_samples.biosample_acc = ngs_biosample_acc.id
 		LEFT JOIN ngs_source
 		ON ngs_source.id = ngs_samples.source_id
+		LEFT JOIN ngs_sample_conds
+		ON ngs_sample_conds.sample_id = ngs_samples.id
 		WHERE ngs_samples.id in ($samples)
+		GROUP BY ngs_samples.id
 		");
 }
 else if($p == 'getLibraries')
@@ -202,7 +283,7 @@ else if ($p == 'createEncodeRow')
 		$update = 'antibody_lot_id';
 		$rowname = 'target';
 	}
-	
+
 	$data=$query->runSQL("
 		INSERT INTO $table
 		($rowname)
@@ -273,7 +354,7 @@ else if ($p == 'enterFileSubmission')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	if (isset($_GET['ordertable'])){$ordertable = $_GET['ordertable'];}
-	
+
 	$submissions=json_decode($query->queryTable("
 		SELECT ngs_file_submissions.sample_id, ngs_file_submissions.dir_id, ngs_file_submissions.run_id, ngs_file_submissions.parent_file,
 		ngs_file_submissions.file_type, ngs_file_submissions.file_name, ngs_samples.samplename
@@ -292,7 +373,7 @@ else if ($p == 'enterFileSubmission')
 		FROM ngs_fastq_files
 		WHERE sample_id IN (".implode(",",array_keys($samples)).")
 	"));
-	
+
 	$insertString = '';
 	foreach($ordertable as $step => $subdata){
 		foreach($samples as $id => $sample){
@@ -316,7 +397,7 @@ else if ($p == 'enterFileSubmission')
 			}else{
 				$sub_d = "'".$subdata['d']."'";
 			}
-			
+
 			if($subdata['t'] == 'fastq' && $subdata['p'] == 0){
 				$filename = "";
 				foreach($fastq_files as $fqf){
