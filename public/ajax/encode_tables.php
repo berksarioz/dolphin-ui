@@ -20,6 +20,18 @@ if ($p == 'getSubmissions')
 		ON encode_submissions.sample_id = ngs_samples.id
 	");
 }
+else if ($p == 'getConditionsForSample')
+{
+	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
+	$data=$query->queryTable("
+		SELECT sample_id, ngs_conds.condition, concentration, duration, ngs_conds.id
+		AS cond_id
+		FROM ngs_sample_conds
+		LEFT JOIN ngs_conds
+		ON ngs_conds.id = cond_id
+		WHERE sample_id=$sample_id
+	");
+}
 else if ($p == 'getBatchSubmissions')
 {
 	$data=$query->queryTable("
@@ -77,15 +89,6 @@ else if($p == 'getDonors')
 		)
 		");
 }
-else if($p =='getTreatmentsForGivenBiosample'){
-	"
-		SELECT ngs_conds.id, ngs_conds.condition
-		FROM ngs_treatments_per_sample
-		LEFT JOIN ngs_conds
-		ON ngs_conds.id = ngs_treatments_per_sample.treatment_id
-		WHERE ngs_treatments_per_sample.sample_id = 319"
-}
-
 else if($p == 'getExperiments')
 {
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
@@ -130,9 +133,8 @@ else if($p == 'getBiosamples')
 		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
 		ngs_treatment.id as treatment_id, ngs_lanes.date_submitted, ngs_biosample_acc.biosample_acc, ngs_samples.biosample_uuid, ngs_treatment.name,
 		biosample_derived_from, starting_amount, starting_amount_units, ngs_protocols.id as protocol_id, ngs_protocols.starting_amount_id, source,
-		ngs_treatment.duration, ngs_treatment.duration_units,
-		GROUP_CONCAT(ngs_treatments_per_sample.treatment_id SEPARATOR ', ') as treatment_list,
-		GROUP_CONCAT(ngs_treatments_per_sample.concentration SEPARATOR ', ') as concentration_list
+		GROUP_CONCAT(ngs_sample_conds.cond_id SEPARATOR ', ') as treatment_list,
+		GROUP_CONCAT(ngs_sample_conds.concentration SEPARATOR ', ') as concentration_list
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
 		ON ngs_samples.biosample_id = ngs_biosample_term.id
@@ -148,8 +150,8 @@ else if($p == 'getBiosamples')
 		ON ngs_samples.biosample_acc = ngs_biosample_acc.id
 		LEFT JOIN ngs_source
 		ON ngs_source.id = ngs_samples.source_id
-		LEFT JOIN ngs_treatments_per_sample
-		ON ngs_samples.id = ngs_treatments_per_sample.sample_id
+		LEFT JOIN ngs_sample_conds
+		ON ngs_sample_conds.sample_id = ngs_samples.id
 		WHERE ngs_samples.id in ($samples)
 		GROUP BY ngs_samples.id
 		");

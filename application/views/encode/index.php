@@ -1,9 +1,8 @@
 <link rel="stylesheet" type="text/css" href="<?php echo BASE_PATH?>/css/selectize/selectize.css">
 <div>
 	<div class="control-group">
-		<label for="treatments_from_database">States:</label>
-		<select class="treatments_from_database" name="state[]" multiple style="width:50%" placeholder="Select a state...">
-			<option value="">Select a state...</option>
+		<select class="conditions_from_database" name="state[]" multiple style="width:100%" placeholder="Select a state...">
+			<option value="">Add a condition(treatment)...</option>
 			<option value="AL">Alabama</option>
 			<option value="DC" selected>District of Columbia</option>
 			<option value="IL">Illinois</option>
@@ -11,9 +10,6 @@
 		</select>
 	</div>
 </div>
-
-
-
 
 				<style>
 					.warning {
@@ -175,6 +171,46 @@
 					  </div>
 					</div>
 				</div><!-- End biosample modal -->
+				<div class="modal fade" id="editConditionsModal" tabindex="-1" role="dialog" aria-labelledby="conditionModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="conditionModalLabel">Edit Conditions(Treatment)</h4>
+						</div>
+						<form name="editForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div id="addConditionsSampleName">Sample Name:</div>
+									<div class="form-group" style="overflow:scroll">
+										<label id="addConditionsLabel">Select Conditions:</label>
+										<br>
+
+
+										<div>
+											<div class="control-group">
+												<select id="add_conditions_from_database" class="conditions_from_database" name="state[]" multiple style="width:100%" placeholder="Add conditions...">
+												</select>
+											</div>
+										</div>
+
+
+
+										<br>
+										<label id="editConditionsLabel">Edit Condition Details:</label>
+										<br>
+										<div id="editConditionDetails"></div>
+										<br>
+									</div>
+								</fieldset>
+							</div>
+							<div class="modal-footer" id="editConditionsFooter">
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End condition modal -->
+
 				<div class="modal fade" id="linkExperimentModal" tabindex="-1" role="dialog" aria-labelledby="myExperimentModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 					  <div class="modal-content">
