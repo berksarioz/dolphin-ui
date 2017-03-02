@@ -3,6 +3,55 @@ var sampleRuns = {};
 var runParams = {};
 var active_runs = [];
 
+function updateConditionDetails($sample_id) {
+	console.log($sample_id);
+	var $i = 0
+	var condSampleList = [];
+	$('#editConditionDetails input').each(function () {
+		  $i += 1;
+			condSampleList.push(this.value);
+
+			if(($i % 3) == 0){
+				alert($sample_id + "  " + condSampleList[0]+ "  " + condSampleList[1]+ "  " + condSampleList[2]);
+				$.ajax({ type: "POST",
+					url: BASE_PATH+"/public/ajax/encode_tables.php",
+					data: { p: "addOrUpdateCondSample", sample_id:$sample_id, new_cond_id:condSampleList[0],
+					   concentration:condSampleList[1], duration:condSampleList[2] },
+					async: false,
+					success : function(s)
+					{
+				    console.log(s);
+					}
+				});
+
+				condSampleList = [];
+			}
+	    //alert(this.value);
+	});
+
+
+}
+function addConditionToModal($sample_id) {
+	var editConditionDetails = document.getElementById('editConditionDetails');
+	var newCondID =  $('#conditionInputModal').val();
+
+	 $.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "getConditionsDetailsWithID", new_cond_id:newCondID },
+		async: false,
+		success : function(s)
+		  {
+				editConditionDetails.innerHTML += '<input type="hidden" value="' + newCondID + '">';
+
+				editConditionDetails.innerHTML += s[0].condition + ' (' + s[0].cond_symbol + ')<br/>';
+				editConditionDetails.innerHTML += 'Concentration: <input style="margin:0 20px 0 20px;" type="text" class="concentration" value="">' +
+					'Duration: <input style="margin:0 20px 0 20px;" type="text" class="duration" value="">' +
+					'<br/><br/>';
+		  }
+	});
+
+}
+
 function selectizeTreatmentsFromDatabase() {
 	$('.conditions_from_database').selectize({
 		create: false,
@@ -98,7 +147,7 @@ function loadSamplesNew($sample_id){
 	var addConditions = document.getElementById('add_conditions_from_database');
 	var editConditionDetails = document.getElementById('editConditionDetails');
 	var editConditionsFooter = document.getElementById('editConditionsFooter');
-	//var addConditionsSampleName = document.getElementById('addConditionsSampleName');
+	var addConditionsSampleName = document.getElementById('addConditionsSampleName');
 
 	editConditionDetails.innerHTML = '';
 	$.ajax({ type: "GET",
@@ -109,27 +158,34 @@ function loadSamplesNew($sample_id){
 		{
 			console.log("++++++++-------++++++++-------++++++++-------++++++++-------");
 			console.log(s);
-			addConditions.innerHTML = '<option value="">Add a condition(treatment)...</option>';
+			//addConditions.innerHTML = '<option value="">Add a condition(treatment)...</option>';
 			// To change to right ajax
-			editConditionDetails.innerHTML = '<form action="/action_page.php">';
-      //addConditionsSampleName.innerHTML = '<p>Sample: ' + s[0].samplename + '</p>';
+			editConditionDetails.innerHTML = '<form id="editConditionsForm">';
+      addConditionsSampleName.innerHTML = '<h3>' + s[0].samplename + '</h3>';
+
+			addConditionsSampleName.innerHTML += '<input type="text" id="conditionInputModal" value="">';
+			addConditionsSampleName.innerHTML += '<button type="button" ' +
+				'class="btn btn-primary" ' +
+				'onclick="addConditionToModal(' + $sample_id + ')">Add Condition</button>';
+			addConditionsSampleName.innerHTML += '<a href="#">Look Up ID</a>'
 
 			for(var x = 0; x < s.length; x++){
-				addConditions.innerHTML += '<option value="' + s[x].cond_id +
-				'" selected>' + s[x].condition + '</option>';
-				editConditionDetails.innerHTML += s[x].condition + ' ';
-				editConditionDetails.innerHTML += 'Concentration: <input type="text" class="concentration" value="' +
+				// addConditions.innerHTML += '<option value="' + s[x].cond_id +
+				// '" selected>' + s[x].condition + '</option>';
+				editConditionDetails.innerHTML += '<input type="hidden" value="' + s[x].cond_id + '">';
+				editConditionDetails.innerHTML += s[x].condition + ' (' + s[x].cond_symbol + ')<br/>';
+				editConditionDetails.innerHTML += 'Concentration: <input style="margin:0 20px 0 20px;" type="text" class="concentration" value="' +
 			    s[x].concentration + '">' +
-					'Duration: <input type="text" class="duration" value="' +
+					'Duration: <input style="margin:0 20px 0 20px;" type="text" class="duration" value="' +
 					s[x].duration + '">' +
-					'<br/>';
+					'<br/><br/>';
 
 					editConditionsFooter.innerHTML = '<button type="button" ' +
 						'class="btn btn-primary" data-dismiss="modal" ' +
-						'onclick="createLink(\'Biosample\')">Save</button>' +
+						'onclick="updateConditionDetails(' + $sample_id + ')">Save</button>' +
 						'<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>';
 			}
-			editConditionDetails.innerHTML += '<input type="submit" value="Submit"></form>';
+			editConditionDetails.innerHTML += '</form>';
 		}
 	});
 }
@@ -308,8 +364,8 @@ function loadBiosamples() {
 				biosampletable.fnAddData([
 					s[x].samplename,
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_derived_from', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_derived_from+"</p>",
-					s[x].treatment_list  + "<input type=\"button\" class=\"btn btn-primary margin pull-right\" value=\"Edit\" onClick=\"editConditions(); loadSamplesNew(" + s[x].sample_id + ")\"/>",
-					s[x].concentration_list + "<input type=\"button\" class=\"btn btn-primary margin pull-right\" value=\"Edit\" onClick=\"editConditions(); loadSamplesNew(" + s[x].sample_id + ")\"/>",
+					s[x].treatment_list  + "<a style=\"margin:10px\" href=\"#\"><span class=\"glyphicon glyphicon-edit\" onClick=\"editConditions(); loadSamplesNew(" + s[x].sample_id + ")\"/></span></a>",
+					s[x].concentration_list,
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id', 'biosample')\">"+s[x].biosample_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",

@@ -9,6 +9,8 @@ if (!isset($_SESSION) || !is_array($_SESSION)) session_start();
 $query = new dbfuncs();
 
 if (isset($_GET['p'])){$p = $_GET['p'];}
+if (isset($_POST['p'])){$p = $_POST['p'];}
+
 $data = '';
 
 if ($p == 'getSubmissions')
@@ -24,14 +26,41 @@ else if ($p == 'getConditionsForSample')
 {
 	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
 	$data=$query->queryTable("
-		SELECT sample_id, ngs_conds.condition, concentration, duration, ngs_conds.id
+		SELECT sample_id, ngs_conds.condition, ngs_samples.samplename, cond_symbol, ngs_sample_conds.concentration, ngs_sample_conds.duration, ngs_conds.id
 		AS cond_id
 		FROM ngs_sample_conds
 		LEFT JOIN ngs_conds
 		ON ngs_conds.id = cond_id
+		LEFT JOIN ngs_samples
+		ON ngs_samples.id = ngs_sample_conds.sample_id
 		WHERE sample_id=$sample_id
 	");
 }
+else if ($p == 'getConditionsDetailsWithID')
+{
+	if (isset($_GET['new_cond_id'])){$new_cond_id = $_GET['new_cond_id'];}
+	$data=$query->queryTable("
+    SELECT * FROM ngs_conds WHERE id=$new_cond_id
+	");
+}
+else if ($p == 'addOrUpdateCondSample')
+{
+	if (isset($_POST['sample_id'])){$sample_id = $_POST['sample_id'];}
+	if (isset($_POST['new_cond_id'])){$new_cond_id = $_POST['new_cond_id'];}
+	if (isset($_POST['concentration'])){$concentration = $_POST['concentration'];}
+	if (isset($_POST['duration'])){$duration = $_POST['duration'];}
+
+  $query_str = "
+		INSERT INTO ngs_sample_conds (sample_id, cond_id, concentration, duration)
+		VALUES ($sample_id, $new_cond_id, $concentration, $duration)
+		ON DUPLICATE KEY
+		    UPDATE concentration=\"$concentration\", duration=\"$duration\";
+	";
+
+
+	$data=$query->queryTable($query_str);
+}
+
 else if ($p == 'getBatchSubmissions')
 {
 	$data=$query->queryTable("

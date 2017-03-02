@@ -1,16 +1,4 @@
 <link rel="stylesheet" type="text/css" href="<?php echo BASE_PATH?>/css/selectize/selectize.css">
-<div>
-	<div class="control-group">
-		<select class="conditions_from_database" name="state[]" multiple style="width:100%" placeholder="Select a state...">
-			<option value="">Add a condition(treatment)...</option>
-			<option value="AL">Alabama</option>
-			<option value="DC" selected>District of Columbia</option>
-			<option value="IL">Illinois</option>
-			<option value="LA" selected>Louisiana</option>
-		</select>
-	</div>
-</div>
-
 				<style>
 					.warning {
 						background-color: #F99 !important;
@@ -181,18 +169,13 @@
 						<form name="editForm" role="form" method="post">
 							<div class="modal-body">
 								<fieldset>
-									<div id="addConditionsSampleName">Sample Name:</div>
+									<div id="addConditionsSampleName"></div>
 									<div class="form-group" style="overflow:scroll">
-										<label id="addConditionsLabel">Select Conditions:</label>
-										<br>
 
 
-										<div>
-											<div class="control-group">
-												<select id="add_conditions_from_database" class="conditions_from_database" name="state[]" multiple style="width:100%" placeholder="Add conditions...">
-												</select>
+
+											<div class="control-group" id="add_conditions_from_database">
 											</div>
-										</div>
 
 
 
