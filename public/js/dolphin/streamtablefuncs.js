@@ -4,12 +4,12 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 	//	Obtain objList keys
 	var keys = obtainObjectKeys(objList[0]);
 	console.log(keys);
-	
+
 	var table = document.getElementById('jsontable_'+type);
-	
+
 	createStreamScript(keys, type);
 	var data = objList, html = $.trim($("#template_"+type).html()), template = Mustache.compile(html);
-	
+
 	var view = function(record, index){
 		var mergeRecords = '<tr>';
 		for(var x = 0; x < keys.length; x++){
@@ -20,14 +20,23 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 		mergeRecords += '</tr>';
 		return mergeRecords;
 	};
-	
+
 	var callbacks = {
 		after_add: function(){
 			//Only for example: Stop ajax streaming beacause from localfile data size never going to empty.
 			if (this.data.length == objList.length){
 				this.stopStreaming();
 			}
-		}
+		},
+    pagination: function(summary){
+			  var $summary = $('#summary');
+        // if ($.trim($('#st_search').val()).length > 0){
+        //   $found.text('Found : '+ summary.total).show();
+        // }else{
+        //   $found.hide();
+        // }
+       $summary.text( summary.from + ' to '+ summary.to +' of '+ summary.total +' entries');
+    }
 	}
 	st = StreamTable('#jsontable_' + type,
 	  { view: view,
@@ -46,18 +55,18 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 		},
 	  },
 	 data, type);
-	
+
 	if (perPageOn) {
 		var num_search = document.getElementById('st_num_search');
 		num_search.id = 'st_num_search_' + type;
 		num_search.setAttribute('class',"st_per_page margin pull-left input-sm");
-		
+
 		var newlabel = createElement('label', ['id','class'], ['st_label_'+type, 'margin']);
 		newlabel.setAttribute("for",'st_num_search_'+type);
 		newlabel.innerHTML = " entries per page";
 		document.getElementById('table_div_'+type).insertBefore(newlabel, document.getElementById('jsontable_'+type));
 	}
-	
+
 	var search = document.getElementById('st_search');
 	if (searchOn) {
 		search.id = 'st_search_' + type;
@@ -65,7 +74,7 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 	}else{
 		search.remove();
 	}
-	
+
 	var pagination = document.getElementById('st_pagination')
 	if (paginationOn) {
 		pagination.id = 'st_pagination_' + type;
@@ -80,7 +89,7 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 function createStreamScript(keys, type){
 	var masterScript = createElement('script', ['id', 'type'], ['template_'+type, 'text/html']);
 	var tr = createElement('tr', [], []);
-	
+
 	for(var x = 0; x < keys.length; x++){
 		var td = createElement('td', [], []);
 		td.innerHTML = "{{record."+keys[x]+"}}";

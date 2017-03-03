@@ -28,9 +28,10 @@
         <script src="<?php echo BASE_PATH?>/js/dolphin/ngs_help.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/ngstrackstatus.js" type="text/javascript"></script>
 		<script>
-		  document.getElementById("all_tracking_data_table").style.overflowX = "scroll";
-		  $('#table_div_run_status_stream').width($('#all_tracking_data_table').width());
-		  $('#jsontable_run_status_stream').width($('#all_tracking_data_table').width());
+		$('.dropdown-menu').css({'position' : 'fixed'});
+		$('.table-scrollable').css({'display' : 'inline-block', 'width' : '100%', 'min-height': '200px', 'overflow-x' : 'auto'});
+		//$('.dropdown-toggle').css({'z-index' : 9999999});
+
 		</script>
 	</body>
 </html>
