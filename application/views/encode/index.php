@@ -78,21 +78,19 @@
 					  <div class="modal-content">
 						<div class="modal-header">
 						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  <h4 class="modal-title" id="createTreatmentModalLabel">Add Treatment</h4>
+						  <h4 class="modal-title" id="createTreatmentModalLabel">Create New Treatment</h4>
 						</div>
 						<form name="editForm" role="form" method="post">
 							<div class="modal-body">
 								<fieldset>
 									<div class="form-group" style="overflow:scroll">
-										<label id="createSampleTreatmentLabel">Select Treatments to include:</label>
-										<br>
-										<select id="createSampleTreatment" type="select-multiple" multiple size="10" style="width:100%"></select>
-										<br>
+										<label id="createTreatmentLabel">Enter Treatment Details:</label>
+										<div id="createTreatment"></div>
 									</div>
 								</fieldset>
 							</div>
 							<div class="modal-footer">
-							  <button type="button" id="treatmentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createNewData('Treatment')">Add</button>
+							  <button type="button" id="treatmentConfirm" class="btn btn-primary" data-dismiss="modal" onclick="createNewTreatment();">Add</button>
 							  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 							</div>
 						</form>

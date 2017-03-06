@@ -53,6 +53,32 @@ function updateConditionDetails($sample_id) {
 	});
 }
 
+function getCreateTreatmentHTML(){
+  html_to_return = '<div id="createNewCondition">';
+  html_to_return += 'Treatment Name: <input style="margin:0 20px 20px 20px; width:25em" type="text" id="new_treatment_name" value="">';
+	html_to_return += '<br/>';
+	html_to_return += 'Treatment Symbol: <input style="margin:0 20px 0 20px;" type="text" id="new_treatment_symbol" value="">';
+	html_to_return += '</div>';
+	return html_to_return;
+
+}
+
+function createNewTreatment(){
+	$new_treatment_name = $('#new_treatment_name').val();
+	$new_treatment_symbol = $('#new_treatment_symbol').val();
+	$.ajax({ type: "POST",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "createTreatmentWithSelection",
+		  new_treatment_name:$new_treatment_name,
+		  new_treatment_symbol:$new_treatment_symbol},
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
+
+}
 
 function getEditConditionHTML($cond_id, $condition, $cond_symbol,
 	$concentration, $duration, $sample_id, $concentration_unit, $duration_unit){
@@ -214,7 +240,7 @@ function loadSamplesNew($sample_id, $samplename){
 			addConditionsSampleName.innerHTML += '<button type="button" ' +
 				'class="btn btn-primary" ' +
 				'onclick="addConditionToModal(' + $sample_id + ')">Add Condition</button>';
-			addConditionsSampleName.innerHTML += '<a href="#">Look Up ID</a>'
+			addConditionsSampleName.innerHTML += '<div class="ui-widget"><label for="selectTreatement">Treatment: </label><input id="selectTreatement"></div>';
 
 			for(var x = 0; x < s.length; x++){
 				// addConditions.innerHTML += '<option value="' + s[x].cond_id +
@@ -240,6 +266,19 @@ function loadSamplesNew($sample_id, $samplename){
 			editConditionDetails.innerHTML += '</form>';
 		}
 	});
+	console.log("here");
+	$( function() {
+		console.log("This is running here.");
+		var availableTags = [
+			"ActionScript",
+			"Erlang",
+			"Example",
+			"Scheme"
+		];
+		$( "#selectTreatement" ).autocomplete({
+			source: availableTags
+		});
+	} );
 }
 
 function loadSamples(){
@@ -930,6 +969,7 @@ function createTreatment(){
 	$('#createTreatmentModal').modal({
 		show: true
 	});
+	$('#createTreatment').html(getCreateTreatmentHTML());
 	addModalType = 'create_treatment'
 }
 
