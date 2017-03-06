@@ -28,7 +28,9 @@
         <script src="<?php echo BASE_PATH?>/js/dolphin/ngs_help.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/ngstrackstatus.js" type="text/javascript"></script>
 		<script>
-		  $('.table-scrollable').css({'display' : 'inline-block', 'width' : '100%', 'overflow' : 'auto'});
+		  $('.table-scrollable').css({ 'width' : '100%', 'overflow' : 'auto', 'table-layout': 'fixed'});
+			$('.td').css({'word-wrap': 'break-word', 'overflow-wrap': 'break-word'});
+
 		</script>
 	</body>
 </html>
