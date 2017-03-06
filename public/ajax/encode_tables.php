@@ -56,9 +56,9 @@ else if ($p == 'addOrUpdateCondSample')
 
   $query_str = "
 		INSERT INTO ngs_sample_conds (sample_id, cond_id, concentration, duration, concentration_unit, duration_unit)
-		VALUES ($sample_id, $new_cond_id, $concentration, $duration, $concentration_unit, $duration_unit)
+		VALUES ($sample_id, $new_cond_id, $concentration, $duration, '" . $concentration_unit ."', '" . $duration_unit ."')
 		ON DUPLICATE KEY
-		    UPDATE concentration=\"$concentration\", duration=\"$duration\", concentration_unit=$concentration_unit, duration_unit=$duration_unit;
+		    UPDATE concentration=\"$concentration\", duration=\"$duration\", concentration_unit='" . $concentration_unit ."', duration_unit='" . $duration_unit ."';
 	";
 
 

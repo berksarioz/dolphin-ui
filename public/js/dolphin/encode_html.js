@@ -31,7 +31,7 @@ function updateConditionDetails($sample_id) {
 				treatmentList.push(condSampleList[0]);
 				concentrationList.push(condSampleList[1]);
 
-				alert($sample_id + "  " + condSampleList[0]+ "  " + condSampleList[1]+ "  " + condSampleList[2] + "  " + condSampleList[3] + "  " + condSampleList[4]);
+				//alert($sample_id + "  " + condSampleList[0]+ "  " + condSampleList[1]+ "  " + condSampleList[2] + "  " + condSampleList[3] + "  " + condSampleList[4]);
 				$.ajax({ type: "POST",
 					url: BASE_PATH+"/public/ajax/encode_tables.php",
 					data: { p: "addOrUpdateCondSample", sample_id:$sample_id, new_cond_id:condSampleList[0],
