@@ -56,3 +56,6 @@ ALTER TABLE `ngs_sample_conds` ADD UNIQUE (
 DROP TABLE `ngs_conds`;
 CREATE TABLE `ngs_conds` LIKE `new_ngs_conds`;
 INSERT INTO `ngs_conds` SELECT * FROM `new_ngs_conds`;
+
+DROP TABLE `new_ngs_sample_conds`;
+DROP TABLE `new_ngs_conds`;
