@@ -1,3 +1,11 @@
+
+$('select').on('change', function() {
+  $('.st_search').val('btn-' + this.value );
+	$('.st_search').click();
+	$('.st_search').keypress();
+	$('.st_search').submit();
+})
+
 function getTrackingDataGeneric(){
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/trackingdb.php",
@@ -7,8 +15,10 @@ function getTrackingDataGeneric(){
 		{
 			for(var i = 0; i < s.length; i++ ){
 				s[i].options = "<input type='checkbox' class='ngs_checkbox' name='"+
-				  s[i].sample_id+"' id='sample_checkbox_"+s[i].sample_id+"'></td>";
+				  s[i].sample_id+"' id='sample_checkbox_"+s[i].sample_id+"'>";
 			}
+			console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
+			console.log(s);
 			groupsStreamTable = createStreamTable('generic_tracking', s, "", true, [10,20,50,100], 20, true, true);
 		}
 	});

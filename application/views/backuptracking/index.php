@@ -10,15 +10,26 @@ td {
 </style>
 </head>
 <body>
-  <?php $title_list = ["id","Sample Name", "Experiment Series", "Lane",
-      "File Name", "Fastq Dir", "Amazon Bucket", "Backup Status",
+  <?php $title_list = ["id", "Backup Status", "Sample Name", "Experiment Series", "Lane",
+      "File Name", "Fastq Dir", "Amazon Bucket",
       "Selected"];
-      $fields_list = ["sample_id", "sample", "experiment", "lane", "file_name",
-      "backup_dir", "amazon_bucket", "backup_status", "selected"]; ?>
+      $fields_list = ["sample_id", "backup_status", "sample", "experiment", "lane", "file_name",
+      "backup_dir", "amazon_bucket", "selected"]; ?>
 
 <section class="content">
 	<div class="row">
 		<div class="col-md-12">
+      <div align="right">
+        <select>
+          <option value=""></option>
+          <option value="success">Green</option>
+          <option value="warning">Orange</option>
+          <option value="flickr">Flickr</option>
+          <option value="primary">Blue</option>
+          <option value="secondary">Grey</option>
+          <option value="danger">Red</option>
+        </select>
+      </div>
   			<!-- general form elements -->
       <div class="nav-tabs-custom">
         <ul id="tabList" class="nav nav-tabs">
