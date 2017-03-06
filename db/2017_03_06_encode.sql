@@ -1,11 +1,11 @@
-/* mysql -u biocore -p biocore < db/sql_screipts/updates_tables.sql */
+/* mysql -u docker -p biocoredev < 2017_03_06_encode.sql */
 
 /* Adding concentration and duration columns to ngs_sample_conds */
 ALTER TABLE `ngs_sample_conds`
 ADD COLUMN `concentration` VARCHAR( 255 ) NOT NULL DEFAULT '' AFTER `cond_id`,
 ADD COLUMN `duration` VARCHAR( 255 ) NOT NULL DEFAULT '' AFTER `concentration`,
 ADD COLUMN `concentration_unit` VARCHAR( 255 ) NOT NULL DEFAULT '' AFTER `duration`,
-ADD COLUMN `concentration_unit` VARCHAR( 255 ) NOT NULL DEFAULT '' AFTER `concentration_unit`;
+ADD COLUMN `duration_unit` VARCHAR( 255 ) NOT NULL DEFAULT '' AFTER `concentration_unit`;
 
 
 /* temporary ngs_conds table */
@@ -36,7 +36,7 @@ new_ngs_conds table which doesn't have the duplicates */
 UPDATE `new_ngs_sample_conds`
 SET `new_ngs_sample_conds`.`cond_id`=(SELECT `new_ngs_conds`.`id`
   FROM `new_ngs_conds`
-  WHERE `new_ngs_conds`.`condition`=n`ew_ngs_sample_conds`.`condition_name`);
+  WHERE `new_ngs_conds`.`condition`=`new_ngs_sample_conds`.`condition_name`);
 
 
 ALTER TABLE `new_ngs_sample_conds`
