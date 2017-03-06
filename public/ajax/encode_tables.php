@@ -26,8 +26,10 @@ else if ($p == 'getConditionsForSample')
 {
 	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
 	$data=$query->queryTable("
-		SELECT sample_id, ngs_conds.condition, ngs_samples.samplename, cond_symbol, ngs_sample_conds.concentration, ngs_sample_conds.duration, ngs_conds.id
-		AS cond_id
+		SELECT sample_id, ngs_conds.condition, ngs_samples.samplename, cond_symbol,
+		ngs_sample_conds.concentration, ngs_sample_conds.duration, ngs_conds.id
+		AS cond_id, ngs_sample_conds.concentration_unit,
+		ngs_sample_conds.duration_unit
 		FROM ngs_sample_conds
 		LEFT JOIN ngs_conds
 		ON ngs_conds.id = cond_id
@@ -49,14 +51,28 @@ else if ($p == 'addOrUpdateCondSample')
 	if (isset($_POST['new_cond_id'])){$new_cond_id = $_POST['new_cond_id'];}
 	if (isset($_POST['concentration'])){$concentration = $_POST['concentration'];}
 	if (isset($_POST['duration'])){$duration = $_POST['duration'];}
+	if (isset($_POST['concentration_unit'])){$concentration_unit = $_POST['concentration_unit'];}
+	if (isset($_POST['duration_unit'])){$duration_unit = $_POST['duration_unit'];}
 
   $query_str = "
-		INSERT INTO ngs_sample_conds (sample_id, cond_id, concentration, duration)
-		VALUES ($sample_id, $new_cond_id, $concentration, $duration)
+		INSERT INTO ngs_sample_conds (sample_id, cond_id, concentration, duration, concentration_unit, duration_unit)
+		VALUES ($sample_id, $new_cond_id, $concentration, $duration, $concentration_unit, $duration_unit)
 		ON DUPLICATE KEY
-		    UPDATE concentration=\"$concentration\", duration=\"$duration\";
+		    UPDATE concentration=\"$concentration\", duration=\"$duration\", concentration_unit=$concentration_unit, duration_unit=$duration_unit;
 	";
 
+
+	$data=$query->queryTable($query_str);
+}
+
+else if ($p == 'removeCondSample')
+{
+	if (isset($_POST['sample_id'])){$sample_id = $_POST['sample_id'];}
+	if (isset($_POST['cond_id'])){$cond_id = $_POST['cond_id'];}
+
+  $query_str = "
+	DELETE FROM ngs_sample_conds WHERE sample_id=$sample_id AND cond_id=$cond_id
+	";
 
 	$data=$query->queryTable($query_str);
 }
