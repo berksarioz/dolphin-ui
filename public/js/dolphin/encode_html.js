@@ -238,6 +238,8 @@ function createNewTreatment(){
 			console.log(s);
 		}
 	});
+	//$("#table_div_encode_stream_conditions").load(location.href+" #table_div_encode_stream_conditions>*","");
+
 
 }
 
