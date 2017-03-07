@@ -13,6 +13,11 @@ function getBrowsingDataExperiments(){
 		async: false,
 		success : function(s)
 		{
+      for(var i = 0; i < s.length; i++ ){
+        s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' + s[i].id +
+        '" id="experiment_checkbox_' + s[i].id +
+        '" onclick="manageChecklists(this.name, \'experiment_checkbox\')">';
+			}
 			console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
 			console.log(s);
 			groupsStreamTable = createStreamTable('browse_experiment', s, "", true, [10,20,50,100], 20, true, true);
@@ -23,10 +28,15 @@ function getBrowsingDataExperiments(){
 function getBrowsingDataImports(){
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/ngs_tables.php",
-		data: { p: 'getLanes' },
+		data: { p: 'getLanesNew' },
 		async: false,
 		success : function(s)
 		{
+      for(var i = 0; i < s.length; i++ ){
+        s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' + s[i].id +
+        '" id="lane_checkbox_' + s[i].id +
+        '" onclick="manageChecklists(this.name, \'lane_checkbox\')">';
+			}
 			console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
 			console.log(s);
 			groupsStreamTable = createStreamTable('browse_import', s, "", true, [10,20,50,100], 20, true, true);
@@ -36,12 +46,19 @@ function getBrowsingDataImports(){
 
 
 function getBrowsingDataSamples(){
+  console.log("+++-+++-+++-+++-999999999++-+++-+++-");
+
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/ngs_tables.php",
-		data: { p: 'getSamples', q: '' },
+		data: { p: 'getSamplesNew'},
 		async: false,
 		success : function(s)
 		{
+      for(var i = 0; i < s.length; i++ ){
+        s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' + s[i].id +
+        '" id="sample_checkbox_' + s[i].id +
+        '" onclick="manageChecklists(this.name, \'sample_checkbox\')">';
+			}
 			console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
 			console.log(s);
 			groupsStreamTable = createStreamTable('browse_sample', s, "", true, [10,20,50,100], 20, true, true);
@@ -49,6 +66,16 @@ function getBrowsingDataSamples(){
 	});
 }
 
+
+function replaceNulls(){
+  $("td:contains('null')").html("");
+}
+
+function updateTable(){
+  $('#jsontable_browse_sample').change(function() {
+    replaceNulls();
+  });
+}
 
 
 $(function() {
@@ -59,4 +86,6 @@ $(function() {
 	getBrowsingDataExperiments();
 	getBrowsingDataImports();
 	getBrowsingDataSamples();
+  replaceNulls();
+  // updateTable();
 });

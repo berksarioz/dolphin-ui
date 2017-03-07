@@ -152,12 +152,12 @@ else if ($p == "getSelectedSamples")	//	Selected samples table
 			$typeCount = $typeCount + 1;
 		}
 	}
-	
+
 	$sample_perms = "";
 	if ($uid != "1"){
 		$sample_perms = "AND (((ngs_samples.group_id in ($gids)) AND (ngs_samples.perms >= 15)) OR (ngs_samples.owner_id = $uid))";
 	}
-	
+
 	$time="";
 	if (isset($start)){$time="and `date_created`>='$start' and `date_created`<='$end'";}
 	$data=$query->queryTable("
@@ -167,7 +167,7 @@ else if ($p == "getSelectedSamples")	//	Selected samples table
 	FROM ngs_samples
     $innerJoin
 	$sampleJoin
-	WHERE $searchQuery 
+	WHERE $searchQuery
 	$sample_perms
 	$time
 	");
@@ -224,6 +224,7 @@ else if($search != "")	//	If there is a search term(s) (experiments, lanes, samp
             $time
 			");
 		}
+
 		else if($p == "getExperimentSeries")
 		{
 			$time="";
@@ -290,7 +291,7 @@ else if($search != "")	//	If there is a search term(s) (experiments, lanes, samp
             $innerJoin
             $sampleJoin
 			WHERE $searchQuery
-			AND ngs_samples.series_id = $q 
+			AND ngs_samples.series_id = $q
             $sample_perms
             $time
 			");
@@ -338,6 +339,7 @@ else	//	if there isn't a search term (experiments, lanes, samples)
 			IN (SELECT ngs_samples.lane_id FROM ngs_samples $innerJoin WHERE ngs_samples.$q = \"$r\") $andPerms $time
 			");
 		}
+
 		else if($p == "getSamples")
 		{
 			$sample_perms = "";
@@ -371,6 +373,8 @@ else	//	if there isn't a search term (experiments, lanes, samples)
 	}
 	else
 	{
+
+
 		//	details (no search)
 		if($p == "getLanes" && $q != "")
 		{
@@ -476,6 +480,60 @@ else	//	if there isn't a search term (experiments, lanes, samples)
 		}
 	}
 }
+
+if($p == "getSamplesNew")
+{
+  $amazon_str = "AND ngs_fastq_files.dir_id = (SELECT ngs_dirs.id FROM ngs_dirs WHERE ngs_fastq_files.dir_id = ngs_dirs.id AND (ngs_dirs.amazon_bucket LIKE '%s3://%'))";
+  $sampleBackup = "CASE
+  					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE aws_status = 2 AND ngs_samples.id = ngs_fastq_files.sample_id) > 0 THEN '<button class=\"btn btn-warning\" disabled>'
+  					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != original_checksum AND (original_checksum != '' AND original_checksum IS NOT NULL) AND ngs_samples.id = ngs_fastq_files.sample_id) > 0 THEN '<button class=\"btn btn-flickr\" disabled>'
+  					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != backup_checksum AND (backup_checksum != '' AND backup_checksum IS NOT NULL) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<button class=\"btn btn-danger\" disabled>'
+  					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE (backup_checksum = '' OR backup_checksum IS NULL) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<button class=\"btn btn-secondary\" disabled>'
+  					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE date_modified < DATE_SUB(now(), INTERVAL 2 MONTH) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<button class=\"btn btn-primary\" disabled>'
+  					WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) = 0 THEN ''
+  					ELSE '<button class=\"btn btn-success\" disabled>'
+  				END AS backup";
+
+ $data=$query->queryTable("
+  SELECT `ngs_samples`.id as sample_id, samplename, `ngs_source`.source,
+  `ngs_source`.source, `ngs_organism`.organism, `ngs_molecule`.molecule,
+  `ngs_samples`.barcode,
+  $sampleBackup,
+  `ngs_samples`.description,  `ngs_samples`.avg_insert_size,
+  `ngs_samples`.read_length, `ngs_samples`.concentration, `ngs_samples`.time,
+  `ngs_samples`.biological_replica, `ngs_samples`.technical_replica,
+  `ngs_samples`.spike_ins, `ngs_samples`.adapter,
+  `ngs_samples`.notebook_ref, `ngs_samples`.notes,
+  `ngs_genotype`.genotype, `ngs_library_type`.library_type,
+  `ngs_biosample_type`.biosample_type, `ngs_treatment_manufacturer`.treatment_manufacturer
+  FROM `ngs_samples`
+  LEFT JOIN `ngs_source`
+  ON `ngs_source`.id = `ngs_samples`.source_id
+  LEFT JOIN `ngs_organism`
+  ON `ngs_organism`.id = `ngs_samples`.organism_id
+  LEFT JOIN `ngs_molecule`
+  ON `ngs_molecule`.id = `ngs_samples`.molecule_id
+  LEFT JOIN `ngs_genotype`
+  ON `ngs_genotype`.id = `ngs_samples`.genotype_id
+  LEFT JOIN `ngs_library_type`
+  ON `ngs_library_type`.id = `ngs_samples`.library_type_id
+  LEFT JOIN `ngs_biosample_type`
+  ON `ngs_biosample_type`.id = `ngs_samples`.biosample_type_id
+  LEFT JOIN `ngs_treatment_manufacturer`
+  ON `ngs_treatment_manufacturer`.id = `ngs_samples`.treatment_manufacturer_id
+ ");
+}
+
+else if($p == "getLanesNew")
+{
+  $data=$query->queryTable("
+  SELECT ngs_lanes.id, name, facility, total_reads, total_samples, cost, phix_requested, phix_in_lane, notes
+  FROM ngs_lanes
+  LEFT JOIN ngs_facility
+  ON ngs_lanes.facility_id = ngs_facility.id
+  ");
+}
+
 
 if (!headers_sent()) {
 	header('Cache-Control: no-cache, must-revalidate');

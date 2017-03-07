@@ -15,10 +15,10 @@ td {
   $experiment_field_list = ["id","experiment_name","summary","design", "lab","organization","grant", ""];
   $import_title_list = ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"];
   $import_field_list = ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""];
-  $sample_title_list = ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
+  $sample_title_list = ["id","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
                          "Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
                          "Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"];
-  $sample_field_list = ["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
+  $sample_field_list = ["id","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
                          "concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
                          "notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"];
  ?>
@@ -74,12 +74,12 @@ td {
       				<div class="box-body">
       				<div class="box-group" id="accordion">
       					<!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
-      					<?php echo $html->sendJScript("index", "", "", "", $uid, $gids); ?>
-      					<?php echo $html->getAccordion("Assay", $assay, "")?>
-      					<?php echo $html->getAccordion("Organism", $organism, "")?>
-      					<?php echo $html->getAccordion("Molecule", $molecule, "")?>
-      					<?php echo $html->getAccordion("Source", $source, "")?>
-      					<?php echo $html->getAccordion("Genotype", $genotype, "")?>
+      					<?php //echo $html->sendJScript("index", "", "", "", $uid, $gids); ?>
+      					<?php echo $html->getAccordion("Assay", [], "")?>
+      					<?php echo $html->getAccordion("Organism", [], "")?>
+      					<?php echo $html->getAccordion("Molecule", [], "")?>
+      					<?php echo $html->getAccordion("Source", [], "")?>
+      					<?php echo $html->getAccordion("Genotype", [], "")?>
       				</div>
       				</div><!-- /.box-body -->
       		</div><!-- /.box -->
