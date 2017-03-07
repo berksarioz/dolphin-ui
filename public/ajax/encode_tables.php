@@ -89,6 +89,7 @@ else if ($p == 'createTreatmentWithSelection')
 	$data=$query->queryTable($query_str);
 }
 
+
 else if ($p == 'getBatchSubmissions')
 {
 	$data=$query->queryTable("
