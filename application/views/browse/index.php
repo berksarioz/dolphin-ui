@@ -62,7 +62,30 @@ td {
             </div>
           </div>
           <div class="tab-pane" id="browse_more">
-
+            <div class="box box-solid">
+      				<div class="box-header with-border">
+      				<h3 class="box-title">Browse</h3>
+      			<div class="panel-tools pull-right">
+      			<button class="btn btn-primary" onclick="returnToIndex();">
+      				<i class="fa fa-fast-backward"></i>
+      			</button>
+      			</div>
+      				</div><!-- /.box-header -->
+      				<div class="box-body">
+      				<div class="box-group" id="accordion">
+      					<!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
+      					<?php echo $html->sendJScript("index", "", "", "", $uid, $gids); ?>
+      					<?php echo $html->getAccordion("Assay", $assay, "")?>
+      					<?php echo $html->getAccordion("Organism", $organism, "")?>
+      					<?php echo $html->getAccordion("Molecule", $molecule, "")?>
+      					<?php echo $html->getAccordion("Source", $source, "")?>
+      					<?php echo $html->getAccordion("Genotype", $genotype, "")?>
+      				</div>
+      				</div><!-- /.box-body -->
+      		</div><!-- /.box -->
+        		<div>
+        			<?php echo $html->getDolphinBasket()?>
+        		</div>
           </div>
         </div>
       </div>
