@@ -14,6 +14,10 @@ function getBrowsingDataExperiments(){
 		success : function(s)
 		{
       for(var i = 0; i < s.length; i++ ){
+        s[i].experiment_name = "<a href=\""+BASE_PATH+
+          "/search/details/experiment_series/"+s[i].id+
+          "\">"+s[i].experiment_name+"</a>";
+
         s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' + s[i].id +
         '" id="experiment_checkbox_' + s[i].id +
         '" onclick="manageChecklists(this.name, \'experiment_checkbox\')">';
