@@ -180,13 +180,19 @@ function updateConditionDetails($sample_id) {
 					success : function(s)
 					{
 				    console.log(s);
-					}
+						$("#treatment_list" + $sample_id).html(treatmentList.join(", "));
+						$("#concentration_list" + $sample_id).html(concentrationList.join(", "));
+					},
+          error: function(s){
+						console.log(s);
+						$("#treatment_list" + $sample_id).html(treatmentList.join(", "));
+						$("#concentration_list" + $sample_id).html(concentrationList.join(", "));
+          }
 				});
 
 				condSampleList = [];
 			}
-			$("#treatment_list" + $sample_id).html(treatmentList.join(", "));
-			$("#concentration_list" + $sample_id).html(concentrationList.join(", "));
+
 
 	    //alert(this.value);
 	});
