@@ -38,7 +38,7 @@ function getBrowsingDataImports(){
 function getBrowsingDataSamples(){
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/ngs_tables.php",
-		data: { p: 'getSamples' },
+		data: { p: 'getSamples', q: '' },
 		async: false,
 		success : function(s)
 		{

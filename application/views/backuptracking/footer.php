@@ -21,7 +21,10 @@
         <script src="<?php echo BASE_PATH?>/js/streamTable/vendors/mustache.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/ngs_help.js" type="text/javascript"></script>
 		<script>
-			$('.table-scrollable').css({'display' : 'inline-block', 'width' : '100%', 'overflow' : 'auto'});
+			$('.table-scrollable').css({'display' : 'inline-block', 'overflow' : 'scroll'});
+			$('.table-responsive').css({'overflow' : 'scroll'});
+			//$('.st_search').css({'position':'fixed', 'left':'100px', 'top':'150px'});
+
 		</script>
 	</body>
 </html>
