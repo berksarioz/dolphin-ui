@@ -142,6 +142,7 @@ function comboBoxScript(){
 	} );
 }
 
+
 function removeConditionDetails($sample_id, $cond_id) {
 		$.ajax({ type: "POST",
 			url: BASE_PATH+"/public/ajax/encode_tables.php",
@@ -388,6 +389,7 @@ function loadSamplesNew($sample_id, $samplename){
 
 			addConditionsSampleName.innerHTML += '<div class="ui-widget"><label>Select Treatment: </label><select id="combobox"><option value="">Select one...</option><option id="50" value="LPS">Lipopolysaccharide</option><option id="14" value="Control">Control</option><option value="Starved Mom">Starved Mom</option><option value="Starved Dad">Starved Dad</option></select></div>';
 
+
 			for(var x = 0; x < s.length; x++){
 				// addConditions.innerHTML += '<option value="' + s[x].cond_id +
 				// '" selected>' + s[x].condition + '</option>';
@@ -413,7 +415,6 @@ function loadSamplesNew($sample_id, $samplename){
 		}
 	});
   comboBoxScript();
-
 }
 
 function loadSamples(){
