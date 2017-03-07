@@ -13,6 +13,13 @@ if (isset($_POST['p'])){$p = $_POST['p'];}
 
 $data = '';
 
+if ($p == 'getConditionData')
+{
+	$data=$query->queryTable("
+	  SELECT * FROM `ngs_conds`
+	");
+}
+
 if ($p == 'getSubmissions')
 {
 	$data=$query->queryTable("

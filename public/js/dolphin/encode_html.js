@@ -3,6 +3,21 @@ var sampleRuns = {};
 var runParams = {};
 var active_runs = [];
 
+function getConditionDataForTable(){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: 'getConditionData' },
+		async: false,
+		success : function(s)
+		{
+			console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
+			console.log(s);
+			groupsStreamTable = createStreamTable('encode_stream_conditions', s, "", true, [10,20,50,100], 20, true, true);
+		}
+	});
+}
+getConditionDataForTable();
+
 function comboBoxScript(){
 	$( function() {
 	  $.widget( "custom.combobox", {
