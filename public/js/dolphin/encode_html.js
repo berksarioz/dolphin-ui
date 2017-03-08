@@ -18,6 +18,12 @@ function getConditionDataForTable(){
 }
 getConditionDataForTable();
 
+function refreshConditionsTable(){
+	var save = $('#table_div_encode_stream_conditions table').detach();
+	$('#table_div_encode_stream_conditions').empty().append(save);
+	getConditionDataForTable();
+}
+
 function comboBoxScript(){
 	$( function() {
 	  $.widget( "custom.combobox", {
@@ -150,11 +156,27 @@ function comboBoxScript(){
 	    }
 	  });
 
-	  $( "#combobox" ).combobox();
+	  $( "#sample_conds_combobox" ).combobox();
 	  $( "#toggle" ).on( "click", function() {
-	    $( "#combobox" ).toggle();
+	    $( "#sample_conds_combobox" ).toggle();
 	  });
 	} );
+	// $('#sample_conds_combobox').children('li').each(function () {
+  //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
+	// });
+	// $('#sample_conds_combobox').children('ul').each(function () {
+  //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
+	// });
+
+	$('ul:not(#tabList, .pagination)').css({'z-index' : 999999, 'position' : 'relative'});
+  $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
+	// $('li').css({'z-index' : 999999, 'position' : 'relative'});
+	// $('.dropdown').css({'z-index' : 999999, 'position' : 'relative'});
+	// $('.modal-body').css({'overflow' : 'visible'});
+
+	$("#sample_conds_combobox").on('change', function () {
+    alert($(this).val());
+});
 }
 
 
@@ -216,9 +238,9 @@ function updateConditionDetails($sample_id) {
 
 function getCreateTreatmentHTML(){
   html_to_return = '<div id="createNewCondition">';
-  html_to_return += 'Treatment Name: <input style="margin:0 20px 20px 20px; width:25em" type="text" id="new_treatment_name" value="">';
-	html_to_return += '<br/>';
 	html_to_return += 'Treatment Symbol: <input style="margin:0 20px 0 20px;" type="text" id="new_treatment_symbol" value="">';
+	html_to_return += '<br/>';
+	html_to_return += 'Treatment Name: <input style="margin:20px 20px 0 20px; width:25em" type="text" id="new_treatment_name" value="">';
 	html_to_return += '</div>';
 	return html_to_return;
 
@@ -240,7 +262,7 @@ function createNewTreatment(){
 	});
 	//$("#table_div_encode_stream_conditions").load(location.href+" #table_div_encode_stream_conditions>*","");
 
-
+  refreshConditionsTable();
 }
 
 function getEditConditionHTML($cond_id, $condition, $cond_symbol,
@@ -379,6 +401,10 @@ function loadInEncodeTables(){
 	}
 }
 
+function comboboxSelectionChanged(){
+	$('#conditionInputModal').val($('#sample_conds_combobox').val());
+}
+
 function loadSamplesNew($sample_id, $samplename){
 	var addConditions = document.getElementById('add_conditions_from_database');
 	var editConditionDetails = document.getElementById('editConditionDetails');
@@ -394,34 +420,21 @@ function loadSamplesNew($sample_id, $samplename){
 		{
 			console.log("++++++++-------++++++++-------++++++++-------++++++++-------");
 			console.log(s);
-			//addConditions.innerHTML = '<option value="">Add a condition(treatment)...</option>';
-			// To change to right ajax
 			editConditionDetails.innerHTML = '<form id="editConditionsForm">';
       addConditionsSampleName.innerHTML = '<h3>' + $samplename + '</h3>';
+			addConditionsSampleName.innerHTML += '<div onchange="comboboxSelectionChanged()" class="combobox"><div class="ui-widget"><label>Select Treatment: </label><select id="sample_conds_combobox"><option value="">Select one...</option></select></div></div>';
 
-			addConditionsSampleName.innerHTML += '<input type="text" id="conditionInputModal" value="">';
+			addConditionsSampleName.innerHTML += '<input style="display:none;" type="text" id="conditionInputModal" value="">';
 			addConditionsSampleName.innerHTML += '<button type="button" ' +
 				'class="btn btn-primary" ' +
 				'onclick="addConditionToModal(' + $sample_id + ')">Add Condition</button>';
 
-			addConditionsSampleName.innerHTML += '<div class="ui-widget"><label>Select Treatment: </label><select id="combobox"><option value="">Select one...</option><option id="50" value="LPS">Lipopolysaccharide</option><option id="14" value="Control">Control</option><option value="Starved Mom">Starved Mom</option><option value="Starved Dad">Starved Dad</option></select></div>';
-
-
 			for(var x = 0; x < s.length; x++){
-				// addConditions.innerHTML += '<option value="' + s[x].cond_id +
-				// '" selected>' + s[x].condition + '</option>';
 
 				editConditionDetails.innerHTML += getEditConditionHTML(s[x].cond_id,
 					s[x].condition, s[x].cond_symbol, s[x].concentration, s[x].duration,
 				  $sample_id, s[x].concentration_unit, s[x].duration_unit);
 
-				// editConditionDetails.innerHTML += '<input type="hidden" value="' + s[x].cond_id + '">';
-				// editConditionDetails.innerHTML += s[x].condition + ' (' + s[x].cond_symbol + ')<br/>';
-				// editConditionDetails.innerHTML += 'Concentration: <input style="margin:0 20px 0 20px;" type="text" class="concentration" value="' +
-			  //   s[x].concentration + '">' +
-				// 	'Duration: <input style="margin:0 20px 0 20px;" type="text" class="duration" value="' +
-				// 	s[x].duration + '">' +
-				// 	'<br/><br/>';
 
 			}
 			editConditionsFooter.innerHTML = '<button type="button" ' +
@@ -429,9 +442,25 @@ function loadSamplesNew($sample_id, $samplename){
 				'onclick="updateConditionDetails(' + $sample_id + ')">Save</button>' +
 				'<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>';
 			editConditionDetails.innerHTML += '</form>';
+
+
+
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/encode_tables.php",
+				data: { p: 'getConditionData' },
+				async: false,
+				success : function(s)
+				{
+					for(var x = 0; x < s.length; x++){
+            $( "#sample_conds_combobox" ).append('<option id="' + s[x].id +
+						  '" value="' + s[x].id + '">' + s[x].condition +
+							'</option>');
+					}
+					comboBoxScript();
+				}
+			});
 		}
 	});
-  comboBoxScript();
 }
 
 function loadSamples(){

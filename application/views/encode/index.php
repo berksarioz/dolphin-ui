@@ -164,10 +164,13 @@
 						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						  <h4 class="modal-title" id="conditionModalLabel">Edit Conditions(Treatment)</h4>
 						</div>
+						
 						<form name="editForm" role="form" method="post">
 							<div class="modal-body">
 								<fieldset>
+
 									<div id="addConditionsSampleName"></div>
+
 									<div class="form-group" style="overflow:scroll">
 
 
