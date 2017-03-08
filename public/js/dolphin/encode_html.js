@@ -24,6 +24,7 @@ function refreshConditionsTable(){
 	getConditionDataForTable();
 }
 
+
 function comboBoxScript(){
 	$( function() {
 	  $.widget( "custom.combobox", {
@@ -177,6 +178,7 @@ function comboBoxScript(){
 	$("#sample_conds_combobox").on('change', function () {
     alert($(this).val());
 });
+
 }
 
 
@@ -260,7 +262,6 @@ function createNewTreatment(){
 			console.log(s);
 		}
 	});
-	//$("#table_div_encode_stream_conditions").load(location.href+" #table_div_encode_stream_conditions>*","");
 
   refreshConditionsTable();
 }
@@ -461,6 +462,7 @@ function loadSamplesNew($sample_id, $samplename){
 			});
 		}
 	});
+  comboBoxScript();
 }
 
 function loadSamples(){
