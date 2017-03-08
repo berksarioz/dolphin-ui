@@ -59,3 +59,8 @@ INSERT INTO `ngs_conds` SELECT * FROM `new_ngs_conds`;
 
 DROP TABLE `new_ngs_sample_conds`;
 DROP TABLE `new_ngs_conds`;
+
+ALTER TABLE `ngs_conds` ADD UNIQUE (
+  `cond_symbol`,
+  `condition`
+);

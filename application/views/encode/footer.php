@@ -2,7 +2,7 @@
 		</div><!-- ./wrapper -->
 		<script src="<?php echo BASE_PATH?>/js/bootstrap/jquery.min.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/bootstrap/bootstrap.min.js" type="text/javascript"></script>
-        <script src="<?php echo BASE_PATH?>/js/bootstrap/jquery-ui.min.js" type="text/javascript"></script>
+        <script src="<?php echo BASE_PATH?>/js/bootstrap/jquery-ui.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/Datatables/DataTables-1.10.11/js/jquery.dataTables.min.js"></script>
         <script src="<?php echo BASE_PATH?>/js/Datatables/DataTables-1.10.11/js/dataTables.bootstrap.js"></script>
         <script src="<?php echo BASE_PATH?>/js/Datatables/DataTables-1.10.11/js/dataTables.tableTools.min.js"></script>
@@ -26,10 +26,19 @@
 		<script src="<?php echo BASE_PATH?>/js/dolphin/ngstrack_stats.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/dolphin/ngs_help.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/ngsstatus_funcs.js" type="text/javascript"></script>
+		<script src="<?php echo BASE_PATH?>/js/dolphin/streamtablefuncs.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/streamTable/stream_table.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/streamTable/vendors/mustache.js" type="text/javascript"></script>
 				<script src="<?php echo BASE_PATH?>/js/selectize/selectize.min.js"></script>
 		<script src='<?php echo BASE_PATH?>/js/dolphin/encode_funcs.js' type="text/javascript"></script>
 		<script src='<?php echo BASE_PATH?>/js/dolphin/encode_html.js' type="text/javascript"></script>
+		<script>
+		  //$('.dropdown').css({'z-index' : 999999, 'position' : 'relative'});
+			//$('.modal-body').css({'overflow' : 'visible'});
+			$('select').on('change', function() {
+				// console.log("here 999 here 99");
+			  // $('#conditionInputModal').val('98');
+			})
+		</script>
 	</body>
 </html>

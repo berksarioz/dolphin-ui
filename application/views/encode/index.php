@@ -164,10 +164,13 @@
 						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						  <h4 class="modal-title" id="conditionModalLabel">Edit Conditions(Treatment)</h4>
 						</div>
+						
 						<form name="editForm" role="form" method="post">
 							<div class="modal-body">
 								<fieldset>
+
 									<div id="addConditionsSampleName"></div>
+
 									<div class="form-group" style="overflow:scroll">
 
 
@@ -305,15 +308,18 @@
 									<div class="tab-pane" id="treatments_tab">
 										<?php
 											#Treatments
-											echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
-																			 "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Treatment UUID</th><th>Selected</th>");
+											echo $html->getRespBoxTableStreamNoExpand("Treatments(Conditions)",
+				                "encode_stream_conditions", ["ID", "Treatment Symbol",
+												"Treatment Details"], ["id", "cond_symbol", "condition"]);
+											// echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
+											// 								 "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Treatment UUID</th><th>Selected</th>");
 											// echo $html->getRespBoxTable_ng("Treatments", "encode_treatments",
 											// 							   "<th>Name</th><th>Treatment Term Name</th><th>Treatment Term Id</th><th>Treatment Type</th><th>Concentration</th><th>Concentration Units</th><th>Duration</th><th>Duration Units</th><th>Treatment UUID</th><th>Selected</th>");
 										?>
-										<input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','treatment',this,event)"/>
-										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','treatment',this,event)"/>
+										<!-- <input type="button" class="btn btn-primary margin" value="Change Selected" onClick="changeValuesEncode('selected','treatment',this,event)"/>
+										<input type="button" class="btn btn-primary margin" value="Change All" onClick="changeValuesEncode('all','treatment',this,event)"/> -->
 										<input type="button" class="btn btn-success margin pull-right" value="Create Treatment" onClick="createTreatment()"/>
-										<input type="button" class="btn btn-primary margin pull-right" value="Add Treatment" onClick="addTreatment()"/>
+										<!-- <input type="button" class="btn btn-primary margin pull-right" value="Add Treatment" onClick="addTreatment()"/> -->
 									</div>
 									<div class="tab-pane" id="biosamples_tab">
 										<?php

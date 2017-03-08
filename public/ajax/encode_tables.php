@@ -13,6 +13,13 @@ if (isset($_POST['p'])){$p = $_POST['p'];}
 
 $data = '';
 
+if ($p == 'getConditionData')
+{
+	$data=$query->queryTable("
+	  SELECT * FROM `ngs_conds` ORDER BY id DESC
+	");
+}
+
 if ($p == 'getSubmissions')
 {
 	$data=$query->queryTable("
@@ -83,7 +90,7 @@ else if ($p == 'createTreatmentWithSelection')
 	if (isset($_POST['new_treatment_symbol'])){$new_treatment_symbol = $_POST['new_treatment_symbol'];}
 
   $query_str = "
-    INSERT INTO `ngs_conds`(`cond_symbol`, `condition`) VALUES ('$new_treatment_name', '$new_treatment_symbol')
+    INSERT INTO `ngs_conds`(`cond_symbol`, `condition`) VALUES ('$new_treatment_symbol', '$new_treatment_name')
     ";
 
 	$data=$query->queryTable($query_str);
