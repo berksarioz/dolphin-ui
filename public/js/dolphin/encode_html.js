@@ -178,8 +178,10 @@ function comboBoxScript(){
 	$("#sample_conds_combobox").on('change', function () {
     alert($(this).val());
 });
-
 }
+
+
+
 
 
 function removeConditionDetails($sample_id, $cond_id) {
@@ -233,7 +235,6 @@ function updateConditionDetails($sample_id) {
 				condSampleList = [];
 			}
 
-
 	    //alert(this.value);
 	});
 }
@@ -262,7 +263,7 @@ function createNewTreatment(){
 			console.log(s);
 		}
 	});
-
+	//$("#table_div_encode_stream_conditions").load(location.href+" #table_div_encode_stream_conditions>*","");
   refreshConditionsTable();
 }
 
