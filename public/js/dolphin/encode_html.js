@@ -24,6 +24,7 @@ function refreshConditionsTable(){
 	getConditionDataForTable();
 }
 
+
 function comboBoxScript(){
 	$( function() {
 	  $.widget( "custom.combobox", {
