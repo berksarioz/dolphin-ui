@@ -169,7 +169,8 @@ function comboBoxScript(){
   //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
 	// });
 
-	$('ul:not(#tabList, .pagination)').css({'z-index' : 999999, 'position' : 'relative'});
+	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative'});
+	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative', 'background-color': '#40E0D0'});	
   $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
 	// $('li').css({'z-index' : 999999, 'position' : 'relative'});
 	// $('.dropdown').css({'z-index' : 999999, 'position' : 'relative'});
