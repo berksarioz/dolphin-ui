@@ -182,6 +182,7 @@ function comboBoxScript(){
 
 
 
+
 function removeConditionDetails($sample_id, $cond_id) {
 		$.ajax({ type: "POST",
 			url: BASE_PATH+"/public/ajax/encode_tables.php",
@@ -262,7 +263,6 @@ function createNewTreatment(){
 		}
 	});
 	//$("#table_div_encode_stream_conditions").load(location.href+" #table_div_encode_stream_conditions>*","");
-
   refreshConditionsTable();
 }
 
