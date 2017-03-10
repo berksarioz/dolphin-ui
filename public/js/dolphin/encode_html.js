@@ -169,7 +169,8 @@ function comboBoxScript(){
   //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
 	// });
 
-	$('ul:not(#tabList, .pagination)').css({'z-index' : 999999, 'position' : 'relative'});
+	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative'});
+	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative', 'background-color': '#40E0D0'});
   $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
 	// $('li').css({'z-index' : 999999, 'position' : 'relative'});
 	// $('.dropdown').css({'z-index' : 999999, 'position' : 'relative'});
@@ -178,8 +179,10 @@ function comboBoxScript(){
 	$("#sample_conds_combobox").on('change', function () {
     alert($(this).val());
 });
-
 }
+
+
+
 
 
 function removeConditionDetails($sample_id, $cond_id) {
@@ -206,22 +209,21 @@ function updateConditionDetails($sample_id) {
 		  $i += 1;
 			condSampleList.push(this.value);
 
-			if(($i % 5) == 0){
-				treatmentList.push(condSampleList[0]);
-				concentrationList.push(condSampleList[1]);
+			if(($i % 6) == 0){
+				treatmentList.push(condSampleList[1]);
+				concentrationList.push(condSampleList[2] + ' ' + condSampleList[3] +
+				 ' ' + condSampleList[4] + ' ' + condSampleList[5]);
 
 				//alert($sample_id + "  " + condSampleList[0]+ "  " + condSampleList[1]+ "  " + condSampleList[2] + "  " + condSampleList[3] + "  " + condSampleList[4]);
 				$.ajax({ type: "POST",
 					url: BASE_PATH+"/public/ajax/encode_tables.php",
-					data: { p: "addOrUpdateCondSample", sample_id:$sample_id, new_cond_id:condSampleList[0],
-					   concentration:condSampleList[1], duration:condSampleList[3],
-					  concentration_unit:"" + condSampleList[2] + "", duration_unit:"" + condSampleList[4] + ""},
+					data: { p: "addOrUpdateCondSample", sample_id:'' + $sample_id, new_cond_id:'' + condSampleList[0],
+					   concentration:'' + condSampleList[2], duration:'' + condSampleList[4],
+					  concentration_unit:'' + condSampleList[3], duration_unit:'' + condSampleList[5]},
 					async: false,
 					success : function(s)
 					{
 				    console.log(s);
-						$("#treatment_list" + $sample_id).html(treatmentList.join(", "));
-						$("#concentration_list" + $sample_id).html(concentrationList.join(", "));
 					},
           error: function(s){
 						console.log(s);
@@ -232,7 +234,6 @@ function updateConditionDetails($sample_id) {
 
 				condSampleList = [];
 			}
-
 
 	    //alert(this.value);
 	});
@@ -262,7 +263,7 @@ function createNewTreatment(){
 			console.log(s);
 		}
 	});
-
+	//$("#table_div_encode_stream_conditions").load(location.href+" #table_div_encode_stream_conditions>*","");
   refreshConditionsTable();
 }
 
@@ -271,6 +272,7 @@ function getEditConditionHTML($cond_id, $condition, $cond_symbol,
 
 	html_to_return = '<div id="editCondition' + $cond_id + '">';
 	html_to_return += '<input type="hidden" value="' + $cond_id + '">';
+	html_to_return += '<input type="hidden" value="' + $cond_symbol + '">';
 	html_to_return += $condition + ' (' + $cond_symbol + ')<br/>';
 	html_to_return += 'Concentration: <input style="margin:0 20px 0 20px;" type="text" class="concentration" value="' +
 		$concentration + '">';

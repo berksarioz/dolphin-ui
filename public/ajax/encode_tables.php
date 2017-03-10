@@ -91,7 +91,6 @@ else if ($p == 'createTreatmentWithSelection')
 
   $query_str = "
     INSERT INTO `ngs_conds`(`cond_symbol`, `condition`) VALUES ('$new_treatment_symbol', '$new_treatment_name')
-
     ";
 
 	$data=$query->queryTable($query_str);
@@ -199,8 +198,15 @@ else if($p == 'getBiosamples')
 		ngs_biosample_term.id as biosample_id, ngs_lanes.id as lane_id, ngs_biosample_term.biosample_type, ngs_lanes.date_received,
 		ngs_treatment.id as treatment_id, ngs_lanes.date_submitted, ngs_biosample_acc.biosample_acc, ngs_samples.biosample_uuid, ngs_treatment.name,
 		biosample_derived_from, starting_amount, starting_amount_units, ngs_protocols.id as protocol_id, ngs_protocols.starting_amount_id, source,
-		GROUP_CONCAT(ngs_sample_conds.cond_id SEPARATOR ', ') as treatment_list,
-		GROUP_CONCAT(ngs_sample_conds.concentration SEPARATOR ', ') as concentration_list
+		GROUP_CONCAT(ngs_conds.cond_symbol SEPARATOR ', ') as treatment_list,
+		GROUP_CONCAT(
+		  DISTINCT CONCAT(ngs_sample_conds.concentration,' ',
+		  ngs_sample_conds.concentration_unit,' ',
+		  ngs_sample_conds.duration,' ',
+		  ngs_sample_conds.duration_unit
+		  )
+		  SEPARATOR ', '
+		) as concentration_list
 		FROM ngs_samples
 		LEFT JOIN ngs_biosample_term
 		ON ngs_samples.biosample_id = ngs_biosample_term.id
@@ -218,6 +224,8 @@ else if($p == 'getBiosamples')
 		ON ngs_source.id = ngs_samples.source_id
 		LEFT JOIN ngs_sample_conds
 		ON ngs_sample_conds.sample_id = ngs_samples.id
+		LEFT JOIN ngs_conds
+		ON ngs_sample_conds.cond_id = ngs_conds.id
 		WHERE ngs_samples.id in ($samples)
 		GROUP BY ngs_samples.id
 		");
