@@ -25,8 +25,14 @@
                                     <div class="chart" id="daily-bar-chart" style="height: 300px;"></div>
                                 </div><!-- /.box-body -->
                             </div><!-- /.box -->
-                            <?php echo $html->getBoxTable_stat("User", "Dolphin", "<th>Name</th><th>Lab</th><th>Count</th>"); ?>
-                            <?php echo $html->getBoxTable_stat("Service", "Dolphin", "<th>Service Name</th><th>The # of Submitted Services</th>"); ?>
+                            <?php $html->getBoxTable_stat("User", "Dolphin", "<th>Name</th><th>Lab</th><th>Count</th>"); ?>
+                            <?php echo $html->getRespBoxTableStreamNoExpand("Dolphin User Table",
+                             "dolphin_user_stream", ["Name", "Lab", "Count"],
+                             ["name", "lab", "count"]); ?>
+                            <?php $html->getBoxTable_stat("Service", "Dolphin", "<th>Service Name</th><th>The # of Submitted Services</th>"); ?>
+                            <?php echo $html->getRespBoxTableStreamNoExpand("Dolphin Service Table",
+                             "dolphin_service_stream", ["Service Name", "The # of Submitted Services"],
+                             ["servicename", "count"]); ?>
                         </div><!-- /.col (LEFT) -->
                         <div class="col-md-6">
                             <!-- BAR CHART -->
@@ -43,10 +49,15 @@
                                     <div class="chart" id="top-users-bar-chart" style="height: 300px;"></div>
                                 </div><!-- /.box-body -->
                             </div><!-- /.box -->
-                            <?php echo $html->getBoxTable_stat("Lab", "Dolphin", "<th>Lab</th><th>Count</th>"); ?>
-                            <?php echo $html->getBoxTable_stat("Job", "Dolphin", "<th>Job Name</th><th>The # of Submitted Jobs</th>"); ?>
+                            <?php $html->getBoxTable_stat("Lab", "Dolphin", "<th>Lab</th><th>Count</th>"); ?>
+                            <?php echo $html->getRespBoxTableStreamNoExpand("Dolphin Lab Table",
+                             "dolphin_lab_stream", ["Lab", "Count"],
+                             ["lab", "count"]); ?>
+                            <?php $html->getBoxTable_stat("Job", "Dolphin", "<th>Job Name</th><th>The # of Submitted Jobs</th>"); ?>
+                            <?php echo $html->getRespBoxTableStreamNoExpand("Dolphin Job Table",
+                             "dolphin_job_stream", ["Job Name", "The # of Submitted Jobs"],
+                             ["servicename", "count"]); ?>
                         </div><!-- /.col (RIGHT) -->
                     </div><!-- /.row -->
 
                 </section><!-- /.content -->
-

@@ -8,7 +8,7 @@ $(function() {
     "use strict";
     /* Morris.js Charts */
      var responseTopDolphinUsers = '';
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getTopUsers", type:"Dolphin" },
                      async: false,
@@ -47,7 +47,7 @@ $(function() {
             },
     function(start, end) {
         var responseTopDolphinUsers = '';
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getTopUsersTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
                      async: false,
@@ -66,7 +66,7 @@ $(function() {
 
     /* Morris.js Charts */
      var responseDaily = '';
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getDailyRuns" },
                      async: false,
@@ -88,24 +88,22 @@ $(function() {
         hideHover: 'auto'
     });
 
-     var userTable = $('#jsontable_User').dataTable(); 
-     $.ajax({ type: "GET",   
+     $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getUsersTime", type:"Dolphin" },
                      async: false,
                      success : function(s)
                      {
-                        userTable.fnClearTable();
+                       var all_objects = [];
                         for(var i = 0; i < s.length; i++) {
-                        userTable.fnAddData([
-                        s[i].name,
-                        s[i].lab,
-                        s[i].count                      
-                        ]);
+                        all_objects.push({name:s[i].name, lab:s[i].lab,
+                          count:s[i].count });
                         } // End For
+                        createStreamTable('dolphin_user_stream', all_objects, "",
+                          true, [10,20,50,100], 10, true, true);
                      }
             });
-    
+
      $('.daterange_User').daterangepicker(
             {
                 ranges: {
@@ -122,46 +120,37 @@ $(function() {
                 endDate: moment()
             },
     function(start, end) {
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getUsersTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
                      async: false,
                      success : function(s)
                      {
-                        userTable.fnClearTable();
                         for(var i = 0; i < s.length; i++) {
-                        userTable.fnAddData([
-                        s[i].name,
-                        s[i].lab,
-                        s[i].count                      
-                        ]);
                         } // End For
                      }
             });
 
     });
-     
-    userTable.fnSort( [ [2,'desc'] ] );
-    
-     
-    var labTable = $('#jsontable_Lab').dataTable();
-     
-     $.ajax({ type: "GET",   
+
+
+
+     $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getLabsTime", type:"Dolphin" },
                      async: false,
                      success : function(s)
                      {
-                        labTable.fnClearTable();
+                       var all_objects = [];
                         for(var i = 0; i < s.length; i++) {
-                        labTable.fnAddData([
-                        s[i].lab,
-                        s[i].count                      
-                        ]);
+                        all_objects.push({lab:s[i].lab,
+                          count:s[i].count });
                         } // End For
+                        createStreamTable('dolphin_lab_stream', all_objects, "",
+                          true, [10,20,50,100], 10, true, true);
                      }
             });
-     
+
     $('.daterange_Lab').daterangepicker(
             {
                 ranges: {
@@ -178,46 +167,39 @@ $(function() {
                 endDate: moment()
             },
     function(start, end) {
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getLabsTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
                      async: false,
                      success : function(s)
                      {
-                        labTable.fnClearTable();
                         for(var i = 0; i < s.length; i++) {
-                        labTable.fnAddData([
-                        s[i].lab,
-                        s[i].count                      
-                        ]);
                         } // End For
                      }
             });
 
     });
-    labTable.fnSort( [ [1,'desc'] ] );
-    
+
 	/*##### SERVICE TABLE #####*/
-    
-    var serviceTable = $('#jsontable_Service').dataTable();
-    
-    $.ajax({ type: "GET",   
+
+
+    $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/adminstatquerydb.php",
                      data: { p: "getServiceTime", type:"Dolphin" },
                      async: false,
                      success : function(s)
                      {
 						console.log(s);
-                        serviceTable.fnClearTable();
+                        var all_objects = [];
                         for(var i = 0; i < s.length; i++) {
-                        serviceTable.fnAddData([
-                        s[i].servicename,
-                        s[i].count                      
-                        ]);
+                        all_objects.push({servicename:s[i].servicename,
+                          count:s[i].count });
                         } // End For
+                        createStreamTable('dolphin_service_stream', all_objects, "",
+                          true, [10,20,50,100], 10, true, true);
                      }
             });
-    
+
     $('.daterange_Service').daterangepicker(
             {
                 ranges: {
@@ -234,46 +216,38 @@ $(function() {
                 endDate: moment()
             },
     function(start, end) {
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/adminstatquerydb.php",
                      data: { p: "getServiceTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
                      async: false,
                      success : function(s)
                      {
 						console.log(s);
-                        serviceTable.fnClearTable();
                         for(var i = 0; i < s.length; i++) {
-                        serviceTable.fnAddData([
-                        s[i].servicename,
-                        s[i].count                      
-                        ]);
                         } // End For
                      }
             });
     });
-    
-    serviceTable.fnSort( [ [1,'desc'] ] );
-    
+
+
     /*##### JOB TABLE #####*/
-    
-    var jobTable = $('#jsontable_Job').dataTable();
-    
-    $.ajax({ type: "GET",   
+
+
+    $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getJobTime", type:"Dolphin" },
                      async: false,
                      success : function(s)
                      {
-                        jobTable.fnClearTable();
+                       var all_objects = [];
                         for(var i = 0; i < s.length; i++) {
-                        jobTable.fnAddData([
-                        s[i].servicename,
-                        s[i].count                      
-                        ]);
+                        all_objects.push({servicename:s[i].servicename,
+                          count:s[i].count });
                         } // End For
-                     }
+                        createStreamTable('dolphin_job_stream', all_objects, "",
+                          true, [10,20,50,100], 10, true, true);                     }
             });
-    
+
     $('.daterange_Job').daterangepicker(
             {
                 ranges: {
@@ -290,24 +264,18 @@ $(function() {
                 endDate: moment()
             },
     function(start, end) {
-            $.ajax({ type: "GET",   
+            $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
                      data: { p: "getJobTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
                      async: false,
                      success : function(s)
                      {
-                        jobTable.fnClearTable();
                         for(var i = 0; i < s.length; i++) {
-                        jobTable.fnAddData([
-                        s[i].servicename,
-                        s[i].count                      
-                        ]);
                         } // End For
                      }
             });
 
     });
-	
-    jobTable.fnSort( [ [1,'desc'] ] );
-	
+
+
 });

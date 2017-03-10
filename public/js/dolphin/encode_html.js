@@ -3,6 +3,330 @@ var sampleRuns = {};
 var runParams = {};
 var active_runs = [];
 
+function getConditionDataForTable(){
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: 'getConditionData' },
+		async: false,
+		success : function(s)
+		{
+			console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
+			console.log(s);
+			groupsStreamTable = createStreamTable('encode_stream_conditions', s, "", true, [10,20,50,100], 20, true, true);
+		}
+	});
+}
+getConditionDataForTable();
+
+function refreshConditionsTable(){
+	var save = $('#table_div_encode_stream_conditions table').detach();
+	$('#table_div_encode_stream_conditions').empty().append(save);
+	getConditionDataForTable();
+}
+
+
+function comboBoxScript(){
+	$( function() {
+	  $.widget( "custom.combobox", {
+	    _create: function() {
+	      this.wrapper = $( "<span>" )
+	        .addClass( "custom-combobox" )
+	        .insertAfter( this.element );
+
+	      this.element.hide();
+	      this._createAutocomplete();
+	      this._createShowAllButton();
+	    },
+
+	    _createAutocomplete: function() {
+	      var selected = this.element.children( ":selected" ),
+	        value = selected.val() ? selected.text() : "";
+
+	      this.input = $( "<input>" )
+	        .appendTo( this.wrapper )
+	        .val( value )
+	        .attr( "title", "" )
+	        .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+	        .autocomplete({
+	          delay: 0,
+	          minLength: 0,
+	          source: $.proxy( this, "_source" )
+	        })
+	        .tooltip({
+	          classes: {
+	            "ui-tooltip": "ui-state-highlight"
+	          }
+	        });
+
+	      this._on( this.input, {
+	        autocompleteselect: function( event, ui ) {
+	          ui.item.option.selected = true;
+	          this._trigger( "select", event, {
+	            item: ui.item.option
+	          });
+	        },
+
+	        autocompletechange: "_removeIfInvalid"
+	      });
+	    },
+
+	    _createShowAllButton: function() {
+	      var input = this.input,
+	        wasOpen = false;
+
+	      $( "<a>" )
+	        .attr( "tabIndex", -1 )
+	        .attr( "title", "Show All Items" )
+	        .tooltip()
+	        .appendTo( this.wrapper )
+	        .button({
+	          icons: {
+	            primary: "ui-icon-triangle-1-s"
+	          },
+	          text: false
+	        })
+	        .removeClass( "ui-corner-all" )
+	        .addClass( "custom-combobox-toggle ui-corner-right" )
+	        .on( "mousedown", function() {
+	          wasOpen = input.autocomplete( "widget" ).is( ":visible" );
+	        })
+	        .on( "click", function() {
+	          input.trigger( "focus" );
+
+	          // Close if already visible
+	          if ( wasOpen ) {
+	            return;
+	          }
+
+	          // Pass empty string as value to search for, displaying all results
+	          input.autocomplete( "search", "" );
+	        });
+	    },
+
+	    _source: function( request, response ) {
+	      var matcher = new RegExp( $.ui.autocomplete.escapeRegex(request.term), "i" );
+	      response( this.element.children( "option" ).map(function() {
+	        var text = $( this ).text();
+	        if ( this.value && ( !request.term || matcher.test(text) ) )
+	          return {
+	            label: text,
+	            value: text,
+	            option: this
+	          };
+	      }) );
+	    },
+
+	    _removeIfInvalid: function( event, ui ) {
+
+	      // Selected an item, nothing to do
+	      if ( ui.item ) {
+	        return;
+	      }
+
+	      // Search for a match (case-insensitive)
+	      var value = this.input.val(),
+	        valueLowerCase = value.toLowerCase(),
+	        valid = false;
+	      this.element.children( "option" ).each(function() {
+	        if ( $( this ).text().toLowerCase() === valueLowerCase ) {
+	          this.selected = valid = true;
+	          return false;
+	        }
+	      });
+
+	      // Found a match, nothing to do
+	      if ( valid ) {
+	        return;
+	      }
+
+	      // Remove invalid value
+	      this.input
+	        .val( "" )
+	        .attr( "title", value + " didn't match any item" )
+	        .tooltip( "open" );
+	      this.element.val( "" );
+	      this._delay(function() {
+	        this.input.tooltip( "close" ).attr( "title", "" );
+	      }, 2500 );
+	      this.input.autocomplete( "instance" ).term = "";
+	    },
+
+	    _destroy: function() {
+	      this.wrapper.remove();
+	      this.element.show();
+	    }
+	  });
+
+	  $( "#sample_conds_combobox" ).combobox();
+	  $( "#toggle" ).on( "click", function() {
+	    $( "#sample_conds_combobox" ).toggle();
+	  });
+	} );
+	// $('#sample_conds_combobox').children('li').each(function () {
+  //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
+	// });
+	// $('#sample_conds_combobox').children('ul').each(function () {
+  //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
+	// });
+
+	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative'});
+	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative', 'background-color': '#40E0D0'});
+  $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
+	// $('li').css({'z-index' : 999999, 'position' : 'relative'});
+	// $('.dropdown').css({'z-index' : 999999, 'position' : 'relative'});
+	// $('.modal-body').css({'overflow' : 'visible'});
+
+	$("#sample_conds_combobox").on('change', function () {
+    alert($(this).val());
+});
+}
+
+
+
+
+
+function removeConditionDetails($sample_id, $cond_id) {
+		$.ajax({ type: "POST",
+			url: BASE_PATH+"/public/ajax/encode_tables.php",
+			data: { p: "removeCondSample", sample_id:$sample_id,
+			cond_id:$cond_id },
+			async: false,
+			success : function(s)
+			{
+		    console.log(s);
+			}
+		});
+		$('#editCondition' + $cond_id).remove();
+}
+
+
+function updateConditionDetails($sample_id) {
+	var $i = 0
+	var condSampleList = [];
+	var treatmentList = [];
+	var concentrationList = [];
+	$('#editConditionDetails input').each(function () {
+		  $i += 1;
+			condSampleList.push(this.value);
+
+			if(($i % 6) == 0){
+				treatmentList.push(condSampleList[1]);
+				concentrationList.push(condSampleList[2] + ' ' + condSampleList[3] +
+				 ' ' + condSampleList[4] + ' ' + condSampleList[5]);
+
+				//alert($sample_id + "  " + condSampleList[0]+ "  " + condSampleList[1]+ "  " + condSampleList[2] + "  " + condSampleList[3] + "  " + condSampleList[4]);
+				$.ajax({ type: "POST",
+					url: BASE_PATH+"/public/ajax/encode_tables.php",
+					data: { p: "addOrUpdateCondSample", sample_id:'' + $sample_id, new_cond_id:'' + condSampleList[0],
+					   concentration:'' + condSampleList[2], duration:'' + condSampleList[4],
+					  concentration_unit:'' + condSampleList[3], duration_unit:'' + condSampleList[5]},
+					async: false,
+					success : function(s)
+					{
+				    console.log(s);
+						$("#treatment_list" + $sample_id).html(treatmentList.join(", "));
+						$("#concentration_list" + $sample_id).html(concentrationList.join(", "));
+					},
+          error: function(s){
+						console.log(s);
+						$("#treatment_list" + $sample_id).html(treatmentList.join(", "));
+						$("#concentration_list" + $sample_id).html(concentrationList.join(", "));
+          }
+				});
+
+				condSampleList = [];
+			}
+
+	    //alert(this.value);
+	});
+}
+
+function getCreateTreatmentHTML(){
+  html_to_return = '<div id="createNewCondition">';
+	html_to_return += 'Treatment Symbol: <input style="margin:0 20px 0 20px;" type="text" id="new_treatment_symbol" value="">';
+	html_to_return += '<br/>';
+	html_to_return += 'Treatment Name: <input style="margin:20px 20px 0 20px; width:25em" type="text" id="new_treatment_name" value="">';
+	html_to_return += '</div>';
+	return html_to_return;
+
+}
+
+function createNewTreatment(){
+	$new_treatment_name = $('#new_treatment_name').val();
+	$new_treatment_symbol = $('#new_treatment_symbol').val();
+	$.ajax({ type: "POST",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "createTreatmentWithSelection",
+		  new_treatment_name:$new_treatment_name,
+		  new_treatment_symbol:$new_treatment_symbol},
+		async: false,
+		success : function(s)
+		{
+			console.log(s);
+		}
+	});
+	//$("#table_div_encode_stream_conditions").load(location.href+" #table_div_encode_stream_conditions>*","");
+  refreshConditionsTable();
+}
+
+function getEditConditionHTML($cond_id, $condition, $cond_symbol,
+	$concentration, $duration, $sample_id, $concentration_unit, $duration_unit){
+
+	html_to_return = '<div id="editCondition' + $cond_id + '">';
+	html_to_return += '<input type="hidden" value="' + $cond_id + '">';
+	html_to_return += '<input type="hidden" value="' + $cond_symbol + '">';
+	html_to_return += $condition + ' (' + $cond_symbol + ')<br/>';
+	html_to_return += 'Concentration: <input style="margin:0 20px 0 20px;" type="text" class="concentration" value="' +
+		$concentration + '">';
+	html_to_return += 'Concentration Unit: <input style="margin:0 20px 0 20px;" type="text" class="concentration_unit" value="' +
+		$concentration_unit + '">';
+	html_to_return += 'Duration: <input style="margin:0 20px 0 20px;" type="text" class="duration" value="' +
+		$duration + '">';
+	html_to_return += 'Duration Unit: <input style="margin:0 20px 0 20px;" type="text" class="duration_unit" value="' +
+			$duration_unit + '">';
+
+	html_to_return += '<button type="button" ' +
+			'class="btn btn-warning" onclick="removeConditionDetails(' +
+			 $sample_id + ',' + $cond_id + ')">Remove</button>' + '<br/><br/>';
+	html_to_return += '</div>';
+	return html_to_return;
+}
+
+function addConditionToModal($sample_id) {
+	var editConditionDetails = document.getElementById('editConditionDetails');
+	var newCondID =  $('#conditionInputModal').val();
+
+	 $.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "getConditionsDetailsWithID", new_cond_id:newCondID },
+		async: false,
+		success : function(s)
+		  {
+				editConditionDetails.innerHTML += getEditConditionHTML(newCondID,
+					s[0].condition, s[0].cond_symbol, '', '', $sample_id, '', '');
+
+				// editConditionDetails.innerHTML += '<input type="hidden" value="' + newCondID + '">';
+				// editConditionDetails.innerHTML += s[0].condition + ' (' + s[0].cond_symbol + ')<br/>';
+				// editConditionDetails.innerHTML += 'Concentration: <input style="margin:0 20px 0 20px;" type="text" class="concentration" value="">' +
+				// 	'Duration: <input style="margin:0 20px 0 20px;" type="text" class="duration" value="">' +
+				// 	'<br/><br/>';
+		  }
+	});
+
+}
+
+function selectizeTreatmentsFromDatabase() {
+	$('.conditions_from_database').selectize({
+		create: false,
+		sortField: {
+			field: 'text',
+			direction: 'asc'
+		},
+		dropdownParent: 'body'
+	});
+}
+selectizeTreatmentsFromDatabase();
+
 function responseCheck(data) {
 	for(var x = 0; x < Object.keys(data).length; x++){
 		if (data[Object.keys(data)[x]] == null) {
@@ -39,7 +363,7 @@ function loadInEncodeSubmissions(){
 			}
 		}
 	});
-	
+
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
 		data: { p: "getSubmissions" },
@@ -82,26 +406,93 @@ function loadInEncodeTables(){
 	}
 }
 
+function comboboxSelectionChanged(){
+	$('#conditionInputModal').val($('#sample_conds_combobox').val());
+}
+
+function loadSamplesNew($sample_id, $samplename){
+	var addConditions = document.getElementById('add_conditions_from_database');
+	var editConditionDetails = document.getElementById('editConditionDetails');
+	var editConditionsFooter = document.getElementById('editConditionsFooter');
+	var addConditionsSampleName = document.getElementById('addConditionsSampleName');
+
+	editConditionDetails.innerHTML = '';
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/encode_tables.php",
+		data: { p: "getConditionsForSample", sample_id:$sample_id },
+		async: false,
+		success : function(s)
+		{
+			console.log("++++++++-------++++++++-------++++++++-------++++++++-------");
+			console.log(s);
+			editConditionDetails.innerHTML = '<form id="editConditionsForm">';
+      addConditionsSampleName.innerHTML = '<h3>' + $samplename + '</h3>';
+			addConditionsSampleName.innerHTML += '<div onchange="comboboxSelectionChanged()" class="combobox"><div class="ui-widget"><label>Select Treatment: </label><select id="sample_conds_combobox"><option value="">Select one...</option></select></div></div>';
+
+			addConditionsSampleName.innerHTML += '<input style="display:none;" type="text" id="conditionInputModal" value="">';
+			addConditionsSampleName.innerHTML += '<button type="button" ' +
+				'class="btn btn-primary" ' +
+				'onclick="addConditionToModal(' + $sample_id + ')">Add Condition</button>';
+
+			for(var x = 0; x < s.length; x++){
+
+				editConditionDetails.innerHTML += getEditConditionHTML(s[x].cond_id,
+					s[x].condition, s[x].cond_symbol, s[x].concentration, s[x].duration,
+				  $sample_id, s[x].concentration_unit, s[x].duration_unit);
+
+
+			}
+			editConditionsFooter.innerHTML = '<button type="button" ' +
+				'class="btn btn-primary" data-dismiss="modal" ' +
+				'onclick="updateConditionDetails(' + $sample_id + ')">Save</button>' +
+				'<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>';
+			editConditionDetails.innerHTML += '</form>';
+
+
+
+			$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/encode_tables.php",
+				data: { p: 'getConditionData' },
+				async: false,
+				success : function(s)
+				{
+					for(var x = 0; x < s.length; x++){
+            $( "#sample_conds_combobox" ).append('<option id="' + s[x].id +
+						  '" value="' + s[x].id + '">' + s[x].condition +
+							'</option>');
+					}
+					comboBoxScript();
+				}
+			});
+		}
+	});
+  comboBoxScript();
+}
+
 function loadSamples(){
 	var treatmentSelect = document.getElementById('addSampleTreatment')
 	var antibodySelect = document.getElementById('addSampleAntibody')
 	var biosampleSelect = document.getElementById('selectBiosample')
 	var experimentSelect = document.getElementById('selectExperiment')
-	
+
+
 	var linkBiosample = document.getElementById('linkBiosample')
 	var linkExperiment = document.getElementById('linkExperiment')
-	
+
+
+
 	var ret_biosample_accs = [];
 	var ret_experiment_accs = [];
-	
+
 	treatmentSelect.innerHTML = ''
 	antibodySelect.innerHTML = ''
 	biosampleSelect.innerHTML = ''
 	experimentSelect.innerHTML = ''
-	
+
+
 	linkBiosample.innerHTML = '<option value="none">* New Accession *</option>';
 	linkExperiment.innerHTML = '<option value="none">* New Accession *</option>';
-	
+
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
 		data: { p: "getSamples", samples:basket_info },
@@ -127,13 +518,15 @@ function loadSamples(){
 					"<button id=\"sample_removal_"+s[x].sample_id+"\" class=\"btn btn-danger btn-xs pull-right\" onclick=\"manageChecklists('"+s[x].sample_id+"', 'sample_checkbox')\"><i class=\"fa fa-times\"></i></button>",
 					"<input type=\"checkbox\" class=\"pull-right\" onclick=\"allCheckboxCheck("+s[x].sample_id+", 'sample')\">"
 				]);
-				
+
 				//	Modal
 				treatmentSelect.innerHTML += '<option id="treatment_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 				antibodySelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 				biosampleSelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
 				experimentSelect.innerHTML += '<option id="antibody_'+s[x].samplename+'" value="'+s[x].sample_id+'">'+s[x].samplename+'</option>'
-				
+
+
+
 				if (ret_biosample_accs.indexOf(s[x].biosample_acc) == -1) {
 					ret_biosample_accs.push(s[x].biosample_acc)
 				}
@@ -141,7 +534,7 @@ function loadSamples(){
 					ret_experiment_accs.push(s[x].experiment_acc)
 				}
 			}
-			
+
 		}
 	});
 	for(var x in ret_biosample_accs){
@@ -233,6 +626,8 @@ function loadTreatments() {
 	});
 }
 
+
+
 function loadBiosamples() {
 	$.ajax({ type: "GET",
 		url: BASE_PATH+"/public/ajax/encode_tables.php",
@@ -248,8 +643,8 @@ function loadBiosamples() {
 				biosampletable.fnAddData([
 					s[x].samplename,
 					"<p onclick=\"editBox("+1+", '"+s[x].sample_id+"', 'biosample_derived_from', 'ngs_samples', this, '', '', '')\">"+s[x].biosample_derived_from+"</p>",
-					"<p onclick=\"editBox("+1+", '"+s[x].treatment_id+"', 'name', 'ngs_treatment', this, 'ngs_samples', '"+s[x].sample_id+"', 'treatment_id')\">"+s[x].name+"</p>",
-					s[x].duration + " " + s[x].duration_units,
+					"<div id=\"treatment_list" +s[x].sample_id + "\">" + s[x].treatment_list + "</div>" + "<a style=\"margin:10px\" href=\"#\"><span class=\"glyphicon glyphicon-edit\" onClick=\"editConditions(); loadSamplesNew(" + s[x].sample_id + ", '" + s[x].samplename + "')\"/></span></a>",
+					"<div id=\"concentration_list" +s[x].sample_id + "\">" + s[x].concentration_list + "</div>",
 					"<p onclick=\"editEncodeBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_name', 'ngs_biosample_term', this, 'ngs_samples', '"+s[x].sample_id+"', 'biosample_id', 'biosample')\">"+s[x].biosample_term_name+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_term_id', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_term_id+"</p>",
 					"<p onclick=\"editBox("+1+", '"+s[x].biosample_id+"', 'biosample_type', 'ngs_biosample_term', this, '', '', '')\">"+s[x].biosample_type+"</p>",
@@ -393,7 +788,7 @@ function loadFiles() {
 			}
 		}
 	});
-	
+
 	var runtable = $('#jsontable_encode_runs').dataTable();
 	var keys = Object.keys(sampleRuns)
 	runtable.fnClearTable();
@@ -416,11 +811,11 @@ function loadFiles() {
 			"<select id=\""+keys[x]+"_dirselect\" style=\"display:none\">"+directories+"</select><p id=\""+keys[x]+"_dirvalue\">"+runParams[runs[0]].outdir+"</p>",
 		]);
 	}
-	
+
 	if (keys.length > 0) {
 		runSelectionEncode(document.getElementById(keys[0]+'_select'))
 	}
-	
+
 	var selectLength = keys.length
 	console.log(selectLength)
 	if (selectLength == 0) {
@@ -432,7 +827,7 @@ function loadFiles() {
 	}else{
 		document.getElementById("addSampleFiles").size = ((509)/18);
 	}
-	
+
 }
 
 function loadPreviousFiles(){
@@ -519,7 +914,7 @@ function createRunOptions(active_runs) {
 	console.log(active_runs)
 	var options_parse = {};
 	var options_select = "";
-	
+
 	for(var x = 0; x < active_runs.length; x++){
 		options_parse = JSONOptionParse(active_runs[x], options_parse)
 	}
@@ -541,7 +936,7 @@ function createRunOptions(active_runs) {
 function JSONOptionParse(run_id, options_parse){
 	var pipeline = runParams[run_id].pipeline
 	var commonind = runParams[run_id].commonind
-	if (pipeline != undefined || pipeline != []) {
+	if (typeof(pipeline) != "undefined" && pipeline != []) {
 		if (runParams[run_id].commonind != "" && runParams[run_id].commonind != "no" && runParams[run_id].commonind != "none") {
 			options_parse = mergeDedupChecks(runParams[run_id], run_id, merged, 'seqmapping', options_parse, commonind)
 		}
@@ -587,7 +982,7 @@ function mergeDedupChecks(pipeline, run_id, merged, type, options_parse, commoni
 			options_parse = optionsCheck(options_parse, '/seqmapping/'+split_common[x].toLowerCase()+'/', run_id, "fastq")
 		}
 	}
-	
+
 	if (dedup && merged) {
 		if (type == 'rsem') {
 			options_parse = optionsCheck(options_parse, '/dedupmergersem_ref.transcipts/', run_id, "bam")
@@ -737,6 +1132,13 @@ function linkBiosample() {
 	addModalType = 'biosample'
 }
 
+function editConditions() {
+	$('#editConditionsModal').modal({
+		show: true
+	});
+	addModalType = 'condition'
+}
+
 function linkExperiment() {
 	$('#linkExperimentModal').modal({
 		show: true
@@ -749,6 +1151,14 @@ function addTreatment(){
 		show: true
 	});
 	addModalType = 'treatment'
+}
+
+function createTreatment(){
+	$('#createTreatmentModal').modal({
+		show: true
+	});
+	$('#createTreatment').html(getCreateTreatmentHTML());
+	addModalType = 'create_treatment'
 }
 
 function addAntibody(){
@@ -825,10 +1235,10 @@ function createLink(type) {
 		async: false,
 		success : function(s)
 		{
-			
+
 		}
 	});
-	
+
 }
 
 function viewEncodeLog(log){
