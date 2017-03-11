@@ -60,14 +60,14 @@ if($p == 'updateDatabase')
 	if(in_array($type, $normalized)){
 		$type_list = json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
 		if($type_list != array()){
-			$data=$query->runSQL("UPDATE $table SET ".$type."_id = ".$type_list[0]->id." WHERE id = '$id'"); 	
+			$data=$query->runSQL("UPDATE $table SET ".$type."_id = ".$type_list[0]->id." WHERE id = '$id'");
 		}else if ($value = ''){
 			$data=$query->runSQL("UPDATE $table SET ".$type."_id = NULL WHERE id = '$id'");
 		}else{
 			$query->runSQL("INSERT INTO ngs_".$type." ($type) VALUES ('$value')");
 			$insert_id= json_decode($query->queryTable("SELECT id FROM ngs_".$type." WHERE $type = '$value'"));
 			$data=$query->runSQL("UPDATE $table SET ".$type."_id = '".$insert_id[0]->id."' WHERE id = '$id'");
-		}	
+		}
 	}else{
 		if ($value == ''){
 			$data=$query->runSQL("UPDATE $table SET $table.$type = NULL WHERE id = '$id'");
@@ -86,11 +86,11 @@ if($p == 'updateDatabaseEncode')
 	if (isset($_GET['parent'])){$parent = $_GET['parent'];}
 	if (isset($_GET['parent_id'])){$parent_id = $_GET['parent_id'];}
 	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
-	
+
 	if(in_array($type, $normalized)){
 		$type_list = json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
 		if($type_list != array()){
-			$data=$query->runSQL("UPDATE $parent SET $parent_child = ".$type_list[0]->id." WHERE id = $parent_id"); 	
+			$data=$query->runSQL("UPDATE $parent SET $parent_child = ".$type_list[0]->id." WHERE id = $parent_id");
 		}else if ($value == ''){
 			$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = NULL WHERE id = $parent_id");
 		}else{
@@ -115,11 +115,11 @@ if($p == 'updateDatabaseMultiEncode')
 	if (isset($_GET['value'])){$value = $_GET['value'];}
 	if (isset($_GET['parent'])){$parent = $_GET['parent'];}
 	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
-	
+
 	if(in_array($type, $normalized)){
 		$type_list = json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
 		if($type_list != array()){
-			$data=$query->runSQL("UPDATE $parent SET $parent_child = ".$type_list[0]->id." WHERE id in ($id)"); 	
+			$data=$query->runSQL("UPDATE $parent SET $parent_child = ".$type_list[0]->id." WHERE id in ($id)");
 		}else if ($value == ''){
 			$data=$query->runSQL("UPDATE $parent SET ".$parent_child." = NULL WHERE id in ($id)");
 		}else{
@@ -140,7 +140,7 @@ else if($p == 'checkPerms')
 	if (isset($_GET['id'])){$id = $_GET['id'];}
 	if (isset($_GET['uid'])){$uid = $_GET['uid'];}
 	if (isset($_GET['table'])){$table = $_GET['table'];}
-	
+
 	$group_id = json_decode($query->queryTable("SELECT group_id, owner_id FROM $table WHERE id = $id"));
 	$user_pass = json_decode($query->queryTable("SELECT u_id FROM user_group WHERE g_id = ".$group_id[0]->group_id." and u_id = $uid"));
 	if($user_pass[0]->u_id == $uid || $_SESSION['uid'] == 1){
@@ -183,18 +183,18 @@ else if($p == 'deleteSelected')
 	if (isset($_GET['samples'])){$samples = $_GET['samples'];}
 	if (isset($_GET['lanes'])){$lanes = $_GET['lanes'];}
 	if (isset($_GET['experiments'])){$experiments = $_GET['experiments'];}
-	
+
 	//	Deleted_Samples table
 	$query->runSQL("INSERT INTO ngs_deleted_samples (sample_id, samplename, lane_id, experiment_series_id, user_delete, date)
 					SELECT id, samplename, lane_id, series_id, ".$_SESSION['uid'].", NOW()
 					from ngs_samples
 					where id in ($samples)
 				   ");
-	
+
 	//	RUN IDS
 	$sample_run_ids=json_decode($query->queryTable("SELECT DISTINCT run_id FROM ngs_runlist WHERE sample_id IN ($samples)"));
 	$lane_run_ids=json_decode($query->queryTable("SELECT DISTINCT run_id FROM ngs_runlist WHERE sample_id IN (SELECT id from ngs_samples WHERE lane_id in ($lanes))"));
-	
+
 	$all_run_ids = array();
 	foreach($sample_run_ids as $sri){
 		if(!in_array($sri->run_id, $all_run_ids)){
@@ -206,7 +206,7 @@ else if($p == 'deleteSelected')
 			array_push($all_run_ids, $lri->run_id);
 		}
 	}
-	
+
 	$clusteruser = json_decode($query->queryTable("SELECT clusteruser FROM users WHERE id = '".$_SESSION['uid']."'"));
 	$samplenames = json_decode($query->queryTable("SELECT samplename FROM ngs_samples WHERE id in ($samples)"));
 	$samplename_array = array();
@@ -218,15 +218,15 @@ else if($p == 'deleteSelected')
 		$outdir=json_decode($query->queryTable("SELECT outdir FROM ngs_runparams WHERE id = $ari"));
 		$data = $funcs->removeAllSampleSuccessFiles($outdir[0]->outdir, $samplename_array, $clusteruser[0]->clusteruser);
 	}
-	
+
 	//	GATHER DIRS
 	$dirs=json_decode($query->queryTable("SELECT id FROM ngs_dirs WHERE id IN (SELECT dir_id FROM ngs_fastq_files WHERE sample_id IN ( $samples ))"));
-	
+
 	//	EXPERIMENT SERIES
 	if ($experiments != ""){
 		$query->runSQL("DELETE FROM ngs_experiment_series WHERE id IN ($experiments)");
 	}
-	
+
 	//	LANES
 	$query->runSQL("DELETE FROM ngs_temp_lane_files WHERE lane_id IN ($lanes)");
 	$query->runSQL("DELETE FROM ngs_fastq_files WHERE lane_id IN ($lanes)");
@@ -234,13 +234,13 @@ else if($p == 'deleteSelected')
 	$query->runSQL("DELETE FROM ngs_sample_conds WHERE sample_id IN (SELECT id FROM ngs_samples WHERE lane_id IN ($lanes))");
 	$query->runSQL("DELETE FROM ngs_samples WHERE lane_id IN ($lanes)");
 	$query->runSQL("DELETE FROM ngs_lanes WHERE id IN ($lanes)");
-	
+
 	//	SAMPLES
 	$query->runSQL("DELETE FROM ngs_temp_sample_files WHERE sample_id IN ($samples)");
 	$query->runSQL("DELETE FROM ngs_sample_conds WHERE sample_id IN ($samples)");
 	$query->runSQL("DELETE FROM ngs_fastq_files WHERE sample_id IN ($samples)");
 	$query->runSQL("DELETE FROM ngs_samples WHERE id IN ($samples)");
-	
+
 	//	REMOVE DIRS
 	foreach($dirs as $d){
 		$dir_return=json_decode($query->queryTable("SELECT sample_id FROM ngs_fastq_files WHERE dir_id = ".$d->id));
@@ -248,7 +248,7 @@ else if($p == 'deleteSelected')
 			$query->runSQL("DELETE FROM ngs_dirs WHERE id = ".$d->id);
 		}
 	}
-	
+
 	//	OBTAIN WKEY INFORMATION FOR REPORT_LIST REMOVAL //
 	$wkeys = array();
 	$wkeys_json = json_decode($query->queryTable("SELECT wkey FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")"));
@@ -257,19 +257,19 @@ else if($p == 'deleteSelected')
 			array_push($wkeys, $wj->wkey);
 		}
 	}
-	
+
 	//	USE WKEY FOR REPORT_LIST REMOVAL	//
 	foreach($wkeys as $w){
 		$query->runSQL("DELETE FROM report_list WHERE wkey = '$w'");
 		$query->runSQL("DELETE FROM ngs_wkeylist WHERE wkey = '$w'");
 	}
-	
+
 	//	OBTAIN PID IF RUNNING AND REMOVE	//
 	//	Check to make sure this is nessicary	//
-	
+
 	$workflow_pids = json_decode($query->queryTable("SELECT runworkflow_pid FROM ngs_runparams WHERE run_id IN (".implode(",", $all_run_ids).")"));
 	$wrapper_pids = json_decode($query->queryTable("SELECT wrapper_pid FROM ngs_runparams WHERE run_id IN (".implode(",", $all_run_ids).")"));
-	
+
 	foreach($workflow_pids as $wp){
 		$cmd = "ps -ef | grep '[".substr($wp->runworkflow_pid, 0, 1)."]".substr($wp->runworkflow_pid, 1)."'";
 		$pid_check = pclose(popen( $cmd, "r" ) );
@@ -284,7 +284,7 @@ else if($p == 'deleteSelected')
 			pclose(popen( "kill -9 ".$wp->wrapper_pid, "r" ) );
 		}
 	}
-	
+
 	//	RUNS
 	$insert_query = "
 	INSERT INTO ngs_deleted_runs
@@ -296,7 +296,7 @@ else if($p == 'deleteSelected')
 	last_modified_user
 	FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")";
 	$query->runSQL($insert_query);
-	
+
 	//	If sample is deleted, delete all run information
 	//$query->runSQL("DELETE FROM ngs_runlist WHERE run_id IN (".implode(",", $all_run_ids).")");
 	//$query->runSQL("DELETE FROM ngs_runparams WHERE id IN (".implode(",", $all_run_ids).")");
