@@ -130,14 +130,14 @@
 								<div class="tab-pane" id="browse_samples">
 									<div id="browse_sample_data_table" class="margin">
 										<?php if(!isset($_SESSION['ngs_samples']) || ($_SESSION['ngs_samples'] == '') ){
-											echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
+											// echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
 										} else{
-											echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
-																									"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
-																									"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
-																									["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
-																									"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
-																									"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
+											// echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
+											// 														"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
+											// 														"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
+											// 														["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
+											// 														"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
+											// 														"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
 										}?>
 									</div>
 								</div>
