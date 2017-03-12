@@ -1,4 +1,5 @@
 function fillSampleTable(){
+  if($('#table_div_samples').length == 0){
 		$.ajax({ type: "GET",
     url: BASE_PATH+"/public/ajax/search_browse.php",
 		data: { p: 'getSearchSamples' },
@@ -6,11 +7,12 @@ function fillSampleTable(){
 			success : function(s)
 			{
         console.log(s);
-				$('#browse_sample_data_table').html(s);
-        ngsTrackCopy();
+          $('#browse_sample_data_table').html(s);
+          ngsTrackCopy();
+
 			}
 		});
-
+  }
 }
 
 
@@ -318,40 +320,40 @@ function ngsTrackCopy(){
   			}
   		});
 
-  		/*##### LANES TABLE #####*/
-
-  		$.ajax({ type: "GET",
-  			url: BASE_PATH+"/public/ajax/ngs_tables.php",
-  			data: { p: "getLanes", q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
-  			async: false,
-  			success : function(s)
-  			{
-  				lane_data = s;
-  				var type = 'lanes';
-  				var queryType = "getLanes";
-  				if (window.location.href.split("/").indexOf('search') > -1) {
-  					generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
-  				}
-  			}
-  		});
-
-  		/*##### SERIES TABLE #####*/
-  		//var experiment_seriesTable = $('#jsontable_experiment_series').dataTable({responsive: true});
-
-  		$.ajax({ type: "GET",
-  			url: BASE_PATH+"/public/ajax/ngs_tables.php",
-  			data: { p: "getExperimentSeries", q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
-  			async: false,
-  			success : function(s)
-  			{
-  				experiment_series_data = s;
-  				var type = 'experiments';
-  				var queryType = "getExperimentSeries";
-  				if (window.location.href.split("/").indexOf('search') > -1) {
-  					generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
-  				}
-  			}
-  		});
+  		// /*##### LANES TABLE #####*/
+      //
+  		// $.ajax({ type: "GET",
+  		// 	url: BASE_PATH+"/public/ajax/ngs_tables.php",
+  		// 	data: { p: "getLanes", q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
+  		// 	async: false,
+  		// 	success : function(s)
+  		// 	{
+  		// 		lane_data = s;
+  		// 		var type = 'lanes';
+  		// 		var queryType = "getLanes";
+  		// 		if (window.location.href.split("/").indexOf('search') > -1) {
+  		// 			generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+  		// 		}
+  		// 	}
+  		// });
+      //
+  		// /*##### SERIES TABLE #####*/
+  		// //var experiment_seriesTable = $('#jsontable_experiment_series').dataTable({responsive: true});
+      //
+  		// $.ajax({ type: "GET",
+  		// 	url: BASE_PATH+"/public/ajax/ngs_tables.php",
+  		// 	data: { p: "getExperimentSeries", q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
+  		// 	async: false,
+  		// 	success : function(s)
+  		// 	{
+  		// 		experiment_series_data = s;
+  		// 		var type = 'experiments';
+  		// 		var queryType = "getExperimentSeries";
+  		// 		if (window.location.href.split("/").indexOf('search') > -1) {
+  		// 			generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+  		// 		}
+  		// 	}
+  		// });
 
   		if (segment == 'index' || segment == 'browse' || segment == 'details') {
   			console.log(experiment_series_data);
