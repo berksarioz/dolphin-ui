@@ -123,6 +123,7 @@
 																						"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
 																						"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
 							}?>
+						<input type="button" class="btn btn-success margin pull-right" value="Create Treatment" onClick="createTreatment()"/>
 						</div><!-- /.col (RIGHT) -->
 					</div><!-- /.row -->
 				</section><!-- /.content -->
