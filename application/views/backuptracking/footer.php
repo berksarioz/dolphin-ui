@@ -21,7 +21,7 @@
         <script src="<?php echo BASE_PATH?>/js/streamTable/vendors/mustache.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/ngs_help.js" type="text/javascript"></script>
 		<script>
-			$('.table-scrollable').css({'display' : 'inline-block', 'width' : '100%', 'overflow' : 'auto'});
+			$('.table-responsive').css({'display' : 'inline-block', 'width' : '100%', 'overflow' : 'auto'});
 		</script>
 	</body>
 </html>
