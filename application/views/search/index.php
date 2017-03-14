@@ -123,7 +123,48 @@
 																						"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
 																						"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
 							}?>
-						<input type="button" class="btn btn-success margin pull-right" value="Create Treatment" onClick="createTreatment()"/>
+							<input type="button" class="btn btn-success margin pull-right" value="Edit Selected" onClick="editMultipleSamples()"/>
+
+							<div class="modal fade" id="editMultipleSamplesModal" tabindex="-1" role="dialog" aria-labelledby="editMultipleSamplesModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+								  <div class="modal-content">
+									<div class="modal-header">
+									  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									  <h4 class="modal-title" id="editMultipleSamplesModalLabel">Edit Multiple Samples</h4>
+									</div>
+									<form name="editForm" role="form" method="post">
+										<div class="modal-body">
+											<fieldset>
+												<div class="form-group" style="overflow:scroll">
+
+													<div id="selectedSamplesList">
+														<label>Selected Samples:</label>
+													</div>
+													<input type="hidden" id="sessionUserID" value="<?php echo $_SESSION['uid'];?>">
+													<div id="editMultipleSamplesAdd">
+														<div id="organism">
+															<div onchange="comboboxSelectionChanged('organism')" class="combobox">
+																<div class="ui-widget">
+														  			<label>Select Organism: </label>
+														  			<select id="organism_combobox">
+														  				<option value="">Select one...</option>
+														  			</select>
+														  		</div>
+														  	</div>
+														</div>
+													</div>
+												</div>
+											</fieldset>
+										</div>
+										<div class="modal-footer">
+										  <button type="button" id="editSamplesConfirm" class="btn btn-primary" data-dismiss="modal" onclick="updateSelectedSamples();">Update</button>
+										  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+										</div>
+									</form>
+								  </div>
+								</div>
+							</div><!-- End Edit Selected modal -->
+
 						</div><!-- /.col (RIGHT) -->
 					</div><!-- /.row -->
 				</section><!-- /.content -->

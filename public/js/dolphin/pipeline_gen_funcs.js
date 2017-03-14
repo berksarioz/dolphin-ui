@@ -985,6 +985,7 @@ function addToDolphinBasket(sampleID){
 			'<button id="remove_basket_'+sampleID+'" class="btn btn-danger btn-xs pull-right" onclick="manageChecklists(\''+sampleID+'\', \'sample_checkbox\')"><i class="fa fa-times"></i></button>'
 		])
 	}
+	addToEditSelectedSamples(sampleID, sample_info.samplename);
 }
 
 function storedSampleSearch(sample){
@@ -1011,6 +1012,7 @@ function removeFromDolphinBasket(sampleID){
 		table.fnClearTable();
 	}
 	removeBasketInfo(sampleID);
+	removeFromEditSelectedSamples(sampleID);
 }
 
 function removeFromDolphinBasketBulk(ids) {
@@ -1037,6 +1039,17 @@ function clearBasket(){
 	manageChecklistsBulk(basket_array);
 	flushBasketInfo();
 }
+
+function addToEditSelectedSamples($sample_id, $samplename){
+	$('#selectedSamplesList').append('<div id="' + 
+		$sample_id + '" class="editMultipleSelected">'  + 'Sample: ' 
+		+ $samplename + '</div>');
+}
+
+function removeFromEditSelectedSamples($sample_id){
+	$('#editMultipleSelected' + $sample_id).remove();
+}
+
 
 function getValidSamples(lane_samples){
 	var valid_samples;
