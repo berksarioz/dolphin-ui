@@ -27,6 +27,10 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 			if (this.data.length == objList.length){
 				this.stopStreaming();
 			}
+		},
+		pagination: function(summary){
+    			var $summary = $('#summary');
+   			$summary.text( summary.from + ' to '+ summary.to +' of '+ summary.total +' entries');
 		}
 	}
 	st = StreamTable('#jsontable_' + type,
