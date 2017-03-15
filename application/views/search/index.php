@@ -142,16 +142,7 @@
 													</div>
 													<input type="hidden" id="sessionUserID" value="<?php echo $_SESSION['uid'];?>">
 													<div id="editMultipleSamplesAdd">
-														<div id="organism">
-															<div onchange="comboboxSelectionChanged('organism')" class="combobox">
-																<div class="ui-widget">
-														  			<label>Select Organism: </label>
-														  			<select id="organism_combobox">
-														  				<option value="">Select one...</option>
-														  			</select>
-														  		</div>
-														  	</div>
-														</div>
+
 													</div>
 												</div>
 											</fieldset>

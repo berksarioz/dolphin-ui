@@ -575,7 +575,7 @@ function allCheckboxCheck(id, type){
 
 function updateSelectedSamples(){
 	var $uid = $('#sessionUserID').val();
-	var $type = 'organism';
+	var $type = 'organism' + '_id';
 	var $table = 'ngs_samples';
 	var $new_value = $('#organism_combobox').val();
 	var $sample_list = [];
@@ -588,10 +588,12 @@ function updateSelectedSamples(){
 		$.ajax({ type: "POST",
 				url: BASE_PATH+"/public/ajax/browse_edit.php",
 				data: { p: 'postInsertDatabase', type: $type, table: $table, 
-					values: $new_value, sample_ids: $sample_list.join()},
+					value: $new_value, sample_ids: $sample_list.join()},
 				async: false,
-				success : function(s)
+				complete : function(s)
 				{
+					console.log('type:' + $type + ' table: ' + $table + 
+					' value: ' + $new_value + ' sample_ids: ' + $sample_list.join());
 					console.log(s);
 				}
 			});
@@ -600,29 +602,50 @@ function updateSelectedSamples(){
 }
 
 function editMultipleSamples(){
+	// fields that have regular naming in the database
+	var editable_fields = ['biosample_type', 'donor', 'flowcell', 'genotype', 
+	  'instrument_model', 'library_type', 'molecule', 'organism', 'source',
+	  'treatment_manufacturer'];
+
+	var combobox_list_string = '';
+
+	for (i = 0; i < editable_fields.length; i++) {
+      combobox_list_string += '<div id="' + editable_fields[i] + 
+        '_div" style="display:none"><div class="combobox"><div class="ui-widget"><label>Select ' +
+        editable_fields[i] + ': </label><select id="' + editable_fields[i] +
+        '_combobox"><option value="">Select one...</option></select></div></div></div>';
+	}
+
+	$('#editMultipleSamplesAdd').html(combobox_list_string);
 	$('#editMultipleSamplesModal').modal({
 		show: true
 	});
 	comboBoxScript();
-	$( "#organism_combobox" ).combobox();
-	$( "#toggle" ).on( "click", function() {
-	    $( "#organism_combobox" ).toggle();
-	});
+
+	for (i = 0; i < editable_fields.length; i++) {
+		$( "#" + editable_fields[i] + "_combobox" ).combobox();
+		$( "#toggle" ).on( "click", function() {
+		    $( "#" + editable_fields[i] + "_combobox" ).toggle();
+		});
+	}
+
 		$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative'});
 	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative'});
     $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
 
+    $('#organism_div').show();
+    $('#flowcell_div').show();
 
     $type = 'organism';
 		$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/browse_edit.php",
-			data: { p: 'getDropdownValues', type: $type},
+			data: { p: 'getDropdownValuesWithID', type: $type},
 			async: false,
 			success : function(s)
 			{
 			for(var x = 0; x < s.length; x++){
-    			$( "#organism_combobox" ).append('<option id="' + s[x][$type] +
-				  '" value="' + s[x][$type] + '">' + s[x][$type] +
+    			$( "#organism_combobox" ).append('<option id="' + s[x]['id'] +
+				  '" value="' + s[x]['id'] + '">' + s[x][$type] +
 					'</option>');
 			}
 		}

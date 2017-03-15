@@ -25,7 +25,7 @@ if($p == 'postInsertDatabase')
 	if (isset($_POST['value'])){$value = $_POST['value'];}
 	if (isset($_POST['sample_ids'])){$sample_ids = $_POST['sample_ids'];}
 	if($type != '' && $table != '' && $value != '' && $sample_ids != ''){
-		$query->runSQL("UPDATE $table SET organism_id = $value  WHERE id IN (sample_ids)");
+		$data=$query->runSQL("UPDATE $table SET $type = $value  WHERE id IN ($sample_ids)");
 	}
 }
 
@@ -168,6 +168,11 @@ else if($p == 'getDropdownValues')
 {
 	if (isset($_GET['type'])){$type = $_GET['type'];}
 	$data=$query->queryTable("SELECT $type FROM ngs_".$type);
+}
+else if($p == 'getDropdownValuesWithID')
+{
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	$data=$query->queryTable("SELECT id, $type FROM ngs_".$type);
 }
 else if($p == 'getDropdownValuesPerms')
 {
