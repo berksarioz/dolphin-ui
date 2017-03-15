@@ -140,7 +140,7 @@
 													<div id="selectedSamplesList">
 														<label>Selected Samples:</label>
 													</div>
-													<input type="hidden" id="sessionUserID" value="<?php echo $_SESSION['uid'];?>">
+													<div id="selectFieldsToModify"></div>
 													<div id="editMultipleSamplesAdd">
 
 													</div>

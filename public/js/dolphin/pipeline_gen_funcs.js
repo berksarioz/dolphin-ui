@@ -1042,12 +1042,12 @@ function clearBasket(){
 
 function addToEditSelectedSamples($sample_id, $samplename){
 	$('#selectedSamplesList').append('<div id="' + 
-		$sample_id + '" class="editMultipleSelected">'  + 'Sample: ' 
+		$sample_id + '" class="editMultipleSelected">'
 		+ $samplename + '</div>');
 }
 
 function removeFromEditSelectedSamples($sample_id){
-	$('#editMultipleSelected' + $sample_id).remove();
+	$('#' + $sample_id).remove();
 }
 
 
