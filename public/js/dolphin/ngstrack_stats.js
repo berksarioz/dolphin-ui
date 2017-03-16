@@ -164,7 +164,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 		if (record.total_reads != '' && type == 'samples'){		
  			initialRunWarning = '';		
  		}
-		var checklist_type = "onClick=\"manageChecklists(this.name, 'sample_checkbox')\""
+		var checklist_type = "onClick=\"manageChecklistsModified(this.name, 'sample_checkbox')\""
 		if (window.location.href.indexOf("/pipeline/") > -1) {
 			checklist_type = "onClick=\"managePipelineChecklists(this.name, 'sample_checkbox')\""
 		}
@@ -272,7 +272,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'phix_requested', 'ngs_lanes', this, '', '', '')\">"+record.phix_requested+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'phix_in_lane', 'ngs_lanes', this, '', '', '')\">"+record.phix_in_lane+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'notes', 'ngs_lanes', this, '', '', '')\">"+record.notes+"</td>"+
-					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\"></td>"+
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklistsModified(this.name, 'lane_checkbox')\"></td>"+
 					"</tr>";
 					
 			}else if(type == 'experiments'){
@@ -284,7 +284,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'lab', 'ngs_experiment_series', this, '', '', '')\">"+record.lab+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'organization', 'ngs_experiment_series', this, '', '', '')\">"+record.organization+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'grant', 'ngs_experiment_series', this, '', '', '')\">"+record.grant+"</td>"+
-					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"experiment_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'experiment_checkbox')\"></td>"+
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"experiment_checkbox_"+record.id+"\" onClick=\"manageChecklistsModified(this.name, 'experiment_checkbox')\"></td>"+
 					"<tr>";
 			}else{
 				return null;
@@ -333,7 +333,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'total_reads', 'ngs_lanes', this, '', '', '')\">"+record.total_reads+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'total_samples', 'ngs_lanes', this, '', '', '')\">"+record.total_samples+"</td>"+
 					record.backup+
-					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\"></td>"+
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklistsModified(this.name, 'lane_checkbox')\"></td>"+
 					"</tr>";
 			}else if(type == 'experiments'){
 				return "<tr>"+
@@ -341,7 +341,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"<td><a href=\""+BASE_PATH+"/search/details/experiment_series/"+record.id+'/'+theSearch+"\">"+record.experiment_name+"</a></td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'summary', 'ngs_experiment_series', this, '', '', '')\">"+record.summary+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'design', 'ngs_experiment_series', this, '', '', '')\">"+record.design+"</td>"+
-					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"experiment_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'experiment_checkbox')\"></td>"+
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"experiment_checkbox_"+record.id+"\" onClick=\"manageChecklistsModified(this.name, 'experiment_checkbox')\"></td>"+
 					"<tr>";
 			}else{
 				return null;
@@ -759,103 +759,103 @@ $(function() {
 		var sample_data = [];
 	
 		/*##### SAMPLES TABLE #####*/	
-		//var samplesTable = $('#jsontable_samples').dataTable();
+		// var samplesTable = $('#jsontable_samples').dataTable();
 	
-		// var samplesType = "";
-		// if (segment == 'selected') {
-		// 	samplesType = "getSelectedSamples";
-		// 	if (window.location.href.indexOf("/rerun/") == -1) {
-		// 		theSearch = basket_info;
-		// 	}
-		// 	if (window.location.href.split("/").indexOf('tablecreator') > -1) {
-		// 		qvar = "getTableSamples";
-		// 	}
-		// }else{
-		// 	samplesType = "getSamples";
-		// }
-		// console.log(basket_info);
-		// $.ajax({ type: "GET",
-		// 	url: BASE_PATH+"/public/ajax/ngs_tables.php",
-		// 	data: { p: samplesType, q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
-		// 	async: false,
-		// 	success : function(s)
-		// 	{
-		// 		console.log(s);
-		// 		sample_data = s;
-		// 		var changeHTML = '';
-		// 		var hrefSplit = window.location.href.split("/");
-		// 		var typeLocSelected = $.inArray('selected', hrefSplit);
-		// 		var typeLocRerun = $.inArray('rerun', hrefSplit);
-		// 		var queryType = 'getSamples';
-		// 		if (typeLocSelected > 0 || typeLocRerun > 0) {
-		// 			theSearch = '';
-		// 		}
-		// 		var type = 'samples';
-		// 		if (samplesType == 'getSamples' && segment == 'table_create') {
-		// 			var samples_with_runs = [];
-		// 			var objects_with_runs = [];
-		// 			$.ajax({ type: "GET",
-		// 				url: BASE_PATH+"/public/ajax/tablegenerator.php",
-		// 				data: { p: "samplesWithRuns" },
-		// 				async: false,
-		// 				success : function(k)
-		// 				{
-		// 					for(var x = 0; x < k.length; x++){
-		// 						samples_with_runs.push(k[x].sample_id);
-		// 					}
-		// 				}
-		// 			});
-		// 			console.log(samples_with_runs);
-		// 			for(var z = 0; z < s.length; z++){
-		// 				if (samples_with_runs.indexOf(s[z].id) > -1) {
-		// 					objects_with_runs.push(s[z]);
-		// 				}
-		// 			}
-		// 			console.log(objects_with_runs);
-		// 			s = objects_with_runs;
-		// 			queryType = 'table_create';
-		// 		}
-		// 		if (segment == 'selected') {
-		// 			var runparams = $('#jsontable_samples_selected').dataTable();
-		// 			runparams.fnClearTable();
-		// 			for(var i = 0; i < s.length; i++){
-		// 				var selection_bool = false;
-		// 				if (window.location.href.indexOf("/rerun/") > -1 || window.location.href.indexOf("/selected/") > -1) {
-		// 					selection_bool = true;
-		// 				}
-		// 				if (selection_bool) {
-		// 					runparams.fnAddData([
-		// 						s[i].id,
-		// 						s[i].samplename,
-		// 						s[i].organism,
-		// 						s[i].molecule,
-		// 						s[i].backup,
-		// 						'<button id="sample_removal_'+s[i].id+'" class="btn btn-danger btn-xs pull-right" onclick="removeSampleSelection(\''+s[i].id+'\', this)"><i class=\"fa fa-times\"></i></button>'
-		// 					]);
-		// 					selected_samples.push(s[i].id);
-		// 				}
-		// 			}
-		// 			samplesType = "getSamples";
-		// 			$.ajax({ type: "GET",
-		// 				url: BASE_PATH+"/public/ajax/ngs_tables.php",
-		// 				data: { p: samplesType, q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
-		// 				async: false,
-		// 				success : function(k)
-		// 				{
-		// 					generateStreamTable(type, k, queryType, qvar, rvar, segment, theSearch, uid, gids);
-		// 					manageChecklistsBulk(selected_samples)
-		// 				}
-		// 			});
-		// 		}else if (segment == "encode") {
-		// 			generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
-		// 			var basket = basket_info.split(",");
-		// 			basket = basket.filter(function(e){return e}); 
-		// 			manageChecklistsBulk(basket);
-		// 		}else{
-		// 			generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
-		// 		}
-		// 	}
-		// });
+		var samplesType = "";
+		if (segment == 'selected') {
+			samplesType = "getSelectedSamples";
+			if (window.location.href.indexOf("/rerun/") == -1) {
+				theSearch = basket_info;
+			}
+			if (window.location.href.split("/").indexOf('tablecreator') > -1) {
+				qvar = "getTableSamples";
+			}
+		}else{
+			samplesType = "getSamples";
+		}
+		console.log(basket_info);
+		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/ngs_tables.php",
+			data: { p: samplesType, q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
+			async: false,
+			success : function(s)
+			{
+				console.log(s);
+				sample_data = s;
+			// 	var changeHTML = '';
+			// 	var hrefSplit = window.location.href.split("/");
+			// 	var typeLocSelected = $.inArray('selected', hrefSplit);
+			// 	var typeLocRerun = $.inArray('rerun', hrefSplit);
+			// 	var queryType = 'getSamples';
+			// 	if (typeLocSelected > 0 || typeLocRerun > 0) {
+			// 		theSearch = '';
+			// 	}
+			// 	var type = 'samples';
+			// 	if (samplesType == 'getSamples' && segment == 'table_create') {
+			// 		var samples_with_runs = [];
+			// 		var objects_with_runs = [];
+			// 		$.ajax({ type: "GET",
+			// 			url: BASE_PATH+"/public/ajax/tablegenerator.php",
+			// 			data: { p: "samplesWithRuns" },
+			// 			async: false,
+			// 			success : function(k)
+			// 			{
+			// 				for(var x = 0; x < k.length; x++){
+			// 					samples_with_runs.push(k[x].sample_id);
+			// 				}
+			// 			}
+			// 		});
+			// 		console.log(samples_with_runs);
+			// 		for(var z = 0; z < s.length; z++){
+			// 			if (samples_with_runs.indexOf(s[z].id) > -1) {
+			// 				objects_with_runs.push(s[z]);
+			// 			}
+			// 		}
+			// 		console.log(objects_with_runs);
+			// 		s = objects_with_runs;
+			// 		queryType = 'table_create';
+			// 	}
+			// 	if (segment == 'selected') {
+			// 		var runparams = $('#jsontable_samples_selected').dataTable();
+			// 		runparams.fnClearTable();
+			// 		for(var i = 0; i < s.length; i++){
+			// 			var selection_bool = false;
+			// 			if (window.location.href.indexOf("/rerun/") > -1 || window.location.href.indexOf("/selected/") > -1) {
+			// 				selection_bool = true;
+			// 			}
+			// 			if (selection_bool) {
+			// 				runparams.fnAddData([
+			// 					s[i].id,
+			// 					s[i].samplename,
+			// 					s[i].organism,
+			// 					s[i].molecule,
+			// 					s[i].backup,
+			// 					'<button id="sample_removal_'+s[i].id+'" class="btn btn-danger btn-xs pull-right" onclick="removeSampleSelection(\''+s[i].id+'\', this)"><i class=\"fa fa-times\"></i></button>'
+			// 				]);
+			// 				selected_samples.push(s[i].id);
+			// 			}
+			// 		}
+			// 		samplesType = "getSamples";
+			// 		$.ajax({ type: "GET",
+			// 			url: BASE_PATH+"/public/ajax/ngs_tables.php",
+			// 			data: { p: samplesType, q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
+			// 			async: false,
+			// 			success : function(k)
+			// 			{
+			// 				generateStreamTable(type, k, queryType, qvar, rvar, segment, theSearch, uid, gids);
+			// 				manageChecklistsBulk(selected_samples)
+			// 			}
+			// 		});
+			// 	}else if (segment == "encode") {
+			// 		generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+			// 		var basket = basket_info.split(",");
+			// 		basket = basket.filter(function(e){return e}); 
+			// 		manageChecklistsBulk(basket);
+			// 	}else{
+			// 		generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+			// 	}
+			}
+		});
 	
 		/*##### LANES TABLE #####*/
 	

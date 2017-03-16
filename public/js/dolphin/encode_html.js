@@ -462,11 +462,12 @@ function loadSamplesNew($sample_id, $samplename){
 						  '" value="' + s[x].id + '">' + s[x].condition +
 							'</option>');
 					}
+  					comboBoxScript();
 				}
 			});
 		}
 	});
-  comboBoxScript();
+  // comboBoxScript();
 }
 
 function loadSamples(){

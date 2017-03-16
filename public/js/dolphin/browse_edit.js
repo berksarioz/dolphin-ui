@@ -663,7 +663,7 @@ function editMultipleSamples(){
 	$( "#select_fields_combobox" ).combobox();
 
 
-	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative'});
+	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative', 'max-width' : '25em'});
 	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative'});
     $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
 	$('.ui-state-default').css({'border-radius': '0.5em', 'background-color':'#fff7e0'});
