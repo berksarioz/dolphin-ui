@@ -172,8 +172,9 @@ function comboBoxScript(){
 	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative',
     'max-width': '25em'});
 	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative',
-	  'background-color': '#40E0D0'});
+	  'background-color': '#fff7e0'});
   $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
+	$('.ui-state-default').css({'border-radius': '0.5em', 'background-color':'#fff7e0'});
 	// $('li').css({'z-index' : 999999, 'position' : 'relative'});
 	// $('.dropdown').css({'z-index' : 999999, 'position' : 'relative'});
 	// $('.modal-body').css({'overflow' : 'visible'});
@@ -461,7 +462,6 @@ function loadSamplesNew($sample_id, $samplename){
 						  '" value="' + s[x].id + '">' + s[x].condition +
 							'</option>');
 					}
-					comboBoxScript();
 				}
 			});
 		}

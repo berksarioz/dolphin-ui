@@ -1038,6 +1038,7 @@ function clearBasket(){
 	var basket_array = getBasketInfo().split(",");
 	manageChecklistsBulk(basket_array);
 	flushBasketInfo();
+	$('.editMultipleSelected').remove();
 }
 
 function addToEditSelectedSamples($sample_id, $samplename){
