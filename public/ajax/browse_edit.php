@@ -29,6 +29,64 @@ if($p == 'postInsertDatabase')
 	}
 }
 
+if($p == 'getExperimentDetailsSearch')
+{
+	if (isset($_GET['experiment_id'])){$experiment_id = $_GET['experiment_id'];}
+	$data=$query->queryTable("SELECT summary, design, experiment_name, groups.name, perms.perms_name FROM `ngs_experiment_series` LEFT JOIN `groups` ON ngs_experiment_series.group_id = groups.id LEFT JOIN `perms` ON ngs_experiment_series.perms = perms.value WHERE ngs_experiment_series.id = $experiment_id");
+}
+
+if($p == 'getImportDetailsSearch')
+{
+	if (isset($_GET['import_id'])){$import_id = $_GET['import_id'];}
+	$data=$query->queryTable("
+		SELECT ngs_lanes.name as import_name, ngs_experiment_series.experiment_name, ngs_facility.facility, ngs_lanes.resequenced, groups.name as group_name, perms.perms_name, ngs_lanes.lane_id, ngs_lanes.series_id
+		FROM `ngs_lanes`
+		LEFT JOIN `groups`
+		ON ngs_lanes.group_id = groups.id
+		LEFT JOIN `perms`
+		ON ngs_lanes.perms = perms.value
+		LEFT JOIN `ngs_facility`
+		ON ngs_lanes.facility_id = ngs_facility.id
+		LEFT JOIN `ngs_experiment_series`
+		ON ngs_lanes.series_id = ngs_experiment_series.id
+		WHERE ngs_lanes.id = $import_id
+		");
+}
+
+if($p == 'getSampleDetailsSearch')
+{
+	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
+	$data=$query->queryTable("
+		SELECT ngs_experiment_series.experiment_name, ngs_lanes.name as import_name, ngs_protocols.name as protocol_name, ngs_samples.samplename, ngs_samples.barcode, ngs_samples.title, ngs_source.source, ngs_organism.organism, ngs_molecule.molecule, ngs_instrument_model.instrument_model, ngs_samples.avg_insert_size, ngs_samples.read_length, ngs_genotype.genotype, ngs_library_type.library_type, ngs_samples.notes, groups.name as group_name, perms.perms_name, ngs_donor.donor, ngs_samples.time, ngs_samples.biological_replica, ngs_samples.technical_replica, ngs_samples.lane_id
+		FROM `ngs_samples`
+		LEFT JOIN `ngs_experiment_series`
+		ON ngs_samples.series_id = ngs_experiment_series.id
+		LEFT JOIN `ngs_lanes`
+		ON ngs_samples.lane_id = ngs_lanes.id
+		LEFT JOIN `ngs_protocols`
+		ON ngs_samples.protocol_id = ngs_protocols.id
+		LEFT JOIN `ngs_source`
+		ON ngs_samples.source_id = ngs_source.id
+		LEFT JOIN `ngs_organism`
+		ON ngs_samples.organism_id = ngs_organism.id
+		LEFT JOIN `ngs_molecule`
+		ON ngs_samples.molecule_id = ngs_molecule.id
+		LEFT JOIN `ngs_instrument_model`
+		ON ngs_samples.instrument_model_id = ngs_instrument_model.id
+		LEFT JOIN `ngs_genotype`
+		ON ngs_samples.genotype_id = ngs_genotype.id
+		LEFT JOIN `ngs_library_type`
+		ON ngs_samples.library_type_id = ngs_library_type.id
+		LEFT JOIN `groups`
+		ON ngs_samples.group_id = groups.id
+		LEFT JOIN `perms`
+		ON ngs_samples.perms = perms.value
+		LEFT JOIN `ngs_donor`
+		ON ngs_samples.donor_id = ngs_donor.id
+		WHERE ngs_samples.id = $sample_id
+		");
+}
+
 if($p == 'insertDatabase')
 {
 	if (isset($_GET['type'])){$type = $_GET['type'];}

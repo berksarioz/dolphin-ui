@@ -95,18 +95,19 @@
 		<!-- END ACCORDION & CAROUSEL-->
 			</div><!-- /.col (LEFT) -->
 			<?php echo $html->getSubmitBrowserButton()?>
-						<div class="col-md-9">
+
+						<div id="top_search_section" class="col-md-9">
 							<ul id="tabList" class="nav nav-tabs">
-			          <li class="active">
-			            <a href="#browse_experiments" data-toggle="tab" aria-expanded="true">Experiments</a>
-			          </li>
-			          <li class>
-			            <a href="#browse_imports" data-toggle="tab" aria-expanded="true">Imports</a>
-			          </li>
-			          <li class>
-			            <a href="#browse_samples" onclick="fillSampleTable();" data-toggle="tab" aria-expanded="true">Samples</a>
-			          </li>
-			        </ul>
+					          <li class="active">
+					            <a href="#browse_experiments" data-toggle="tab" aria-expanded="true">Experiments</a>
+					          </li>
+					          <li class>
+					            <a href="#browse_imports" data-toggle="tab" aria-expanded="true">Imports</a>
+					          </li>
+					          <li class>
+					            <a href="#browse_samples" onclick="fillSampleTable();" data-toggle="tab" aria-expanded="true">Samples</a>
+					          </li>
+					        </ul>
 							<div class="tab-content">
 								<div class="tab-pane active" id="browse_experiments">
 									<div id="browse_experiment_data_table" class="margin">
@@ -174,5 +175,8 @@
 								</div>
 							</div><!-- End Edit Selected modal -->
 						</div><!-- /.col (RIGHT) -->
+						<div id="e_details" class="col-md-9"></div>
+						<div id="i_details" class="col-md-9"></div>
+						<div id="s_details" class="col-md-9"></div>
 					</div><!-- /.row -->
 				</section><!-- /.content -->

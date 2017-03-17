@@ -15,7 +15,89 @@ function fillSampleTable(){
   }
 }
 
+function clearAllDetails(){
+  $('#e_details').html('');
+  $('#i_details').html('');
+  $('#s_details').html('');
+}
 
+function displayExperimentDetails($experiment_id, $div_id){
+  clearAllDetails();
+  var $html_to_return = "";
+  var $fields = ["summary", "design", "name", "perms_name"];
+  var $titles = ["Summary", "Overall Design", "Groups", "Permission"];
+        $.ajax({ type: "GET",
+            url: BASE_PATH+"/public/ajax/browse_edit.php",
+            data: { p: 'getExperimentDetailsSearch', experiment_id: '' + $experiment_id},
+            async: false,
+            complete : function(s)
+            {
+              var $json_object = jQuery.parseJSON(s.responseText)[0];
+              $html_to_return += getDetailsHTML($json_object, 'Experiment Series', 'experiment_name', $fields, $titles);
+            }
+        });
+      $('#' + $div_id).html($html_to_return);
+  }
+
+function displayImportDetails($import_id, $div_id){
+  clearAllDetails();
+  var $html_to_return = "";
+  var $fields = ["experiment_name", "facility", "resequenced", "group_name", "perms_name", "lane_id"];
+  var $titles = ["Series Name", "Sequencing Facility", "Resequenced", "Groups", "Permission", "Lane ID"];
+        $.ajax({ type: "GET",
+            url: BASE_PATH+"/public/ajax/browse_edit.php",
+            data: { p: 'getImportDetailsSearch', import_id: '' + $import_id},
+            async: false,
+            complete : function(s)
+            {
+              var $json_object = jQuery.parseJSON(s.responseText)[0];
+              displayExperimentDetails($json_object['series_id'], 'e_details');
+              $html_to_return += getDetailsHTML($json_object, 'Import', 'import_name', $fields, $titles);
+            }
+        });
+      $('#' + $div_id).html($html_to_return);
+  }
+
+function displaySampleDetails($sample_id, $div_id){
+  clearAllDetails();
+  var $html_to_return = "";
+  var $fields = ["experiment_name", "import_name", "protocol_name", 
+    "samplename", "barcode", "title", "source", "organism", "molecule",
+    "instrument_model", "avg_insert_size", "read_length", "genotype",
+    "library_type", "notes", "group_name", "perms_name", "donor", "time",
+    "biological_replica", "technical_replica"];
+  var $titles = ["Series Name", "Lane Name", "Protocol Name", "Sample Name", 
+    "Barcode", "Title", "Source", "Organism", "Molecule", "Instrument Model",
+    "Avg. Insert Size", "Read Length", "Genotype", "Library Type", "Notes",
+    "Groups", "Permission", "Donor", "Time", "Biological Rep", "Technical Rep"];
+        $.ajax({ type: "GET",
+            url: BASE_PATH+"/public/ajax/browse_edit.php",
+            data: { p: 'getSampleDetailsSearch', sample_id: '' + $sample_id},
+            async: false,
+            complete : function(s)
+            {
+              var $json_object = jQuery.parseJSON(s.responseText)[0];
+              displayImportDetails($json_object['lane_id'], 'i_details');
+              $html_to_return += getDetailsHTML($json_object, 'Sample', 'samplename', $fields, $titles);
+            }
+        });
+      $('#' + $div_id).html($html_to_return);
+  }
+
+
+
+  function getDetailsHTML($json_object, $top_title, $second_title, $fields, $titles){
+    var $html_to_return = "<hr><h3>" + $top_title + "</h3><br/>"
+    $html_to_return += "<h4>" + $json_object[$second_title] + "</h4>" + "<br/>";
+    var $current_val;
+    for(var i = 0; i < $fields.length; i++){
+      $current_val = $json_object[$fields[i]];
+      if($current_val){
+        $html_to_return += "<label>" + $titles[i] + "</label>" + ": " + $current_val + "<br/>";
+      }
+    }
+    return $html_to_return;
+  }
 
 
 
