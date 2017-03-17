@@ -162,23 +162,17 @@ function comboBoxScript(){
 	    $( "#sample_conds_combobox" ).toggle();
 	  });
 	} );
-	// $('#sample_conds_combobox').children('li').each(function () {
-  //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
-	// });
-	// $('#sample_conds_combobox').children('ul').each(function () {
-  //   $(this).css({'z-index' : 999999, 'position' : 'relative'});
-	// });
+
 
 	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative',
     'max-width': '25em'});
-	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative',
-	  'background-color': '#fff7e0'});
-  $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
-	$('.ui-state-default').css({'border-radius': '0.5em', 'background-color':'#fff7e0'});
-	// $('li').css({'z-index' : 999999, 'position' : 'relative'});
-	// $('.dropdown').css({'z-index' : 999999, 'position' : 'relative'});
-	// $('.modal-body').css({'overflow' : 'visible'});
+	$('.ui-icon-triangle-1-s').css({'z-index' : 9999999, 'position' : 'relative'});
 
+	$('.ui-state-default').css({'background-color':'#fff'});
+    $('.ui-button-icon-only').css({'background-color':'#eee'});
+
+	$('.ui-icon-triangle-1-s').replaceWith('<span class="caret" style="margin:8px"></span>');
+	$('.ui-button-text').remove();
 	$("#sample_conds_combobox").on('change', function () {
     alert($(this).val());
 });
