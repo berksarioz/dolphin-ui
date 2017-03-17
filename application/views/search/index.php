@@ -120,12 +120,30 @@
 								</div>
 								<div class="tab-pane" id="browse_imports">
 									<div id="browse_import_data_table" class="margin">
-										<?php if(!isset($_SESSION['ngs_lanes']) || ($_SESSION['ngs_lanes'] == '') ){
-											echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples","Selected"], ["id","name","facility", "total_reads", "total_samples",""]);
+										<?php 
+											$title = "Imports";
+											$table_all = "lanes";
+											$table_filtered = "lanes_filtered";
+											$fields_basic = ["id","Import Name","Facility","Total Reads","Total Samples","Selected"];
+											$tableKeys_basic = ["id","name","facility", "total_reads", "total_samples",""];
+											$fields_extended = ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"];
+											$tableKeys_extended = ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""];
+
+										if(!isset($_SESSION['ngs_lanes']) || ($_SESSION['ngs_lanes'] == '') ){
+											echo $html->getRespBoxTableStream($title, $table_all, $fields_basic, $tableKeys_basic);
 										} else{
-											echo $html->getRespBoxTableStream("Imports", "lanes", ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"],
-																			  ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""]);
-										}?>
+											echo $html->getRespBoxTableStream($title, $table_all, $fields_extended, $tableKeys_extended);
+										}
+										?>
+									</div>
+									<div id="imports_filtered_by_experiment" class="margin">
+										<?php 
+										if(!isset($_SESSION['ngs_lanes']) || ($_SESSION['ngs_lanes'] == '') ){
+											echo $html->getRespBoxTableStreamNoExpand($title, $table_filtered, $fields_basic, $tableKeys_basic);
+										} else{
+											echo $html->getRespBoxTableStreamNoExpand($title, $table_filtered, $fields_extended, $tableKeys_extended);
+										}
+										 ?>
 									</div>
 								</div>
 								<div class="tab-pane" id="browse_samples">
@@ -141,6 +159,8 @@
 											// 														"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
 										}?>
 									</div>
+									<div id="samples_filtered_by_experiment" class="margin"></div>
+									<div id="samples_filtered_by_import" class="margin"></div>
 								</div>
 							</div>
 							<input type="button" class="btn btn-success margin pull-right" value="Edit Selected" onClick="editMultipleSamples()"/>

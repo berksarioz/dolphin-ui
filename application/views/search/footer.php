@@ -27,6 +27,7 @@
         <script src="<?php echo BASE_PATH?>/js/dolphin/ngs_help.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/dolphin/browse_edit.js" type="text/javascript"></script>
 		<script src="<?php echo BASE_PATH?>/js/dolphin/ngsstatus_funcs.js" type="text/javascript"></script>
+		<script src="<?php echo BASE_PATH?>/js/dolphin/streamtablefuncs.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/streamTable/stream_table.js" type="text/javascript"></script>
         <script src="<?php echo BASE_PATH?>/js/streamTable/vendors/mustache.js" type="text/javascript"></script>
 		<script src='<?php echo BASE_PATH?>/js/dolphin/encode_funcs.js' type="text/javascript"></script>

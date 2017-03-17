@@ -53,6 +53,24 @@ if($p == 'getImportDetailsSearch')
 		");
 }
 
+if($p == 'getFilteredImportData')
+{
+	if (isset($_GET['experiment_id'])){$experiment_id = $_GET['experiment_id'];}
+	$data=$query->queryTable("
+		SELECT ngs_lanes.name as import_name, ngs_experiment_series.experiment_name, ngs_facility.facility, ngs_lanes.resequenced, groups.name as group_name, perms.perms_name, ngs_lanes.lane_id, ngs_lanes.series_id
+		FROM `ngs_lanes`
+		LEFT JOIN `groups`
+		ON ngs_lanes.group_id = groups.id
+		LEFT JOIN `perms`
+		ON ngs_lanes.perms = perms.value
+		LEFT JOIN `ngs_facility`
+		ON ngs_lanes.facility_id = ngs_facility.id
+		LEFT JOIN `ngs_experiment_series`
+		ON ngs_lanes.series_id = ngs_experiment_series.id
+		WHERE ngs_lanes.series_id = $experiment_id
+		");
+}
+
 if($p == 'getSampleDetailsSearch')
 {
 	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}

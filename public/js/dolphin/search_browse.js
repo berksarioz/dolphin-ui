@@ -15,6 +15,24 @@ function fillSampleTable(){
   }
 }
 
+function createFilteredImport($experiment_id){
+  $.ajax({ type: "GET",
+    url: BASE_PATH+"/public/ajax/browse_edit.php",
+    data: { p: 'getFilteredImportData', experiment_id: $experiment_id },
+    async: false,
+    success : function(s)
+    {
+      for(var i = 0; i < s.length; i++ ){
+        s[i].options = "<input type='checkbox' class='ngs_checkbox' name='"+
+          s[i].sample_id+"' id='sample_checkbox_"+s[i].sample_id+"'>";
+      }
+      console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
+      console.log(s);
+      groupsStreamTable = createStreamTable('lanes_filtered', s, "", true, [10,20,50,100], 20, true, true);
+    }
+  });
+}
+
 function clearAllDetails(){
   $('#e_details').html('');
   $('#i_details').html('');
@@ -37,6 +55,7 @@ function displayExperimentDetails($experiment_id, $div_id){
             }
         });
       $('#' + $div_id).html($html_to_return);
+      createFilteredImport($experiment_id);
   }
 
 function displayImportDetails($import_id, $div_id){
@@ -51,6 +70,7 @@ function displayImportDetails($import_id, $div_id){
             complete : function(s)
             {
               var $json_object = jQuery.parseJSON(s.responseText)[0];
+              // Also show Experiment Details
               displayExperimentDetails($json_object['series_id'], 'e_details');
               $html_to_return += getDetailsHTML($json_object, 'Import', 'import_name', $fields, $titles);
             }
@@ -77,6 +97,7 @@ function displaySampleDetails($sample_id, $div_id){
             complete : function(s)
             {
               var $json_object = jQuery.parseJSON(s.responseText)[0];
+              // Also show Import Details (which in turn shows Experiment's)
               displayImportDetails($json_object['lane_id'], 'i_details');
               $html_to_return += getDetailsHTML($json_object, 'Sample', 'samplename', $fields, $titles);
             }
