@@ -395,28 +395,31 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 	 data, type);
 	
 	var search = document.getElementById('st_search');
-	search.id = 'st_search_' + type;
-	search.setAttribute('class',"st_search margin pull-right");
-	
-	var table_element = document.getElementById('jsontable_'+type);
-	var num_search = document.getElementById('st_num_search');
-	num_search.id = 'st_num_search_' + type;
-	
-	var newlabel = createElement('label', ['class'], ['margin']);
-	newlabel.setAttribute("for",'st_num_search_'+type);
-	newlabel.innerHTML = "entries per page";
-	document.getElementById('table_div_'+type).insertBefore(newlabel, table_element);
-	
-	num_search.setAttribute('class',"st_per_page"+type+" margin pull-left input-sm");
-	
-	document.getElementById('st_pagination').id = 'st_pagination_' + type;
-	var pagination = document.getElementById('st_pagination_'+type);
-	pagination.setAttribute('class',"st_pagination_"+type+" margin");
-	pagination.setAttribute('style',"text-align:right");
-	
-	type_summary = document.getElementById(type+'_summary');
-	document.getElementById(type+'_summary').remove();
-	the_table.insertBefore(type_summary, pagination);
+	if(search){
+		search.id = 'st_search_' + type;
+		search.setAttribute('class',"st_search margin pull-right");
+
+		var table_element = document.getElementById('jsontable_'+type);
+		var num_search = document.getElementById('st_num_search');
+		num_search.id = 'st_num_search_' + type;
+		
+		var newlabel = createElement('label', ['class'], ['margin']);
+		newlabel.setAttribute("for",'st_num_search_'+type);
+		newlabel.innerHTML = "entries per page";
+		document.getElementById('table_div_'+type).insertBefore(newlabel, table_element);
+		
+		num_search.setAttribute('class',"st_per_page"+type+" margin pull-left input-sm");
+		
+		document.getElementById('st_pagination').id = 'st_pagination_' + type;
+		var pagination = document.getElementById('st_pagination_'+type);
+		pagination.setAttribute('class',"st_pagination_"+type+" margin");
+		pagination.setAttribute('style',"text-align:right");
+		
+		type_summary = document.getElementById(type+'_summary');
+		document.getElementById(type+'_summary').remove();
+		the_table.insertBefore(type_summary, pagination);
+	}
+
 }
 
 function shiftColumns(id){
