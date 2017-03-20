@@ -1,4 +1,24 @@
-$('#toggle').toggles({text:{on:'HI',off:'BYE'}});
+$('.toggle').toggles({
+  text:{on:'All',off:'Filtered'},
+  width: 100,
+  height: 20,
+  on: true
+});
+
+$('.toggle').on('toggle', function(e, active) {
+  if (active) {
+    $('#imports_filtered_by_selection').hide();
+    $('#samples_filtered_by_selection').hide();
+    $('#browse_import_data_table').show();
+    $('#browse_sample_data_table').show();
+  } else {
+    $('#imports_filtered_by_selection').show();
+    $('#samples_filtered_by_selection').show();
+    $('#browse_import_data_table').hide();
+    $('#browse_sample_data_table').hide();
+
+  }
+});
 
 function fillSampleTable(){
   if($('#table_div_samples').length == 0){
@@ -98,8 +118,8 @@ function displayExperimentDetails($experiment_id, $div_id, $called_from_import =
 function displayImportDetails($import_id, $div_id, $called_from_sample = false){
   clearAllDetails();
   var $html_to_return = "";
-  var $fields = ["experiment_name", "facility", "resequenced", "group_name", "perms_name", "lane_id"];
-  var $titles = ["Series Name", "Sequencing Facility", "Resequenced", "Groups", "Permission", "Lane ID"];
+  var $fields = ["experiment_name", "facility", "date_submitted", "date_received", "total_samples", "resequenced", "group_name", "perms_name", "lane_id"];
+  var $titles = ["Series Name", "Sequencing Facility", "Date Submitted", "Date Received", "# of Samples", "Resequenced", "Groups", "Permission", "Lane ID"];
         $.ajax({ type: "GET",
             url: BASE_PATH+"/public/ajax/browse_edit.php",
             data: { p: 'getImportDetailsSearch', import_id: '' + $import_id},

@@ -39,7 +39,7 @@ if($p == 'getImportDetailsSearch')
 {
 	if (isset($_GET['import_id'])){$import_id = $_GET['import_id'];}
 	$data=$query->queryTable("
-		SELECT ngs_lanes.name as import_name, ngs_experiment_series.experiment_name, ngs_facility.facility, ngs_lanes.resequenced, groups.name as group_name, perms.perms_name, ngs_lanes.lane_id, ngs_lanes.series_id
+		SELECT ngs_lanes.name as import_name, ngs_experiment_series.experiment_name, ngs_facility.facility, ngs_lanes.date_submitted, ngs_lanes.date_received, ngs_lanes.total_samples, ngs_lanes.resequenced, groups.name as group_name, perms.perms_name, ngs_lanes.lane_id, ngs_lanes.series_id
 		FROM `ngs_lanes`
 		LEFT JOIN `groups`
 		ON ngs_lanes.group_id = groups.id

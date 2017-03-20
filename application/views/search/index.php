@@ -66,6 +66,7 @@
 				<!-- Main content -->
 				<section class="content">
 					<div class="row">
+					<div class="toggle toggle-modern pull-right" style="margin:25px;"></div>
 						<div class="col-md-3">
 
 			<div class="box box-solid">
@@ -223,7 +224,5 @@
 								<a href="#">Back to top</a>
 							</div>
 						</div>
-						<div class="toggles" data-toggle-on="true" data-toggle-height="20" data-toggle-width="60"></div>
 					</div><!-- /.row -->
 				</section><!-- /.content -->
-<div class="toggle toggle-modern">
