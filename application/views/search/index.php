@@ -121,46 +121,66 @@
 								<div class="tab-pane" id="browse_imports">
 									<div id="browse_import_data_table" class="margin">
 										<?php 
-											$title = "Imports";
-											$table_all = "lanes";
-											$table_filtered = "lanes_filtered";
-											$fields_basic = ["id","Import Name","Facility","Total Reads","Total Samples","Selected"];
-											$tableKeys_basic = ["id","name","facility", "total_reads", "total_samples",""];
-											$fields_extended = ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"];
-											$tableKeys_extended = ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""];
+											$title_all_import = "Imports";
+											$table_all_import = "lanes";
+											$table_filtered_import = "lanes_filtered";
+											$title_filtered_import = "Filtered Imports";
+											$fields_basic_import = ["id","Import Name","Facility","Total Reads","Total Samples","Selected"];
+											$tableKeys_basic_import = ["id","name","facility", "total_reads", "total_samples",""];
+											$fields_extended_import = ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"];
+											$tableKeys_extended_import = ["id","name","facility", "total_reads", "total_samples", "cost", "phix_requested", "phix_in_lane", "notes", ""];
 
 										if(!isset($_SESSION['ngs_lanes']) || ($_SESSION['ngs_lanes'] == '') ){
-											echo $html->getRespBoxTableStream($title, $table_all, $fields_basic, $tableKeys_basic);
+											echo $html->getRespBoxTableStream($title_all_import, $table_all_import, $fields_basic_import, $tableKeys_basic_import);
 										} else{
-											echo $html->getRespBoxTableStream($title, $table_all, $fields_extended, $tableKeys_extended);
+											echo $html->getRespBoxTableStream($title_all_import, $table_all_import, $fields_extended_import, $tableKeys_extended_import);
 										}
 										?>
 									</div>
-									<div id="imports_filtered_by_experiment" class="margin">
+									<div id="imports_filtered_by_selection" class="margin">
 										<?php 
 										if(!isset($_SESSION['ngs_lanes']) || ($_SESSION['ngs_lanes'] == '') ){
-											echo $html->getRespBoxTableStreamNoExpand($title, $table_filtered, $fields_basic, $tableKeys_basic);
+											echo $html->getRespBoxTableStreamNoExpand($title_filtered_import, $table_filtered_import, $fields_basic_import, $tableKeys_basic_import);
 										} else{
-											echo $html->getRespBoxTableStreamNoExpand($title, $table_filtered, $fields_extended, $tableKeys_extended);
+											echo $html->getRespBoxTableStreamNoExpand($title_filtered_import, $table_filtered_import, $fields_extended_import, $tableKeys_extended_import);
 										}
 										 ?>
 									</div>
 								</div>
 								<div class="tab-pane" id="browse_samples">
 									<div id="browse_sample_data_table" class="margin">
-										<?php if(!isset($_SESSION['ngs_samples']) || ($_SESSION['ngs_samples'] == '') ){
-											// echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"], ["id","name","title","source","organism","molecule","backup","total_reads"]);
-										} else{
-											// echo $html->getRespBoxTableStream("Samples", "samples", ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", "Backup", "Description", "Avg Insert Size", "Read Length",
-											// 														"Concentration", "Time", "Biological Replica", "Technical Replica", "Spike-ins", "Adapter",
-											// 														"Notebook Ref", "Notes", "Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"],
-											// 														["id","name","title","source","organism","molecule","backup","total_reads", "barcode", "description", "avg_insert_size", "read_length",
-											// 														"concentration", "time", "biological_replica", "technical_replica", "spike_ins", "adapter",
-											// 														"notebook_ref", "notes", "genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"]);
-										}?>
+										<?php 
+											$title_all_sample = "Samples";
+											$table_all_sample = "samples";
+											$table_filtered_sample = "samples_filtered";
+											$title_filtered_sample = "Filtered Samples";
+											$fields_basic_sample = ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"];
+											$tableKeys_basic_sample = ["id","name","title","source","organism","molecule","backup","total_reads"];
+											$fields_extended_sample = ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", 
+												"Backup", "Description", "Avg Insert Size", "Read Length", "Concentration", "Time", 
+												"Biological Replica", "Technical Replica", "Spike-ins", "Adapter", "Notebook Ref", "Notes", 
+												"Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"];
+											$tableKeys_extended_sample = ["id","name","title","source","organism","molecule","backup","total_reads",
+												"barcode", "description", "avg_insert_size", "read_length", "concentration", "time", 
+												"biological_replica", "technical_replica", "spike_ins", "adapter", "notebook_ref", "notes",
+												"genotype", "library_type", "biosample_type", "instrument_model", "treatment_manufacturer"];
+
+											if(!isset($_SESSION['ngs_samples']) || ($_SESSION['ngs_samples'] == '') ){
+												echo $html->getRespBoxTableStream($title_all_sample, $table_all_sample, $fields_basic_sample, $tableKeys_basic_sample);
+											} else{
+												echo $html->getRespBoxTableStream($title_all_sample, $table_all_sample, $fields_extended_sample, $tableKeys_extended_sample);
+											}
+										?>
 									</div>
-									<div id="samples_filtered_by_experiment" class="margin"></div>
-									<div id="samples_filtered_by_import" class="margin"></div>
+									<div id="samples_filtered_by_selection" class="margin">
+										<?php 
+										if(!isset($_SESSION['ngs_samples']) || ($_SESSION['ngs_samples'] == '') ){
+											echo $html->getRespBoxTableStreamNoExpand($title_filtered_sample, $table_filtered_sample, $fields_basic_sample, $tableKeys_basic_sample);
+										} else{
+											echo $html->getRespBoxTableStreamNoExpand($title_filtered_sample, $table_filtered_sample, $fields_extended_sample, $tableKeys_extended_sample);
+										}
+										 ?>										
+									</div>
 								</div>
 							</div>
 							<input type="button" class="btn btn-success margin pull-right" value="Edit Selected" onClick="editMultipleSamples()"/>
@@ -195,8 +215,15 @@
 								</div>
 							</div><!-- End Edit Selected modal -->
 						</div><!-- /.col (RIGHT) -->
-						<div id="e_details" class="col-md-9"></div>
-						<div id="i_details" class="col-md-9"></div>
-						<div id="s_details" class="col-md-9"></div>
+						<div id="outer_e" class="col-md-9 pull-right"><div id="e_details" class="col-md-9"></div></div>
+						<div id="outer_i" class="col-md-9 pull-right"><div id="i_details" class="col-md-9"></div></div>
+						<div id="outer_s" class="col-md-9 pull-right"><div id="s_details" class="col-md-9"></div></div>
+						<div id="outer_top" class="col-md-9 pull-right" style="margin-top: 50px;">
+							<div id="back_to_top" class="col-md-9">
+								<a href="#">Back to top</a>
+							</div>
+						</div>
+						<div class="toggles" data-toggle-on="true" data-toggle-height="20" data-toggle-width="60"></div>
 					</div><!-- /.row -->
 				</section><!-- /.content -->
+<div class="toggle toggle-modern">

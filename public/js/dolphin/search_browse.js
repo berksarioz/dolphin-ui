@@ -1,3 +1,5 @@
+$('#toggle').toggles({text:{on:'HI',off:'BYE'}});
+
 function fillSampleTable(){
   if($('#table_div_samples').length == 0){
 		$.ajax({ type: "GET",
@@ -15,19 +17,42 @@ function fillSampleTable(){
   }
 }
 
-function createFilteredImport($experiment_id){
+function createFilteredSample($experiment_or_import, $id){
   $.ajax({ type: "GET",
     url: BASE_PATH+"/public/ajax/browse_edit.php",
-    data: { p: 'getFilteredImportData', experiment_id: $experiment_id },
+    data: { p: 'getFilteredSampleData', experiment_or_import: $experiment_or_import, id: $id },
     async: false,
     success : function(s)
     {
       for(var i = 0; i < s.length; i++ ){
-        s[i].options = "<input type='checkbox' class='ngs_checkbox' name='"+
-          s[i].sample_id+"' id='sample_checkbox_"+s[i].sample_id+"'>";
+        s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' +
+        s[i].id + '" id="sample_checkbox_' + s[i].id + '" onclick="manageChecklists(this.name, \'sample_checkbox\')">';
       }
       console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
       console.log(s);
+      var save = $('#table_div_samples_filtered table').detach();
+      $('#table_div_samples_filtered').empty().append(save);
+      groupsStreamTable = createStreamTable('samples_filtered', s, "", true, [10,20,50,100], 20, true, true);
+    }
+  });
+}
+
+
+function createFilteredImport($experiment_id){
+  $.ajax({ type: "GET",
+    url: BASE_PATH+"/public/ajax/browse_edit.php",
+    data: { p: 'getFilteredImportData', 'experiment_id': $experiment_id },
+    async: false,
+    success : function(s)
+    {
+      for(var i = 0; i < s.length; i++ ){
+        s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' +
+        s[i].id + '" id="lane_checkbox_' + s[i].id + '" onclick="manageChecklists(this.name, \'lane_checkbox\')">';
+      }
+      console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
+      console.log(s);
+      var save = $('#table_div_lanes_filtered table').detach();
+      $('#table_div_lanes_filtered').empty().append(save);
       groupsStreamTable = createStreamTable('lanes_filtered', s, "", true, [10,20,50,100], 20, true, true);
     }
   });
@@ -39,7 +64,13 @@ function clearAllDetails(){
   $('#s_details').html('');
 }
 
-function displayExperimentDetails($experiment_id, $div_id){
+function hideFilteredTables(){
+      $('#imports_filtered_by_selection').hide();
+      $('#samples_filtered_by_selection').hide();
+}
+hideFilteredTables();
+
+function displayExperimentDetails($experiment_id, $div_id, $called_from_import = false){
   clearAllDetails();
   var $html_to_return = "";
   var $fields = ["summary", "design", "name", "perms_name"];
@@ -55,10 +86,16 @@ function displayExperimentDetails($experiment_id, $div_id){
             }
         });
       $('#' + $div_id).html($html_to_return);
-      createFilteredImport($experiment_id);
+      if(!$called_from_import){
+        createFilteredImport($experiment_id);
+        createFilteredSample('experiment', $experiment_id);
+      }
+      $('#imports_filtered_by_selection').show();
+      $('#samples_filtered_by_selection > h3').css({'color':'blue'});
+      $('#samples_filtered_by_selection').show();
   }
 
-function displayImportDetails($import_id, $div_id){
+function displayImportDetails($import_id, $div_id, $called_from_sample = false){
   clearAllDetails();
   var $html_to_return = "";
   var $fields = ["experiment_name", "facility", "resequenced", "group_name", "perms_name", "lane_id"];
@@ -71,11 +108,18 @@ function displayImportDetails($import_id, $div_id){
             {
               var $json_object = jQuery.parseJSON(s.responseText)[0];
               // Also show Experiment Details
-              displayExperimentDetails($json_object['series_id'], 'e_details');
+              displayExperimentDetails($json_object['series_id'], 'e_details', true);
               $html_to_return += getDetailsHTML($json_object, 'Import', 'import_name', $fields, $titles);
             }
         });
       $('#' + $div_id).html($html_to_return);
+      if(!$called_from_sample){
+        console.log("I'm here.")
+        createFilteredSample('import', $import_id);
+      }
+      $('#imports_filtered_by_selection').hide();
+      $('#samples_filtered_by_selection > h3').css({'color':'blue'});
+      $('#samples_filtered_by_selection').show();
   }
 
 function displaySampleDetails($sample_id, $div_id){
@@ -98,11 +142,13 @@ function displaySampleDetails($sample_id, $div_id){
             {
               var $json_object = jQuery.parseJSON(s.responseText)[0];
               // Also show Import Details (which in turn shows Experiment's)
-              displayImportDetails($json_object['lane_id'], 'i_details');
+              displayImportDetails($json_object['lane_id'], 'i_details', true);
               $html_to_return += getDetailsHTML($json_object, 'Sample', 'samplename', $fields, $titles);
             }
         });
       $('#' + $div_id).html($html_to_return);
+      $('#imports_filtered_by_selection').hide();
+      $('#samples_filtered_by_selection').hide();
   }
 
 

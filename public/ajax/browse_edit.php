@@ -53,11 +53,52 @@ if($p == 'getImportDetailsSearch')
 		");
 }
 
+
+if($p == 'getFilteredSampleData')
+{
+	if (isset($_GET['experiment_or_import'])){$experiment_or_import = $_GET['experiment_or_import'];}
+	if($experiment_or_import == "experiment"){
+		$where_variable = "ngs_samples.series_id";
+	}
+	if($experiment_or_import == "import"){
+		$where_variable = "ngs_samples.lane_id";
+	}
+	if (isset($_GET['id'])){$id = $_GET['id'];}
+
+
+
+	$amazon_str = "AND ngs_fastq_files.dir_id = (SELECT ngs_dirs.id FROM ngs_dirs WHERE ngs_fastq_files.dir_id = ngs_dirs.id AND (ngs_dirs.amazon_bucket LIKE '%s3://%'))";
+
+	$sampleBackup = "CASE
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE aws_status = 2 AND ngs_samples.id = ngs_fastq_files.sample_id) > 0 THEN '<button class=\"btn btn-warning\" disabled>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != original_checksum AND (original_checksum != '' AND original_checksum IS NOT NULL) AND ngs_samples.id = ngs_fastq_files.sample_id) > 0 THEN '<button class=\"btn btn-flickr\" disabled>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE checksum != backup_checksum AND (backup_checksum != '' AND backup_checksum IS NOT NULL) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<button class=\"btn btn-danger\" disabled>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE (backup_checksum = '' OR backup_checksum IS NULL) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<button class=\"btn btn-secondary\" disabled>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE date_modified < DATE_SUB(now(), INTERVAL 2 MONTH) AND ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) > 0 THEN '<button class=\"btn btn-primary\" disabled>'
+						WHEN (SELECT COUNT(*) FROM ngs_fastq_files WHERE ngs_samples.id = ngs_fastq_files.sample_id $amazon_str) = 0 THEN ''
+						ELSE '<button class=\"btn btn-success\" disabled>'
+					END AS backup";
+
+
+
+	$data=$query->queryTable("
+		SELECT ngs_samples.id, ngs_samples.samplename, ngs_samples.title, ngs_source.source, ngs_organism.organism, ngs_molecule.molecule, $sampleBackup
+		FROM `ngs_samples`
+		LEFT JOIN `ngs_source`
+		ON ngs_samples.source_id = ngs_source.id
+		LEFT JOIN `ngs_organism`
+		ON ngs_samples.organism_id = ngs_organism.id
+		LEFT JOIN `ngs_molecule`
+		ON ngs_samples.molecule_id = ngs_molecule.id
+		WHERE $where_variable = $id
+		");
+}
+
 if($p == 'getFilteredImportData')
 {
 	if (isset($_GET['experiment_id'])){$experiment_id = $_GET['experiment_id'];}
 	$data=$query->queryTable("
-		SELECT ngs_lanes.name as import_name, ngs_experiment_series.experiment_name, ngs_facility.facility, ngs_lanes.resequenced, groups.name as group_name, perms.perms_name, ngs_lanes.lane_id, ngs_lanes.series_id
+		SELECT ngs_lanes.id, ngs_lanes.name as import_name, ngs_facility.facility, ngs_lanes.total_reads, ngs_lanes.total_samples
 		FROM `ngs_lanes`
 		LEFT JOIN `groups`
 		ON ngs_lanes.group_id = groups.id

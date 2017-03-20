@@ -10,6 +10,8 @@
         <link href="<?php echo BASE_PATH?>/css/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
         <link href="<?php echo BASE_PATH?>/css/datatables/dataTables.tableTools.css" rel="stylesheet" type="text/css" />
 		<link href="<?php echo BASE_PATH?>/css/datatables/dataTables.editor.bootstrap.css" rel="stylesheet" type="text/css" />
+        <link href="<?php echo BASE_PATH?>/css/toggles/toggles.css" rel="stylesheet" type="text/css" />
+        <link href="<?php echo BASE_PATH?>/css/toggles/toggles-modern.css" rel="stylesheet" type="text/css" />
 		<!-- Date Picker -->
 		<link href="<?php echo BASE_PATH?>/css/datepicker/datepicker3.css" rel="stylesheet" type="text/css" />
 		<!-- Daterange picker -->
