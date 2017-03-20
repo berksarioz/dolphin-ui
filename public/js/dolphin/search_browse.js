@@ -101,6 +101,7 @@ function displayExperimentDetails($experiment_id, $div_id, $called_from_import =
             async: false,
             complete : function(s)
             {
+              console.log(s);
               var $json_object = jQuery.parseJSON(s.responseText)[0];
               $html_to_return += getDetailsHTML($json_object, 'Experiment Series', 'experiment_name', $fields, $titles);
             }
@@ -126,6 +127,7 @@ function displayImportDetails($import_id, $div_id, $called_from_sample = false){
             async: false,
             complete : function(s)
             {
+              console.log(s);
               var $json_object = jQuery.parseJSON(s.responseText)[0];
               // Also show Experiment Details
               displayExperimentDetails($json_object['series_id'], 'e_details', true);
@@ -145,28 +147,41 @@ function displayImportDetails($import_id, $div_id, $called_from_sample = false){
 function displaySampleDetails($sample_id, $div_id){
   clearAllDetails();
   var $html_to_return = "";
-  var $fields = ["experiment_name", "import_name", "protocol_name", 
+  var $fields1 = ["experiment_name", "import_name", "protocol_name", 
     "samplename", "barcode", "title", "source", "organism", "molecule",
     "instrument_model", "avg_insert_size", "read_length", "genotype",
     "library_type", "notes", "group_name", "perms_name", "donor", "time",
     "biological_replica", "technical_replica"];
-  var $titles = ["Series Name", "Lane Name", "Protocol Name", "Sample Name", 
+  var $titles1 = ["Series Name", "Lane Name", "Protocol Name", "Sample Name", 
     "Barcode", "Title", "Source", "Organism", "Molecule", "Instrument Model",
     "Avg. Insert Size", "Read Length", "Genotype", "Library Type", "Notes",
     "Groups", "Permission", "Donor", "Time", "Biological Rep", "Technical Rep"];
+  var $fields2 = ["fastq_dir", "file_names", "backup_dir", "file_name", "amazon_bucket"];
+  var $titles2 = ["Input File(s) Directory", "Input File(s)", "Processed File(s) Directory", "Processed File(s)", "Amazon Backup"];
+
+  var $fields_lists = [$fields1, $fields2, [], []];
+  var $titles_lists = [$titles1, $titles2, [], []];
         $.ajax({ type: "GET",
             url: BASE_PATH+"/public/ajax/browse_edit.php",
             data: { p: 'getSampleDetailsSearch', sample_id: '' + $sample_id},
             async: false,
             complete : function(s)
             {
+              console.log(s);
               var $json_object = jQuery.parseJSON(s.responseText)[0];
               // Also show Import Details (which in turn shows Experiment's)
               displayImportDetails($json_object['lane_id'], 'i_details', true);
-              $html_to_return += getDetailsHTML($json_object, 'Sample', 'samplename', $fields, $titles);
+              $html_to_return += getDetailsHTMLforSample($json_object, 
+                ['Data', 'Directory', 'Runs', 'Tables'], 
+                ['data_of_sample', 'directory_of_sample', 'runs_of_sample', 'tables_of_sample'], 
+                $fields_lists, $titles_lists);
+
+              console.log($html_to_return);
             }
         });
       $('#' + $div_id).html($html_to_return);
+      $( "#data_of_sample" ).parent().addClass('active');
+      
       $('#imports_filtered_by_selection').hide();
       $('#samples_filtered_by_selection').hide();
   }
@@ -186,10 +201,29 @@ function displaySampleDetails($sample_id, $div_id){
     return $html_to_return;
   }
 
-
+  function getDetailsHTMLforSample($json_object, $top_title_list, $div_id_list, $fields_lists, $titles_lists){
+    var $html_to_return = '<hr><h3>Sample</h3><div class="nav-tabs-custom"><ul id="tabList" class="nav nav-tabs"><ul class="nav nav-tabs">';
+    for(var k = 0; k < $top_title_list.length; k++){
+      $html_to_return += '<li class><a href="#' + $div_id_list[k] + '" id="' + $div_id_list[k] + '_select">' + $top_title_list[k] + '</a></li>';
+    }
+    $html_to_return += '</ul></div>';
+    $html_to_return += '<div class="tab-content">';
+    for(var i = 0; i < $top_title_list.length; i++){
+      $html_to_return += '<div class="box-body tab-pane" id="' + $div_id_list[i] + '"><div style="overflow-y:scroll"><dl class="dl-horizontal">';
+      var $current_val;
+      for(var j = 0; j < $fields_lists[i].length; j++){
+        $current_val = $json_object[$fields_lists[i][j]];
+        if($current_val){
+          $html_to_return += "<dt>" + $titles_lists[i][j] + "</dt><dd>" + $current_val + "</dd>";
+        }
+      }
+      $html_to_return += '</dl></div></div>';
+    }
+    $html_to_return += '</div>';
+    return $html_to_return;
+  }
 
 function ngsTrackCopy(){
-
   $(function() {
   	"use strict";
 

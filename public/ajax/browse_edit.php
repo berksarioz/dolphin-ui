@@ -116,7 +116,7 @@ if($p == 'getSampleDetailsSearch')
 {
 	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
 	$data=$query->queryTable("
-		SELECT ngs_experiment_series.experiment_name, ngs_lanes.name as import_name, ngs_protocols.name as protocol_name, ngs_samples.samplename, ngs_samples.barcode, ngs_samples.title, ngs_source.source, ngs_organism.organism, ngs_molecule.molecule, ngs_instrument_model.instrument_model, ngs_samples.avg_insert_size, ngs_samples.read_length, ngs_genotype.genotype, ngs_library_type.library_type, ngs_samples.notes, groups.name as group_name, perms.perms_name, ngs_donor.donor, ngs_samples.time, ngs_samples.biological_replica, ngs_samples.technical_replica, ngs_samples.lane_id
+		SELECT ngs_experiment_series.experiment_name, ngs_lanes.name as import_name, ngs_protocols.name as protocol_name, ngs_samples.samplename, ngs_samples.barcode, ngs_samples.title, ngs_source.source, ngs_organism.organism, ngs_molecule.molecule, ngs_instrument_model.instrument_model, ngs_samples.avg_insert_size, ngs_samples.read_length, ngs_genotype.genotype, ngs_library_type.library_type, ngs_samples.notes, groups.name as group_name, perms.perms_name, ngs_donor.donor, ngs_samples.time, ngs_samples.biological_replica, ngs_samples.technical_replica, ngs_samples.lane_id, ngs_dirs.fastq_dir, ngs_dirs.backup_dir, ngs_fastq_files.file_name, ngs_dirs.amazon_bucket, GROUP_CONCAT(ngs_temp_sample_files.file_name separator '<br/>') AS file_names
 		FROM `ngs_samples`
 		LEFT JOIN `ngs_experiment_series`
 		ON ngs_samples.series_id = ngs_experiment_series.id
@@ -142,6 +142,12 @@ if($p == 'getSampleDetailsSearch')
 		ON ngs_samples.perms = perms.value
 		LEFT JOIN `ngs_donor`
 		ON ngs_samples.donor_id = ngs_donor.id
+		LEFT JOIN `ngs_fastq_files`
+		ON ngs_samples.id = ngs_fastq_files.sample_id
+		LEFT JOIN `ngs_dirs`
+		ON ngs_dirs.id = ngs_fastq_files.dir_id
+		LEFT JOIN `ngs_temp_sample_files`
+		ON ngs_temp_sample_files.sample_id = ngs_samples.id
 		WHERE ngs_samples.id = $sample_id
 		");
 }

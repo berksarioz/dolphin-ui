@@ -29,10 +29,17 @@ function createStreamTable(type, objList, dataURL, perPageOn, perPageOpts, perPa
 			}
 		},
 		pagination: function(summary){
-    			var $summary = $('#summary');
+    		var $summary = $('#summary_' + type);
    			$summary.text( summary.from + ' to '+ summary.to +' of '+ summary.total +' entries');
 		}
 	}
+
+	var type_summary = createElement('div', ['id', 'class'], ['summary_' + type, 'pull-left margin']);
+	var the_table = document.getElementById('table_div_'+type);
+	the_table.setAttribute('style','overflow:scroll');
+	the_table.appendChild(type_summary);
+
+
 	st = StreamTable('#jsontable_' + type,
 	  { view: view,
 		data_url: dataURL,

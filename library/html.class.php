@@ -252,7 +252,6 @@ class HTML {
 										<tbody>
 										</tbody>
 								</table>
-						<div id="summary"></div>
 						</div><!-- /.box-body -->
 				</div><!-- /.box -->';
 		
