@@ -4,7 +4,12 @@
  * Description:
  **/
 
+
+
 $(function() {
+
+
+
     "use strict";
     /* Morris.js Charts */
      var responseTopDolphinUsers = '';
@@ -88,194 +93,163 @@ $(function() {
         hideHover: 'auto'
     });
 
-     $.ajax({ type: "GET",
-                     url: BASE_PATH+"/public/ajax/statquerydb.php",
-                     data: { p: "getUsersTime", type:"Dolphin" },
-                     async: false,
-                     success : function(s)
-                     {
-                       var all_objects = [];
-                        for(var i = 0; i < s.length; i++) {
-                        all_objects.push({name:s[i].name, lab:s[i].lab,
-                          count:s[i].count });
-                        } // End For
-                        createStreamTable('dolphin_user_stream', all_objects, "",
-                          true, [10,20,50,100], 10, true, true);
-                     }
-            });
 
-     $('.daterange_User').daterangepicker(
-            {
-                ranges: {
-                    'Today': [moment().subtract('days', 1), moment()],
-                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
-                    'Last 7 Days': [moment().subtract('days', 6), moment()],
-                    'Last 30 Days': [moment().subtract('days', 29), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
-					'This Year': [moment().startOf('year'), moment().endOf('year')],
-					'All Time': [moment('2012-01-01'), moment()],
+    var $table_id_list = ['user', 'lab', 'service', 'job'];
+    for(var i = 0; i < $table_id_list.length; i++){
+        $('#dolphin_' + $table_id_list[i] + '_stream-head').parent().html(
+            // '<button class="btn btn-primary btn-sm pull-right" data-toggle="collapse"'+
+            // ' title="Collapse" data-target="#table_div_dolphin_' + $table_id_list[i] + '_stream"' +
+            // 'style="margin-right: 5px;"><i class="fa fa-minus"></i></button>' +
+            '<button id="daterange_' + $table_id_list[i] + '" class="btn ' +
+            'btn-primary btn-sm pull-right" data-toggle="tooltip" title="Date' +
+            ' range"><i class="fa fa-calendar"></i></button>');
+    }
+    var $second_vars_list = ['Users', 'Labs', 'Service', 'Job'];
+
+
+    for(var index = 0; index < $table_id_list.length; index++){
+        $.ajax({ type: "GET",
+                         url: BASE_PATH+"/public/ajax/statquerydb.php",
+                         data: { p: "get" + $second_vars_list[index] + "Time", type:"Dolphin" },
+                         async: false,
+                         success : function(s)
+                         {
+                            createStreamTable('dolphin_' + $table_id_list[index] + '_stream', s, "",
+                              true, [10,20,50,100], 10, true, true);
+                         }
+                });
+    }
+
+
+         $('#daterange_user').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment().subtract('days', 1), moment()],
+                        'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
+                        'Last 7 Days': [moment().subtract('days', 6), moment()],
+                        'Last 30 Days': [moment().subtract('days', 29), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
+                        'This Year': [moment().startOf('year'), moment().endOf('year')],
+                        'All Time': [moment('2012-01-01'), moment()],
+                    },
+                    startDate: moment('2012-01-01'),
+                    endDate: moment()
                 },
-                startDate: moment('2012-01-01'),
-                endDate: moment()
-            },
-    function(start, end) {
-            $.ajax({ type: "GET",
-                     url: BASE_PATH+"/public/ajax/statquerydb.php",
-                     data: { p: "getUsersTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
-                     async: false,
-                     success : function(s)
-                     {
-                        for(var i = 0; i < s.length; i++) {
-                        } // End For
-                     }
-            });
+        function(start, end) {
+                $.ajax({ type: "GET",
+                         url: BASE_PATH+"/public/ajax/statquerydb.php",
+                         data: { p: "getUsersTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
+                         async: false,
+                         success : function(s)
+                         {
+                            var save = $('#table_div_dolphin_user_stream table').detach();
+                            $('#table_div_dolphin_user_stream').empty().append(save);
+                            createStreamTable('dolphin_user_stream', s, "",
+                              true, [10,20,50,100], 10, true, true);
+                         }
+                });
 
-    });
-
+        });
 
 
-     $.ajax({ type: "GET",
-                     url: BASE_PATH+"/public/ajax/statquerydb.php",
-                     data: { p: "getLabsTime", type:"Dolphin" },
-                     async: false,
-                     success : function(s)
-                     {
-                       var all_objects = [];
-                        for(var i = 0; i < s.length; i++) {
-                        all_objects.push({lab:s[i].lab,
-                          count:s[i].count });
-                        } // End For
-                        createStreamTable('dolphin_lab_stream', all_objects, "",
-                          true, [10,20,50,100], 10, true, true);
-                     }
-            });
-
-    $('.daterange_Lab').daterangepicker(
-            {
-                ranges: {
-                    'Today': [moment().subtract('days', 1), moment()],
-                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
-                    'Last 7 Days': [moment().subtract('days', 6), moment()],
-                    'Last 30 Days': [moment().subtract('days', 29), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
-					'This Year': [moment().startOf('year'), moment().endOf('year')],
-					'All Time': [moment('2012-01-01'), moment()],
+         $('#daterange_lab').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment().subtract('days', 1), moment()],
+                        'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
+                        'Last 7 Days': [moment().subtract('days', 6), moment()],
+                        'Last 30 Days': [moment().subtract('days', 29), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
+                        'This Year': [moment().startOf('year'), moment().endOf('year')],
+                        'All Time': [moment('2012-01-01'), moment()],
+                    },
+                    startDate: moment('2012-01-01'),
+                    endDate: moment()
                 },
-                startDate: moment('2012-01-01'),
-                endDate: moment()
-            },
-    function(start, end) {
-            $.ajax({ type: "GET",
-                     url: BASE_PATH+"/public/ajax/statquerydb.php",
-                     data: { p: "getLabsTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
-                     async: false,
-                     success : function(s)
-                     {
-                        for(var i = 0; i < s.length; i++) {
-                        } // End For
-                     }
-            });
+        function(start, end) {
+                $.ajax({ type: "GET",
+                         url: BASE_PATH+"/public/ajax/statquerydb.php",
+                         data: { p: "getLabsTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
+                         async: false,
+                         success : function(s)
+                         {
+                            var save = $('#table_div_dolphin_lab_stream table').detach();
+                            $('#table_div_dolphin_lab_stream').empty().append(save);
+                            createStreamTable('dolphin_lab_stream', s, "",
+                              true, [10,20,50,100], 10, true, true);
+                         }
+                });
 
-    });
-
-	/*##### SERVICE TABLE #####*/
+        });
 
 
-    $.ajax({ type: "GET",
-                     url: BASE_PATH+"/public/ajax/adminstatquerydb.php",
-                     data: { p: "getServiceTime", type:"Dolphin" },
-                     async: false,
-                     success : function(s)
-                     {
-						console.log(s);
-                        var all_objects = [];
-                        for(var i = 0; i < s.length; i++) {
-                        all_objects.push({servicename:s[i].servicename,
-                          count:s[i].count });
-                        } // End For
-                        createStreamTable('dolphin_service_stream', all_objects, "",
-                          true, [10,20,50,100], 10, true, true);
-                     }
-            });
-
-    $('.daterange_Service').daterangepicker(
-            {
-                ranges: {
-                    'Today': [moment().subtract('days', 1), moment()],
-                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
-                    'Last 7 Days': [moment().subtract('days', 6), moment()],
-                    'Last 30 Days': [moment().subtract('days', 29), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
-					'This Year': [moment().startOf('year'), moment().endOf('year')],
-					'All Time': [moment('2012-01-01'), moment()],
+         $('#daterange_service').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment().subtract('days', 1), moment()],
+                        'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
+                        'Last 7 Days': [moment().subtract('days', 6), moment()],
+                        'Last 30 Days': [moment().subtract('days', 29), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
+                        'This Year': [moment().startOf('year'), moment().endOf('year')],
+                        'All Time': [moment('2012-01-01'), moment()],
+                    },
+                    startDate: moment('2012-01-01'),
+                    endDate: moment()
                 },
-                startDate: moment('2012-01-01'),
-                endDate: moment()
-            },
-    function(start, end) {
-            $.ajax({ type: "GET",
-                     url: BASE_PATH+"/public/ajax/adminstatquerydb.php",
-                     data: { p: "getServiceTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
-                     async: false,
-                     success : function(s)
-                     {
-						console.log(s);
-                        for(var i = 0; i < s.length; i++) {
-                        } // End For
-                     }
-            });
-    });
+        function(start, end) {
+                $.ajax({ type: "GET",
+                         url: BASE_PATH+"/public/ajax/statquerydb.php",
+                         data: { p: "getServiceTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
+                         async: false,
+                         success : function(s)
+                         {
+                            var save = $('#table_div_dolphin_service_stream table').detach();
+                            $('#table_div_dolphin_service_stream').empty().append(save);
+                            createStreamTable('dolphin_service_stream', s, "",
+                              true, [10,20,50,100], 10, true, true);
+                         }
+                });
+
+        });
 
 
-    /*##### JOB TABLE #####*/
-
-
-    $.ajax({ type: "GET",
-                     url: BASE_PATH+"/public/ajax/statquerydb.php",
-                     data: { p: "getJobTime", type:"Dolphin" },
-                     async: false,
-                     success : function(s)
-                     {
-                       var all_objects = [];
-                        for(var i = 0; i < s.length; i++) {
-                        all_objects.push({servicename:s[i].servicename,
-                          count:s[i].count });
-                        } // End For
-                        createStreamTable('dolphin_job_stream', all_objects, "",
-                          true, [10,20,50,100], 10, true, true);                     }
-            });
-
-    $('.daterange_Job').daterangepicker(
-            {
-                ranges: {
-                    'Today': [moment().subtract('days', 1), moment()],
-                    'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
-                    'Last 7 Days': [moment().subtract('days', 6), moment()],
-                    'Last 30 Days': [moment().subtract('days', 29), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
-					'This Year': [moment().startOf('year'), moment().endOf('year')],
-					'All Time': [moment('2012-01-01'), moment()],
+         $('#daterange_job').daterangepicker(
+                {
+                    ranges: {
+                        'Today': [moment().subtract('days', 1), moment()],
+                        'Yesterday': [moment().subtract('days', 2), moment().subtract('days', 1)],
+                        'Last 7 Days': [moment().subtract('days', 6), moment()],
+                        'Last 30 Days': [moment().subtract('days', 29), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract('month', 1).startOf('month'), moment().subtract('month', 1).endOf('month')],
+                        'This Year': [moment().startOf('year'), moment().endOf('year')],
+                        'All Time': [moment('2012-01-01'), moment()],
+                    },
+                    startDate: moment('2012-01-01'),
+                    endDate: moment()
                 },
-                startDate: moment('2012-01-01'),
-                endDate: moment()
-            },
-    function(start, end) {
-            $.ajax({ type: "GET",
-                     url: BASE_PATH+"/public/ajax/statquerydb.php",
-                     data: { p: "getJobTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
-                     async: false,
-                     success : function(s)
-                     {
-                        for(var i = 0; i < s.length; i++) {
-                        } // End For
-                     }
-            });
+        function(start, end) {
+                $.ajax({ type: "GET",
+                         url: BASE_PATH+"/public/ajax/statquerydb.php",
+                         data: { p: "getJobTime", type:"Dolphin", start:start.format('YYYY-MM-DD'), end:end.format('YYYY-MM-DD') },
+                         async: false,
+                         success : function(s)
+                         {
+                            var save = $('#table_div_dolphin_job_stream table').detach();
+                            $('#table_div_dolphin_job_stream').empty().append(save);
+                            createStreamTable('dolphin_job_stream', s, "",
+                              true, [10,20,50,100], 10, true, true);
+                         }
+                });
 
-    });
+        });
+
+
+
 
 
 });
