@@ -119,29 +119,33 @@ function displayExperimentDetails($experiment_id, $div_id, $called_from_import =
 function displayImportDetails($import_id, $div_id, $called_from_sample = false){
   clearAllDetails();
   var $html_to_return = "";
-  var $fields = ["experiment_name", "facility", "date_submitted", "date_received", "total_samples", "resequenced", "group_name", "perms_name", "lane_id"];
-  var $titles = ["Series Name", "Sequencing Facility", "Date Submitted", "Date Received", "# of Samples", "Resequenced", "Groups", "Permission", "Lane ID"];
-        $.ajax({ type: "GET",
-            url: BASE_PATH+"/public/ajax/browse_edit.php",
-            data: { p: 'getImportDetailsSearch', import_id: '' + $import_id},
-            async: false,
-            complete : function(s)
-            {
-              console.log(s);
-              var $json_object = jQuery.parseJSON(s.responseText)[0];
-              // Also show Experiment Details
-              displayExperimentDetails($json_object['series_id'], 'e_details', true);
-              $html_to_return += getDetailsHTML($json_object, 'Import', 'import_name', $fields, $titles);
-            }
-        });
-      $('#' + $div_id).html($html_to_return);
-      if(!$called_from_sample){
-        console.log("I'm here.")
-        createFilteredSample('import', $import_id);
+  var $fields = ["experiment_name", "facility", "date_submitted",
+    "date_received", "total_samples", "resequenced", "group_name",
+    "perms_name", "lane_id"];
+  var $titles = ["Series Name", "Sequencing Facility", "Date Submitted",
+    "Date Received", "# of Samples", "Resequenced", "Groups", "Permission",
+    "Lane ID"];
+  $.ajax({ type: "GET",
+      url: BASE_PATH+"/public/ajax/browse_edit.php",
+      data: { p: 'getImportDetailsSearch', import_id: '' + $import_id},
+      async: false,
+      complete : function(s)
+      {
+        console.log(s);
+        var $json_object = jQuery.parseJSON(s.responseText)[0];
+        // Also show Experiment Details
+        displayExperimentDetails($json_object['series_id'], 'e_details', true);
+        $html_to_return += getDetailsHTML($json_object, 'Import', 'import_name', $fields, $titles);
       }
-      $('#imports_filtered_by_selection').hide();
-      $('#samples_filtered_by_selection > h3').css({'color':'blue'});
-      $('#samples_filtered_by_selection').show();
+  });
+  $('#' + $div_id).html($html_to_return);
+  if(!$called_from_sample){
+    console.log("I'm here.")
+    createFilteredSample('import', $import_id);
+  }
+  $('#imports_filtered_by_selection').hide();
+  $('#samples_filtered_by_selection > h3').css({'color':'blue'});
+  $('#samples_filtered_by_selection').show();
   }
 
 function displaySampleDetails($sample_id, $div_id){
@@ -156,35 +160,38 @@ function displaySampleDetails($sample_id, $div_id){
     "Barcode", "Title", "Source", "Organism", "Molecule", "Instrument Model",
     "Avg. Insert Size", "Read Length", "Genotype", "Library Type", "Notes",
     "Groups", "Permission", "Donor", "Time", "Biological Rep", "Technical Rep"];
-  var $fields2 = ["fastq_dir", "file_names", "backup_dir", "file_name", "amazon_bucket"];
-  var $titles2 = ["Input File(s) Directory", "Input File(s)", "Processed File(s) Directory", "Processed File(s)", "Amazon Backup"];
+  var $fields2 = ["fastq_dir", "file_names", "backup_dir", "file_name", 
+    "amazon_bucket"];
+  var $titles2 = ["Input File(s) Directory", "Input File(s)", 
+    "Processed File(s) Dir", "Processed File(s)", "Amazon Backup"];
 
   var $fields_lists = [$fields1, $fields2, [], []];
   var $titles_lists = [$titles1, $titles2, [], []];
-        $.ajax({ type: "GET",
-            url: BASE_PATH+"/public/ajax/browse_edit.php",
-            data: { p: 'getSampleDetailsSearch', sample_id: '' + $sample_id},
-            async: false,
-            complete : function(s)
-            {
-              console.log(s);
-              var $json_object = jQuery.parseJSON(s.responseText)[0];
-              // Also show Import Details (which in turn shows Experiment's)
-              displayImportDetails($json_object['lane_id'], 'i_details', true);
-              $html_to_return += getDetailsHTMLforSample($json_object, 
-                ['Data', 'Directory', 'Runs', 'Tables'], 
-                ['data_of_sample', 'directory_of_sample', 'runs_of_sample', 'tables_of_sample'], 
-                $fields_lists, $titles_lists);
+  $.ajax({ type: "GET",
+      url: BASE_PATH+"/public/ajax/browse_edit.php",
+      data: { p: 'getSampleDetailsSearch', sample_id: '' + $sample_id},
+      async: false,
+      complete : function(s)
+      {
+        console.log(s);
+        var $json_object = jQuery.parseJSON(s.responseText)[0];
+        // Also show Import Details (which in turn shows Experiment's)
+        displayImportDetails($json_object['lane_id'], 'i_details', true);
+        $html_to_return += getDetailsHTMLforSample($json_object, 
+          ['Data', 'Directory', 'Runs', 'Tables'], 
+          ['data_of_sample', 'directory_of_sample', 'runs_of_sample', 
+            'tables_of_sample'], 
+          $fields_lists, $titles_lists);
 
-              console.log($html_to_return);
-            }
-        });
-      $('#' + $div_id).html($html_to_return);
-      $( "#data_of_sample" ).parent().addClass('active');
-      
-      $('#imports_filtered_by_selection').hide();
-      $('#samples_filtered_by_selection').hide();
-  }
+        console.log($html_to_return);
+      }
+  });
+  $('#' + $div_id).html($html_to_return);
+  $( "#data_of_sample" ).addClass('active');
+  
+  $('#imports_filtered_by_selection').hide();
+  $('#samples_filtered_by_selection').hide();
+}
 
 
 
@@ -202,9 +209,9 @@ function displaySampleDetails($sample_id, $div_id){
   }
 
   function getDetailsHTMLforSample($json_object, $top_title_list, $div_id_list, $fields_lists, $titles_lists){
-    var $html_to_return = '<hr><h3>Sample</h3><div class="nav-tabs-custom"><ul id="tabList" class="nav nav-tabs"><ul class="nav nav-tabs">';
+    var $html_to_return = '<hr><h3>Sample</h3><div class="nav-tabs-custom"><ul id="tabList" class="nav nav-tabs">';
     for(var k = 0; k < $top_title_list.length; k++){
-      $html_to_return += '<li class><a href="#' + $div_id_list[k] + '" id="' + $div_id_list[k] + '_select">' + $top_title_list[k] + '</a></li>';
+      $html_to_return += '<li class><a href="#' + $div_id_list[k] + '" id="' + $div_id_list[k] + '_select" data-toggle="tab" aria-expanded="true">' + $top_title_list[k] + '</a></li>';
     }
     $html_to_return += '</ul></div>';
     $html_to_return += '<div class="tab-content">';

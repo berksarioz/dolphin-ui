@@ -216,9 +216,11 @@
 								</div>
 							</div><!-- End Edit Selected modal -->
 						</div><!-- /.col (RIGHT) -->
-						<div id="outer_e" class="col-md-9 pull-right"><div id="e_details" class="col-md-9"></div></div>
-						<div id="outer_i" class="col-md-9 pull-right"><div id="i_details" class="col-md-9"></div></div>
 						<div id="outer_s" class="col-md-9 pull-right"><div id="s_details" class="col-md-9"></div></div>
+						<div id="outer_e_and_i" class="col-md-9 pull-right">
+							<div id="outer_e" class="col-md-6"><div id="e_details" class="col-md-10"></div></div>
+							<div id="outer_i" class="col-md-6"><div id="i_details" class="col-md-10"></div></div>
+						</div>
 						<div id="outer_top" class="col-md-9 pull-right" style="margin-top: 50px;">
 							<div id="back_to_top" class="col-md-9">
 								<a href="#">Back to top</a>
