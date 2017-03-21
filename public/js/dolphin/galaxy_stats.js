@@ -87,6 +87,14 @@ $(function() {
     });
 
 
+    var $table_id_list = ['user', 'tool', 'lab'];
+    for(var i = 0; i < $table_id_list.length; i++){
+        $('#galaxy_' + $table_id_list[i] + '_stream-head').parent().html(
+            '<button id="daterange_' + $table_id_list[i] + '" class="btn ' +
+            'btn-primary btn-sm pull-right" data-toggle="tooltip" title="Date' +
+            ' range"><i class="fa fa-calendar"></i></button>');
+    }
+
 
         $.ajax({ type: "GET",
                      url: BASE_PATH+"/public/ajax/statquerydb.php",
@@ -94,17 +102,12 @@ $(function() {
                      async: false,
                      success : function(s)
                      {
-                        var all_objects = [];
-                        for(var i = 0; i < s.length; i++) {
-                        all_objects.push({name:s[i].name, lab:s[i].lab,
-                          count:s[i].count });
-                        } // End For
-                        createStreamTable('galaxy_user_stream', all_objects, "",
+                        createStreamTable('galaxy_user_stream', s, "",
                           true, [10,20,50,100], 10, true, true);
                      }
             });
 
-     $('.daterange_User').daterangepicker(
+     $('#daterange_user').daterangepicker(
             {
                 ranges: {
                     'Today': [moment().subtract('days', 1), moment()],
@@ -127,6 +130,10 @@ $(function() {
                      success : function(s)
                      {
                         for(var i = 0; i < s.length; i++) {
+                            var save = $('#table_div_galaxy_user_stream table').detach();
+                            $('#table_div_galaxy_user_stream').empty().append(save);
+                            createStreamTable('galaxy_user_stream', s, "",
+                              true, [10,20,50,100], 10, true, true);
                         } // End For
                      }
             });
@@ -140,15 +147,11 @@ $(function() {
                      async: false,
                      success : function(s)
                      {
-                       var all_objects = [];
-                        for(var i = 0; i < s.length; i++) {
-                        all_objects.push({lab:s[i].lab, count:s[i].count });
-                        } // End For
-                        createStreamTable('galaxy_lab_stream', all_objects, "",
+                        createStreamTable('galaxy_lab_stream', s, "",
                           true, [10,20,50,100], 10, true, true);
                      }
             });
-    $('.daterange_Lab').daterangepicker(
+    $('#daterange_lab').daterangepicker(
             {
                 ranges: {
                     'Today': [moment().subtract('days', 1), moment()],
@@ -171,6 +174,10 @@ $(function() {
                      success : function(s)
                      {
                         for(var i = 0; i < s.length; i++) {
+                            var save = $('#table_div_galaxy_lab_stream table').detach();
+                            $('#table_div_galaxy_lab_stream').empty().append(save);
+                            createStreamTable('galaxy_lab_stream', s, "",
+                              true, [10,20,50,100], 10, true, true);
                         } // End For
                      }
             });
@@ -184,16 +191,10 @@ $(function() {
                      async: false,
                      success : function(s)
                      {
-                        var all_objects = [];
-                        for(var i = 0; i < s.length; i++) {
-
-                        all_objects.push({tool_name:s[i].tool_name,
-                          count:s[i].count });
-                        } // End For
-                        createStreamTable('galaxy_tool_stream', all_objects, "",
+                        createStreamTable('galaxy_tool_stream', s, "",
                           true, [10,20,50,100], 10, true, true);                     }
             });
-    $('.daterange_Tool').daterangepicker(
+    $('#daterange_tool').daterangepicker(
             {
                 ranges: {
                     'Today': [moment().subtract('days', 1), moment()],
@@ -216,7 +217,10 @@ $(function() {
                      success : function(s)
                      {
                         for(var i = 0; i < s.length; i++) {
-
+                            var save = $('#table_div_galaxy_tool_stream table').detach();
+                            $('#table_div_galaxy_tool_stream').empty().append(save);
+                            createStreamTable('galaxy_tool_stream', s, "",
+                              true, [10,20,50,100], 10, true, true);
                         } // End For
                      }
             });
