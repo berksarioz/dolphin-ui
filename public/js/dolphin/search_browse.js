@@ -1,24 +1,31 @@
-$('.toggle').toggles({
-  text:{on:'All',off:'Filtered'},
-  width: 100,
-  height: 20,
-  on: true
-});
+// $('.toggle').toggles({
+//   text:{on:'All',off:'Filtered'},
+//   width: 100,
+//   height: 20,
+//   on: true
+// });
 
-$('.toggle').on('toggle', function(e, active) {
-  if (active) {
+// $('.toggle').on('toggle', function(e, active) {
+//   if (active) {
+//     $('#imports_filtered_by_selection').hide();
+//     $('#samples_filtered_by_selection').hide();
+//     $('#browse_import_data_table').show();
+//     $('#browse_sample_data_table').show();
+//   } else {
+//     $('#imports_filtered_by_selection').show();
+//     $('#samples_filtered_by_selection').show();
+//     $('#browse_import_data_table').hide();
+//     $('#browse_sample_data_table').hide();
+
+//   }
+// });
+
+function showAllSamplesAndImports(){
     $('#imports_filtered_by_selection').hide();
     $('#samples_filtered_by_selection').hide();
     $('#browse_import_data_table').show();
     $('#browse_sample_data_table').show();
-  } else {
-    $('#imports_filtered_by_selection').show();
-    $('#samples_filtered_by_selection').show();
-    $('#browse_import_data_table').hide();
-    $('#browse_sample_data_table').hide();
-
-  }
-});
+}
 
 function fillSampleTable(){
   if($('#table_div_samples').length == 0){
@@ -46,13 +53,19 @@ function createFilteredSample($experiment_or_import, $id){
     {
       for(var i = 0; i < s.length; i++ ){
         s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' +
-        s[i].id + '" id="sample_checkbox_' + s[i].id + '" onclick="manageChecklists(this.name, \'sample_checkbox\')">';
+          s[i].id + '" id="sample_checkbox_' + s[i].id +
+          '" onclick="manageChecklists(this.name, \'sample_checkbox\')">';
+        s[i].samplename = '<a href="#" onclick="displaySampleDetails(' + s[i].id +
+          ', \'s_details\');event.preventDefault();">' + s[i].samplename + '</a>';
       }
       console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
       console.log(s);
       var save = $('#table_div_samples_filtered table').detach();
       $('#table_div_samples_filtered').empty().append(save);
       groupsStreamTable = createStreamTable('samples_filtered', s, "", true, [10,20,50,100], 20, true, true);
+
+      $('#samples_filtered_by_selection').show();
+      $('#browse_sample_data_table').hide();
     }
   });
 }
@@ -67,13 +80,20 @@ function createFilteredImport($experiment_id){
     {
       for(var i = 0; i < s.length; i++ ){
         s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' +
-        s[i].id + '" id="lane_checkbox_' + s[i].id + '" onclick="manageChecklists(this.name, \'lane_checkbox\')">';
+          s[i].id + '" id="lane_checkbox_' + s[i].id +
+          '" onclick="manageChecklists(this.name, \'lane_checkbox\')">';
+        s[i].import_name = '<a href="#" onclick="displayImportDetails(' + s[i].id +
+          ', \'i_details\');event.preventDefault();">' + s[i].import_name + '</a>';
       }
       console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
       console.log(s);
       var save = $('#table_div_lanes_filtered table').detach();
       $('#table_div_lanes_filtered').empty().append(save);
-      groupsStreamTable = createStreamTable('lanes_filtered', s, "", true, [10,20,50,100], 20, true, true);
+      groupsStreamTable = createStreamTable('lanes_filtered', s, "", true,
+        [10,20,50,100], 20, true, true);
+
+      $('#imports_filtered_by_selection').show();
+      $('#browse_import_data_table').hide();
     }
   });
 }
@@ -97,23 +117,30 @@ function displayExperimentDetails($experiment_id, $div_id, $called_from_import =
   var $titles = ["Summary", "Overall Design", "Groups", "Permission"];
         $.ajax({ type: "GET",
             url: BASE_PATH+"/public/ajax/browse_edit.php",
-            data: { p: 'getExperimentDetailsSearch', experiment_id: '' + $experiment_id},
+            data: { p: 'getExperimentDetailsSearch', experiment_id: '' +
+              $experiment_id},
             async: false,
             complete : function(s)
             {
               console.log(s);
               var $json_object = jQuery.parseJSON(s.responseText)[0];
-              $html_to_return += getDetailsHTML($json_object, 'Experiment Series', 'experiment_name', $fields, $titles);
+              $html_to_return += getDetailsHTML($json_object,
+                'Experiment Series', 'experiment_name', $fields, $titles);
             }
         });
       $('#' + $div_id).html($html_to_return);
       if(!$called_from_import){
         createFilteredImport($experiment_id);
         createFilteredSample('experiment', $experiment_id);
+        var scroll_to = "#back_to_top";
+      } else {
+        var scroll_to = "#back_to_top";
       }
-      $('#imports_filtered_by_selection').show();
-      $('#samples_filtered_by_selection > h3').css({'color':'blue'});
-      $('#samples_filtered_by_selection').show();
+
+      $('html, body').animate({
+          scrollTop: $(scroll_to).offset().top - 500
+      }, 2000);
+
   }
 
 function displayImportDetails($import_id, $div_id, $called_from_sample = false){
@@ -135,7 +162,8 @@ function displayImportDetails($import_id, $div_id, $called_from_sample = false){
         var $json_object = jQuery.parseJSON(s.responseText)[0];
         // Also show Experiment Details
         displayExperimentDetails($json_object['series_id'], 'e_details', true);
-        $html_to_return += getDetailsHTML($json_object, 'Import', 'import_name', $fields, $titles);
+        $html_to_return += getDetailsHTML($json_object, 'Import',
+          'import_name', $fields, $titles);
       }
   });
   $('#' + $div_id).html($html_to_return);
@@ -143,10 +171,7 @@ function displayImportDetails($import_id, $div_id, $called_from_sample = false){
     console.log("I'm here.")
     createFilteredSample('import', $import_id);
   }
-  $('#imports_filtered_by_selection').hide();
-  $('#samples_filtered_by_selection > h3').css({'color':'blue'});
-  $('#samples_filtered_by_selection').show();
-  }
+}
 
 function displaySampleDetails($sample_id, $div_id){
   clearAllDetails();
@@ -183,14 +208,63 @@ function displaySampleDetails($sample_id, $div_id){
             'tables_of_sample'], 
           $fields_lists, $titles_lists);
 
-        console.log($html_to_return);
       }
   });
   $('#' + $div_id).html($html_to_return);
   $( "#data_of_sample" ).addClass('active');
-  
-  $('#imports_filtered_by_selection').hide();
-  $('#samples_filtered_by_selection').hide();
+  addRunsToSampleDetails($sample_id, 'runs_of_sample');
+}
+
+function addRunsToSampleDetails($sample_id, $run_div_id){
+  var $run_html = '';
+  $.ajax({ type: "GET",
+      url: BASE_PATH+"/public/ajax/browse_edit.php",
+      data: { p: 'getRunsForSample', sample_id: '' + $sample_id},
+      async: false,
+      complete : function(response)
+      {
+        console.log(response);
+        var s = jQuery.parseJSON(response.responseText);
+        console.log('length of response:' + response.length);
+
+        addTablesToSampleDetails(response.responseText, 'tables_of_sample');
+
+        console.log(s);
+        for(var i = 0; i < s.length; i++ ){
+          console.log(s[i].id + s[i].run_name );
+          $run_html += '<p>' + s[i].id + '&ensp;' + s[i].run_name +
+          '&ensp;<a href="#" id="' + s[i].id +
+          '" onclick="reportSelected(this.id,1)">Reports</a>&ensp;<a href="#" id="' +
+          s[i].id + '" onclick="sendToAdvancedStatus(this.id)">Status</a></p>';
+        }
+      }
+  });
+  $('#' + $run_div_id).html($run_html);
+}
+
+
+function addTablesToSampleDetails($runs, $table_div_id){
+  var $tables_html = '';
+  $.ajax({ type: "GET",
+      url: BASE_PATH+"/public/ajax/browse_edit.php",
+      data: { p: 'getTablesForSample', runs: '' + $runs},
+      async: false,
+      complete : function(response)
+      {
+        console.log(response);
+        var s = jQuery.parseJSON(response.responseText);
+        console.log('length of response:' + response.length);
+
+        console.log(s);
+        for(var i = 0; i < s.length; i++ ){
+          console.log(s[i].id + s[i].run_name );
+          $tables_html += '<a href="#" id="' + s[i].id + 
+            '" onclick="sendToSavedTable(this.id)">' + s[i].id + ' -- ' +
+            s[i].name + '</a><br>';
+        }
+      }
+  });
+  $('#' + $table_div_id).html($tables_html);
 }
 
 
@@ -208,20 +282,27 @@ function displaySampleDetails($sample_id, $div_id){
     return $html_to_return;
   }
 
-  function getDetailsHTMLforSample($json_object, $top_title_list, $div_id_list, $fields_lists, $titles_lists){
-    var $html_to_return = '<hr><h3>Sample</h3><div class="nav-tabs-custom"><ul id="tabList" class="nav nav-tabs">';
+  function getDetailsHTMLforSample($json_object, $top_title_list, $div_id_list,
+                                    $fields_lists, $titles_lists){
+    var $html_to_return = '<hr><h3>Sample</h3><div class="nav-tabs-custom">' +
+      '<ul id="tabList" class="nav nav-tabs">';
     for(var k = 0; k < $top_title_list.length; k++){
-      $html_to_return += '<li class><a href="#' + $div_id_list[k] + '" id="' + $div_id_list[k] + '_select" data-toggle="tab" aria-expanded="true">' + $top_title_list[k] + '</a></li>';
+      $html_to_return += '<li class><a href="#' + $div_id_list[k] + 
+        '" id="' + $div_id_list[k] +
+        '_select" data-toggle="tab" aria-expanded="true">' +
+        $top_title_list[k] + '</a></li>';
     }
     $html_to_return += '</ul></div>';
     $html_to_return += '<div class="tab-content">';
     for(var i = 0; i < $top_title_list.length; i++){
-      $html_to_return += '<div class="box-body tab-pane" id="' + $div_id_list[i] + '"><div style="overflow-y:scroll"><dl class="dl-horizontal">';
+      $html_to_return += '<div class="box-body tab-pane" id="' +$div_id_list[i]
+        + '"><div style="overflow-y:scroll"><dl class="dl-horizontal">';
       var $current_val;
       for(var j = 0; j < $fields_lists[i].length; j++){
         $current_val = $json_object[$fields_lists[i][j]];
         if($current_val){
-          $html_to_return += "<dt>" + $titles_lists[i][j] + "</dt><dd>" + $current_val + "</dd>";
+          $html_to_return += "<dt>" + $titles_lists[i][j] + "</dt><dd>" +
+            $current_val + "</dd>";
         }
       }
       $html_to_return += '</dl></div></div>';

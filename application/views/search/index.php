@@ -125,7 +125,7 @@
 											$title_all_import = "Imports";
 											$table_all_import = "lanes";
 											$table_filtered_import = "lanes_filtered";
-											$title_filtered_import = "Filtered Imports";
+											$title_filtered_import = "Imports";
 											$fields_basic_import = ["id","Import Name","Facility","Total Reads","Total Samples","Selected"];
 											$tableKeys_basic_import = ["id","name","facility", "total_reads", "total_samples",""];
 											$fields_extended_import = ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"];
@@ -154,7 +154,7 @@
 											$title_all_sample = "Samples";
 											$table_all_sample = "samples";
 											$table_filtered_sample = "samples_filtered";
-											$title_filtered_sample = "Filtered Samples";
+											$title_filtered_sample = "Samples";
 											$fields_basic_sample = ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"];
 											$tableKeys_basic_sample = ["id","name","title","source","organism","molecule","backup","total_reads"];
 											$fields_extended_sample = ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", 
@@ -184,7 +184,6 @@
 									</div>
 								</div>
 							</div>
-							<input type="button" class="btn btn-success margin pull-right" value="Edit Selected" onClick="editMultipleSamples()"/>
 							<div class="modal fade" id="editMultipleSamplesModal" tabindex="-1" role="dialog" aria-labelledby="editMultipleSamplesModalLabel" aria-hidden="true">
 								<div class="modal-dialog">
 								  <div class="modal-content">
@@ -216,9 +215,11 @@
 								</div>
 							</div><!-- End Edit Selected modal -->
 						</div><!-- /.col (RIGHT) -->
-						<div id="outer_s" class="col-md-9 pull-right"><div id="s_details" class="col-md-9"></div></div>
-						<div id="outer_e_and_i" class="col-md-9 pull-right">
-							<div id="outer_e" class="col-md-6"><div id="e_details" class="col-md-10"></div></div>
+						<div id="filler_div" class="col-md-2 pull-right"></div>
+						<div id="outer_s" style="background-color:white;"  class="col-md-7 pull-right"><div id="s_details" class="col-md-11"></div></div>
+						<div id="filler_div" class="col-md-2 pull-right"></div>
+						<div id="outer_e_and_i"  style="background-color:white;"  class="col-md-7 pull-right">
+							<div id="outer_e" class="col-md-6"><div id="e_details"class="col-md-10"></div></div>
 							<div id="outer_i" class="col-md-6"><div id="i_details" class="col-md-10"></div></div>
 						</div>
 						<div id="outer_top" class="col-md-9 pull-right" style="margin-top: 50px;">

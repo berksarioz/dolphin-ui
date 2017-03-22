@@ -727,7 +727,9 @@ e range"><i class="fa fa-calendar"></i></button>
 	$html.= 		'</ul>';
 	$html.= '	</div>
 				<div class="margin pull-right">
-					<input type="button" class="btn btn-danger" name="delete_Selected" value="Delete Selected" onclick="deleteButton('.$_SESSION['uid'].')"/>
+					<button class="btn btn-info" type="button" onClick="showAllSamplesAndImports()"><i class="glyphicon glyphicon-refresh"></i></button>
+					<button class="btn btn-success" type="button" onClick="editMultipleSamples()"><i class="glyphicon glyphicon-edit"></i></button>
+					<button class="btn btn-danger" type="button" onclick="deleteButton('.$_SESSION['uid'].')"><i class="glyphicon glyphicon-remove-sign"></i></button>
 				</div>
 			</div>';
 	return $html;

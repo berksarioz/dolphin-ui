@@ -171,9 +171,9 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 		}
 
 		// to reduce repetition
-		$s_details_html = '<td><a href="#s_details" onclick="displaySampleDetails(' + record.id+', \'s_details\');">'+sample_name+'</a></td>';
-		$i_details_html = '<td><a href="#e_details" onclick="displayImportDetails(' + record.id+', \'i_details\');">'+record.name+'</a></td>';
-		$e_details_html = '<td><a href="#e_details" onclick="displayExperimentDetails(' + record.id+', \'e_details\');">'+record.experiment_name+'</a></td>';
+		$s_details_html = '<td><a href="#s_details" onclick="displaySampleDetails(' + record.id+', \'s_details\');event.preventDefault();">'+sample_name+'</a></td>';
+		$i_details_html = '<td><a href="#" onclick="displayImportDetails(' + record.id+', \'i_details\');event.preventDefault();">'+record.name+'</a></td>';
+		$e_details_html = '<td><a href="#e_details" onclick="displayExperimentDetails(' + record.id+', \'e_details\');event.preventDefault();">'+record.experiment_name+'</a></td>';
 
 		if (type == 'generated') {
 			var row = '<tr>';

@@ -29,6 +29,36 @@ if($p == 'postInsertDatabase')
 	}
 }
 
+if($p == 'getRunsForSample')
+{
+	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
+	$data=$query->queryTable("SELECT id, run_name
+		FROM ngs_runparams
+		WHERE id in(
+		SELECT run_id
+		FROM ngs_runlist
+		WHERE sample_id = $sample_id)");
+}
+
+if($p == 'getTablesForSample')
+{
+	if (isset($_GET['runs'])){$runs = $_GET['runs'];}
+
+	$r_list = json_decode($runs);
+
+	$query_str = 'SELECT id, name
+				FROM ngs_createdtables
+				WHERE parameters LIKE ';
+
+	$id_list = [];
+	foreach($r_list as $rl){
+		$id_list[] = "'%;".$rl->id."%' ";
+	}
+	$query_str.= implode('OR parameters LIKE ', $id_list);
+
+	$data=$query->queryTable($query_str);
+}
+
 if($p == 'getExperimentDetailsSearch')
 {
 	if (isset($_GET['experiment_id'])){$experiment_id = $_GET['experiment_id'];}
