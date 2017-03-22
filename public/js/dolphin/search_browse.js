@@ -45,6 +45,7 @@ function fillSampleTable(){
 }
 
 function createFilteredSample($experiment_or_import, $id){
+  var $fields_to_check = ['molecule', 'source', 'organism'];
   $.ajax({ type: "GET",
     url: BASE_PATH+"/public/ajax/browse_edit.php",
     data: { p: 'getFilteredSampleData', experiment_or_import: $experiment_or_import, id: $id },
@@ -57,6 +58,11 @@ function createFilteredSample($experiment_or_import, $id){
           '" onclick="manageChecklists(this.name, \'sample_checkbox\')">';
         s[i].samplename = '<a href="#" onclick="displaySampleDetails(' + s[i].id +
           ', \'s_details\');event.preventDefault();">' + s[i].samplename + '</a>';
+        for(var j = 0; j < $fields_to_check.length; j++){
+          if(s[i][$fields_to_check[j]] == null){
+            s[i][$fields_to_check[j]] = '';
+          }
+        }
       }
       console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
       console.log(s);
@@ -72,6 +78,7 @@ function createFilteredSample($experiment_or_import, $id){
 
 
 function createFilteredImport($experiment_id){
+  var $fields_to_check = ['total_reads', 'total_samples', 'facility'];
   $.ajax({ type: "GET",
     url: BASE_PATH+"/public/ajax/browse_edit.php",
     data: { p: 'getFilteredImportData', 'experiment_id': $experiment_id },
@@ -84,6 +91,11 @@ function createFilteredImport($experiment_id){
           '" onclick="manageChecklists(this.name, \'lane_checkbox\')">';
         s[i].import_name = '<a href="#" onclick="displayImportDetails(' + s[i].id +
           ', \'i_details\');event.preventDefault();">' + s[i].import_name + '</a>';
+        for(var j = 0; j < $fields_to_check.length; j++){
+          if(s[i][$fields_to_check[j]] == null){
+            s[i][$fields_to_check[j]] = '';
+          }
+        }
       }
       console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
       console.log(s);
