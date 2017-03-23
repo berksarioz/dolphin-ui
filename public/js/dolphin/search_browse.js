@@ -20,6 +20,31 @@
 //   }
 // });
 
+
+$(function() { 
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        localStorage.setItem('focustab', $(e.target).attr('href'));
+    });
+
+    var focustab = localStorage.getItem('focustab');
+    if (focustab) {
+        $('[href="' + focustab + '"]').tab('show');
+    }
+});
+
+// $(document).ready(function() {
+//     if (location.hash) {
+//         $("a[href='" + location.hash + "']").tab("show");
+//     }
+//     $(document.body).on("click", "a[data-toggle]", function(event) {
+//         location.hash = this.getAttribute("href");
+//     });
+// });
+// $(window).on("popstate", function() {
+//     var anchor = location.hash || $("a[data-toggle='tab']").first().attr("href");
+//     $("a[href='" + anchor + "']").tab("show");
+// });
+
 function showAllSamplesAndImports(){
     $('#imports_filtered_by_selection').hide();
     $('#samples_filtered_by_selection').hide();
