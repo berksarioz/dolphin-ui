@@ -806,7 +806,7 @@ function comboBoxScript(){
 
 
 
-	      var current_div_id = this.input.parents(':eq(3)').attr('id');
+	      var current_div_id = this.input.parents(':eq(4)').attr('id');
 	      var $value = this.input.val();
 	      var $type = current_div_id.slice(0, -4);
 		  var last_id = this.input.parents(':eq(1)').children('select').children('option').last().attr('id');
