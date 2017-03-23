@@ -66,7 +66,7 @@ class CSV_To_API {
 
       // Retrieve the requested source material via HTTP GET.
       if (ini_get('allow_url_fopen') == true) {
-        $this->data = file_get_contents( $this->source );
+        $this->data = file_get_contents( $this->source, false, stream_context_create(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false))) );
       }
       else {
         $this->data = $this->curl_get( $this->source );

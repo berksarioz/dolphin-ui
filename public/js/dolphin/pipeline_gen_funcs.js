@@ -575,6 +575,9 @@ function manageChecklistsBulk(names){
 			lane_check = sample_search[0];
 			experiment_check = sample_search[1];
 			var lane_samples = seachLaneToSamples(lane_check);
+			if(typeof(lane_samples) == 'undefined'){
+				lane_samples = [];
+			}
 			var lanes_bool = true;
 			var experiment_samples = searchExperimentToSamples(experiment_check);
 			var experiment_bool = true;
@@ -646,6 +649,9 @@ function manageChecklistsBulk(names){
 				if (document.getElementById('clear_basket').disabled) {
 					document.getElementById('clear_basket').disabled = false;
 				}
+			if(typeof(lane_samples) == 'undefined'){
+				lane_samples = [];
+			}
 				if (checklist_lanes.indexOf(parseInt(lane_check)) == -1) {
 					for(var x = 0; x < lane_samples.length; x++){
 						if (lane_samples[x] == undefined) {
@@ -666,7 +672,9 @@ function manageChecklistsBulk(names){
 				}
 				
 				if (checklist_experiment_series.indexOf(parseInt(experiment_check)) == -1) {
-					for(var x = 0; x < experiment_samples.length; x++){
+			if(typeof(experiment_samples) == 'undefined'){
+				experiment_samples = [];
+			}					for(var x = 0; x < experiment_samples.length; x++){
 						if (experiment_samples[x] == undefined) {
 							experiment_bool = false;
 						}else{
@@ -693,6 +701,11 @@ function manageChecklistsBulk(names){
 	}
 }
 
+function manageChecklistsModified(name, type){
+	fillSampleTable();
+	manageChecklists(name, type);
+}
+
 function manageChecklists(name, type){
 	var lane_check;
 	var experiment_check;
@@ -705,6 +718,9 @@ function manageChecklists(name, type){
 			lane_check = sample_search[0];
 			experiment_check = sample_search[1];
 			var lane_samples = seachLaneToSamples(lane_check);
+			if(typeof(lane_samples) == 'undefined'){
+				lane_samples = [];
+			}
 			var lanes_bool = true;
 			var experiment_samples = searchExperimentToSamples(experiment_check);
 			var experiment_bool = true;
@@ -1038,12 +1054,13 @@ function clearBasket(){
 	var basket_array = getBasketInfo().split(",");
 	manageChecklistsBulk(basket_array);
 	flushBasketInfo();
+	$('.editMultipleSelected').remove();
 }
 
 function addToEditSelectedSamples($sample_id, $samplename){
-	$('#selectedSamplesList').append('<div id="' + 
+	$('#selectedSamplesList').append('<div class="inner"><div id="' + 
 		$sample_id + '" class="editMultipleSelected">'
-		+ $samplename + '</div>');
+		+ $samplename + '&ensp;</div></div>');
 }
 
 function removeFromEditSelectedSamples($sample_id){

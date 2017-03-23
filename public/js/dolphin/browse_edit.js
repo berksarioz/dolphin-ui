@@ -625,24 +625,32 @@ function updateSelectedSamples(){
 	}
 }
 
+function normalizeName($str){
+	// underscore to space
+	$str = $str.split("_").join(" ");
+	// Capitalize
+	$str = $str.replace(/\b\w/g, l => l.toUpperCase());
+	return $str;
+}
+
 function editMultipleSamples(){
 	var $editable_fields = getEditableFields();
 
 	var combobox_list_string = '';
-	var combobox_select_field_string ='<div id="select_fields_div"><div class="combobox"><div class="ui-widget"><label>Select Fields To Add: </label><select id="select_fields_combobox"><option value="">Select one...</option></select></div></div></div>';
+	var combobox_select_field_string ='<div id="select_fields_div"><div class="inner"><div class="combobox"><div class="ui-widget"><label>Fields To Add&ensp;</label><select id="select_fields_combobox"><option value="">Select one...</option></select></div></div></div></div>';
 	$('#selectFieldsToModify').html(combobox_select_field_string);
-	$('#select_fields_div').append('<input type="button" class="btn btn-success" value="Add Field" onClick="addNewFieldCombobox()"/>');
+	$('#select_fields_div').append('<div class="inner"><input type="button" class="btn btn-success" value="Add Field" onClick="addNewFieldCombobox()"/></div><br/><hr><br/>');
 
 	for (i = 0; i < $editable_fields.length; i++) {
       combobox_list_string += '<div id="' + $editable_fields[i] + 
-        '_div" style="display:none"><div class="combobox"><div class="ui-widget"><label>Select ' +
-        $editable_fields[i] + ': </label><select id="' + $editable_fields[i] +
-        '_combobox"><option value="">Select one...</option></select></div></div>' +
-        '<input style="display:inline-block" type="button" class="btn btn-danger" value="X" onClick="removeCombobox(\'' +
-        $editable_fields[i] + '\')"/>' + '</div>';
+        '_div" style="display:none"><div class="inner"><div class="combobox"><div class="ui-widget"><label>Select ' +
+        normalizeName($editable_fields[i]) + '&ensp;</label><select id="' + $editable_fields[i] +
+        '_combobox"><option value="">Select one...</option></select></div></div></div>' +
+        '<div class="inner"><input type="button" class="btn btn-danger btn-xs" value="X" onClick="removeCombobox(\'' +
+        $editable_fields[i] + '\')"/></div>' + '</div>';
 
      $('#select_fields_combobox').append('<option id="' + $editable_fields[i] +
-				  '" value="' + $editable_fields[i] + '">' + $editable_fields[i] +
+				  '" value="' + $editable_fields[i] + '">' + normalizeName($editable_fields[i]) +
 					'</option>');
 	}
 
@@ -653,6 +661,7 @@ function editMultipleSamples(){
 	});
 	comboBoxScript();
 
+
 	for (i = 0; i < $editable_fields.length; i++) {
 		$( "#" + $editable_fields[i] + "_combobox" ).combobox();
 		$( "#toggle" ).on( "click", function() {
@@ -662,9 +671,12 @@ function editMultipleSamples(){
 	$( "#select_fields_combobox" ).combobox();
 
 
-	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative'});
-	$('.ui-icon-triangle-1-s').css({'z-index' : 999999, 'position' : 'relative'});
-    $('.ui-button-icon-only').css({'z-index' : 999999, 'position' : 'relative'});
+	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative', 'max-width' : '25em'});
+	$('.ui-icon-triangle-1-s').css({'z-index' : 9999999, 'position' : 'relative'});
+
+	$('.ui-state-default').css({'background-color':'#fff'});
+	$('.inner').css({'display': 'inline-block'});
+	$('.btn').css({'margin': '10px 20px'});
 
 
 	for (i = 0; i < $editable_fields.length; i++) {
@@ -686,6 +698,9 @@ function editMultipleSamples(){
 
 	}
 
+	$('.ui-icon-triangle-1-s').replaceWith('<span class="caret" style="margin:8px"></span>');
+	$('.ui-button-text').remove();
+	$('.ui-button-icon-only').css({'background-color':'#eee'});
 
 }
 
@@ -856,6 +871,5 @@ function comboBoxScript(){
 
 
 	} );
-
 
 }

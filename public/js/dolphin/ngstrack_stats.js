@@ -165,7 +165,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 		if (record.total_reads != '' && type == 'samples'){		
  			initialRunWarning = '';		
  		}
-		var checklist_type = "onClick=\"manageChecklists(this.name, 'sample_checkbox')\""
+		var checklist_type = "onClick=\"manageChecklistsModified(this.name, 'sample_checkbox')\""
 		if (window.location.href.indexOf("/pipeline/") > -1) {
 			checklist_type = "onClick=\"managePipelineChecklists(this.name, 'sample_checkbox')\""
 		}
@@ -279,7 +279,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'phix_requested', 'ngs_lanes', this, '', '', '')\">"+record.phix_requested+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'phix_in_lane', 'ngs_lanes', this, '', '', '')\">"+record.phix_in_lane+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'notes', 'ngs_lanes', this, '', '', '')\">"+record.notes+"</td>"+
-					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\"></td>"+
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklistsModified(this.name, 'lane_checkbox')\"></td>"+
 					"</tr>";
 					
 			}else if(type == 'experiments'){
@@ -291,7 +291,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'lab', 'ngs_experiment_series', this, '', '', '')\">"+record.lab+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'organization', 'ngs_experiment_series', this, '', '', '')\">"+record.organization+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'grant', 'ngs_experiment_series', this, '', '', '')\">"+record.grant+"</td>"+
-					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"experiment_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'experiment_checkbox')\"></td>"+
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"experiment_checkbox_"+record.id+"\" onClick=\"manageChecklistsModified(this.name, 'experiment_checkbox')\"></td>"+
 					"<tr>";
 			}else{
 				return null;
@@ -340,7 +340,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'total_reads', 'ngs_lanes', this, '', '', '')\">"+record.total_reads+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'total_samples', 'ngs_lanes', this, '', '', '')\">"+record.total_samples+"</td>"+
 					record.backup+
-					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'lane_checkbox')\"></td>"+
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"lane_checkbox_"+record.id+"\" onClick=\"manageChecklistsModified(this.name, 'lane_checkbox')\"></td>"+
 					"</tr>";
 			}else if(type == 'experiments'){
 				return "<tr>"+
@@ -348,7 +348,7 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 					$e_details_html+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'summary', 'ngs_experiment_series', this, '', '', '')\">"+record.summary+"</td>"+
 					"<td onclick=\"editBox("+uid+", "+record.id+", 'design', 'ngs_experiment_series', this, '', '', '')\">"+record.design+"</td>"+
-					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"experiment_checkbox_"+record.id+"\" onClick=\"manageChecklists(this.name, 'experiment_checkbox')\"></td>"+
+					"<td><input type=\"checkbox\" class=\"ngs_checkbox\" name=\""+record.id+"\" id=\"experiment_checkbox_"+record.id+"\" onClick=\"manageChecklistsModified(this.name, 'experiment_checkbox')\"></td>"+
 					"<tr>";
 			}else{
 				return null;
@@ -377,9 +377,12 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 	
 	var type_summary = createElement('div', ['id', 'class'], [type+'_summary', 'pull-left margin']);
 	var the_table = document.getElementById('table_div_'+type);
-	the_table.setAttribute('style','overflow:scroll');
-	the_table.appendChild(type_summary);
-	var table_rows = the_table.getElementsByTagName('tr');
+	if(the_table){
+		the_table.setAttribute('style','overflow:scroll');
+		the_table.appendChild(type_summary);
+		var table_rows = the_table.getElementsByTagName('tr');
+	}
+
 	
 	var st = StreamTable('#jsontable_'+type,
 	  { view: view, 
@@ -399,28 +402,31 @@ function generateStreamTable(type, queryData, queryType, qvar, rvar, seg, theSea
 	 data, type);
 	
 	var search = document.getElementById('st_search');
-	search.id = 'st_search_' + type;
-	search.setAttribute('class',"st_search margin pull-right");
-	
-	var table_element = document.getElementById('jsontable_'+type);
-	var num_search = document.getElementById('st_num_search');
-	num_search.id = 'st_num_search_' + type;
-	
-	var newlabel = createElement('label', ['class'], ['margin']);
-	newlabel.setAttribute("for",'st_num_search_'+type);
-	newlabel.innerHTML = "entries per page";
-	document.getElementById('table_div_'+type).insertBefore(newlabel, table_element);
-	
-	num_search.setAttribute('class',"st_per_page"+type+" margin pull-left input-sm");
-	
-	document.getElementById('st_pagination').id = 'st_pagination_' + type;
-	var pagination = document.getElementById('st_pagination_'+type);
-	pagination.setAttribute('class',"st_pagination_"+type+" margin");
-	pagination.setAttribute('style',"text-align:right");
-	
-	type_summary = document.getElementById(type+'_summary');
-	document.getElementById(type+'_summary').remove();
-	the_table.insertBefore(type_summary, pagination);
+	if(search){
+		search.id = 'st_search_' + type;
+		search.setAttribute('class',"st_search margin pull-right");
+
+		var table_element = document.getElementById('jsontable_'+type);
+		var num_search = document.getElementById('st_num_search');
+		num_search.id = 'st_num_search_' + type;
+		
+		var newlabel = createElement('label', ['class'], ['margin']);
+		newlabel.setAttribute("for",'st_num_search_'+type);
+		newlabel.innerHTML = "entries per page";
+		document.getElementById('table_div_'+type).insertBefore(newlabel, table_element);
+		
+		num_search.setAttribute('class',"st_per_page"+type+" margin pull-left input-sm");
+		
+		document.getElementById('st_pagination').id = 'st_pagination_' + type;
+		var pagination = document.getElementById('st_pagination_'+type);
+		pagination.setAttribute('class',"st_pagination_"+type+" margin");
+		pagination.setAttribute('style',"text-align:right");
+		
+		type_summary = document.getElementById(type+'_summary');
+		document.getElementById(type+'_summary').remove();
+		the_table.insertBefore(type_summary, pagination);
+	}
+
 }
 
 function shiftColumns(id){
@@ -763,7 +769,7 @@ $(function() {
 		var sample_data = [];
 	
 		/*##### SAMPLES TABLE #####*/	
-		//var samplesTable = $('#jsontable_samples').dataTable();
+		// var samplesTable = $('#jsontable_samples').dataTable();
 	
 		var samplesType = "";
 		if (segment == 'selected') {

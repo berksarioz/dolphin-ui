@@ -1,3 +1,7 @@
+VERSION:	0.9.7
+DETAILS:	-https support
+		-ngs browser simplified
+
 VERSION:	0.9.6
 DETAILS:	-S3 download functionality
 
