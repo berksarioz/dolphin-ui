@@ -17,6 +17,16 @@ $normalized = ['facility', 'organism', 'molecule', 'lab', 'organization', 'genot
 if (isset($_GET['p'])){$p = $_GET['p'];}
 if (isset($_POST['p'])){$p = $_POST['p'];}
 
+if($p == 'insertFromCombobox')
+{
+	if (isset($_POST['type'])){$type = $_POST['type'];}
+	if (isset($_POST['value'])){$value = $_POST['value'];}
+
+
+	if($type != '' && $value != ''){
+		$data=$query->runSQL("INSERT INTO ngs_" . $type . " ($type) VALUES ('$value')");
+	}
+}
 
 if($p == 'postInsertDatabase')
 {
@@ -27,6 +37,65 @@ if($p == 'postInsertDatabase')
 	if($type != '' && $table != '' && $value != '' && $sample_ids != ''){
 		$data=$query->runSQL("UPDATE $table SET $type = $value  WHERE id IN ($sample_ids)");
 	}
+}
+
+if($p == 'getDirectoryInfoForSample')
+{
+	if (isset($_GET['sample_id'])){$sample_id = $_GET['sample_id'];}
+
+    // getSampleFileLocation
+    $file_loc = $query->queryTable("select ngs_temp_sample_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir, amazon_bucket from ngs_temp_sample_files left join ngs_dirs on ngs_temp_sample_files.dir_id = ngs_dirs.id where sample_id = $sample_id");
+	$files = json_decode($file_loc, true);
+
+	// getInputSampleDirectories
+	$sample_dirs = $query->queryTable("select ngs_dirs.fastq_dir, ngs_dirs.id from ngs_dirs where id in (select dir_id from ngs_temp_sample_files where sample_id = $sample_id)");
+	$dir_array = json_decode($sample_dirs, true);
+
+    // getSampleFastqFileLocation
+    $fastq_locs = $query->queryTable("select ngs_fastq_files.id, ngs_dirs.id as dir_id, file_name, fastq_dir, backup_dir, amazon_bucket from ngs_fastq_files left join ngs_dirs on ngs_fastq_files.dir_id = ngs_dirs.id where sample_id = $sample_id");
+	$fastq_files = json_decode($fastq_locs, true);
+    
+		$html = '';
+
+		foreach ($dir_array as $da){
+
+			$html .= '		<table class="table table-hover table-striped table-condensed">';
+			$html.='			<thead><tr><th>Input File(s) Directory:</th></tr></thead>
+								<tbody>';
+			$html.='				<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $da['id'].', \'fastq_dir\', \'ngs_dirs\', this)">'.$da['fastq_dir'].'</td></tr>
+								</tbody>';
+			$html.='			<thead><tr><th>Input File(s):</th></tr></thead>
+								<tbody>';
+			foreach ($files as $f){
+				if($f['dir_id'] == $da['id']){
+					$html.='<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $f['id'].', \'file_name\', \'ngs_temp_sample_files\', this)">'.$f['file_name'].'</td></tr>';	
+				}
+			}
+			$html .= '			</tbody>
+							</table>';
+		}
+
+		if($fastq_files != null){
+			$html .= '		<table class="table table-hover table-striped table-condensed">';
+			$html.='			<thead><tr><th>Processed File(s) Directory:</th></tr></thead>
+								<tbody>';
+			$html.='				<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $fastq_files[0]['dir_id'].', \'backup_dir\', \'ngs_dirs\', this)">'.$fastq_files[0]['backup_dir'].'</td></tr>
+								</tbody>';
+			$html.='			<thead><tr><th>Processed File(s):</th></tr></thead>
+								<tbody>';
+			foreach ($fastq_files as $ff){
+					$html.='		<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $ff['id'].', \'file_name\', \'ngs_fastq_files\', this)">'.$ff['file_name'].'</td></tr>';
+			}
+			$html.='			<thead><tr><th>Amazon Backup:</th></tr></thead>
+								<tbody>';
+			$html.='				<tr><td onclick="editBox( '.$_SESSION['uid'].', '. $fastq_files[0]['dir_id'].', \'amazon_bucket\', \'ngs_dirs\', this)">'.$fastq_files[0]['amazon_bucket'].'</td></tr>
+								</tbody>';
+			$html .= '		</table>';
+		}
+
+		
+		// return the entire html
+		$data = $html;
 }
 
 if($p == 'getRunsForSample')

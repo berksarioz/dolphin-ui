@@ -197,13 +197,9 @@ function displaySampleDetails($sample_id, $div_id){
     "Barcode", "Title", "Source", "Organism", "Molecule", "Instrument Model",
     "Avg. Insert Size", "Read Length", "Genotype", "Library Type", "Notes",
     "Groups", "Permission", "Donor", "Time", "Biological Rep", "Technical Rep"];
-  var $fields2 = ["fastq_dir", "file_names", "backup_dir", "file_name", 
-    "amazon_bucket"];
-  var $titles2 = ["Input File(s) Directory", "Input File(s)", 
-    "Processed File(s) Dir", "Processed File(s)", "Amazon Backup"];
 
-  var $fields_lists = [$fields1, $fields2, [], []];
-  var $titles_lists = [$titles1, $titles2, [], []];
+  var $fields_lists = [$fields1, [], [], []];
+  var $titles_lists = [$titles1, [], [], []];
   $.ajax({ type: "GET",
       url: BASE_PATH+"/public/ajax/browse_edit.php",
       data: { p: 'getSampleDetailsSearch', sample_id: '' + $sample_id},
@@ -224,8 +220,27 @@ function displaySampleDetails($sample_id, $div_id){
   });
   $('#' + $div_id).html($html_to_return);
   $( "#data_of_sample" ).addClass('active');
+  
+  // Directory Info to Sample Details
+  addRDirectoryInfoToSampleDetails($sample_id, 'directory_of_sample');
+  // Runs and Tables to Sample Details
   addRunsToSampleDetails($sample_id, 'runs_of_sample');
+  
 }
+
+function addRDirectoryInfoToSampleDetails($sample_id, $directory_div_id){
+  $.ajax({ type: "GET",
+      url: BASE_PATH+"/public/ajax/browse_edit.php",
+      data: { p: 'getDirectoryInfoForSample', sample_id: '' + $sample_id},
+      async: false,
+      complete : function(s)
+      {
+        console.log(s);
+        $('#' + $directory_div_id).html(s.responseText);
+      }
+  });
+}
+
 
 function addRunsToSampleDetails($sample_id, $run_div_id){
   var $run_html = '';
@@ -237,13 +252,11 @@ function addRunsToSampleDetails($sample_id, $run_div_id){
       {
         console.log(response);
         var s = jQuery.parseJSON(response.responseText);
-        console.log('length of response:' + response.length);
 
         addTablesToSampleDetails(response.responseText, 'tables_of_sample');
 
         console.log(s);
         for(var i = 0; i < s.length; i++ ){
-          console.log(s[i].id + s[i].run_name );
           $run_html += '<p>' + s[i].id + '&ensp;' + s[i].run_name +
           '&ensp;<a href="#" id="' + s[i].id +
           '" onclick="reportSelected(this.id,1)">Reports</a>&ensp;<a href="#" id="' +
@@ -265,11 +278,9 @@ function addTablesToSampleDetails($runs, $table_div_id){
       {
         console.log(response);
         var s = jQuery.parseJSON(response.responseText);
-        console.log('length of response:' + response.length);
 
         console.log(s);
         for(var i = 0; i < s.length; i++ ){
-          console.log(s[i].id + s[i].run_name );
           $tables_html += '<a href="#" id="' + s[i].id + 
             '" onclick="sendToSavedTable(this.id)">' + s[i].id + ' -- ' +
             s[i].name + '</a><br>';

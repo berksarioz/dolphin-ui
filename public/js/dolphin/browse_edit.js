@@ -580,7 +580,7 @@ function removeCombobox($combobox_id){
 }
 
 function addNewFieldCombobox(){
-	var $selected = $('#select_fields_combobox option:selected').val();
+	var $selected =$('#select_fields_combobox option:selected').val(); 
 	$('#' + $selected + '_div').show();
 }
 
@@ -802,22 +802,55 @@ function comboBoxScript(){
 	      if ( valid ) {
 	        return;
 	      }
+	      
+
+
+
+	      var current_div_id = this.input.parents(':eq(3)').attr('id');
+	      var $value = this.input.val();
+	      var $type = current_div_id.slice(0, -4);
+		  var last_id = this.input.parents(':eq(1)').children('select').children('option').last().attr('id');
+		  var new_id = parseInt(last_id) + 1;
+
+	    if($type == 'select_fields'){
+	    	var $temp_msg = " is not a valid option.";
+	    } else {
+	    	var $temp_msg = " is now added to the database.";
+
+	    
+			$.ajax({ type: "POST",
+					url: BASE_PATH+"/public/ajax/browse_edit.php",
+					data: { p: 'insertFromCombobox', type: $type, value: $value},
+					async: false,
+					complete : function(s)
+					{
+						console.log(s);
+					}
+			});
+
+
+			var to_add = '<option id="' + new_id + '" value="' + new_id + '">' + $value + '</option>';
+		    this.input.parents(':eq(1)').children('select').append(to_add);
+		    console.log("havuc");
+	    }
+
 
 	      // Remove invalid value
 	      this.input
 	        .val( "" )
-	        .attr( "title", value + " didn't match any item" )
+	        .attr( "title", value +  $temp_msg)
 	        .tooltip( "open" );
 	      this.element.val( "" );
 	      this._delay(function() {
 	        this.input.tooltip( "close" ).attr( "title", "" );
 	      }, 2500 );
 	      this.input.autocomplete( "instance" ).term = "";
+		  $('#' + $type + '_combobox option:selected').val(new_id + '');
 	    },
 
 	    _destroy: function() {
-	      this.wrapper.remove();
-	      this.element.show();
+	      // this.wrapper.remove();
+	      // this.element.show();
 	    }
 	  });
 

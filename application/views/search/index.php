@@ -25,6 +25,34 @@
 					  </div>
 					</div>
 				</div><!-- End Delete modal -->
+
+				<div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="myFileModal" aria-hidden="true">
+					<div class="modal-dialog">
+					  <div class="modal-content">
+						<div class="modal-header">
+						  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						  <h4 class="modal-title" id="myFileModal">Save Editted Changes</h4>
+						</div>
+						<form name="editFileForm" role="form" method="post">
+							<div class="modal-body">
+								<fieldset>
+									<div class="form-group" style="overflow:scroll">
+										<label id="fileLabel">Saving these changes will overwrite current directory/file information</label>
+										<br>
+										<p id="fileAreas">Please make sure that the changes being made to either the directory location or the file names are accurate before submission.</p>
+										<p id="fileAreas2">Once completed, please visit the NGS Run Status page and resubmit the initial run to make sure that all file information is correct and secure.</p>
+									</div>
+								</fieldset>   
+							</div>
+							<div class="modal-footer">
+							  <button type="button" id="confirmFileButton" class="btn btn-danger" data-dismiss="modal" onclick="">Confirm</button>
+							  <button type="button" id="cancelFileButton" class="btn btn-default" data-dismiss="modal" onclick="">Cancel</button>
+							</div>
+						</form>
+					  </div>
+					</div>
+				</div><!-- End File modal -->
+
 				<div class="modal fade" id="permsModal" tabindex="-1" role="dialog" aria-labelledby="myPermsModal" aria-hidden="true">
 					<div class="modal-dialog">
 					  <div class="modal-content">
@@ -215,12 +243,13 @@
 								</div>
 							</div><!-- End Edit Selected modal -->
 						</div><!-- /.col (RIGHT) -->
-						<div id="filler_div" class="col-md-2 pull-right"></div>
-						<div id="outer_s" style="background-color:white;"  class="col-md-7 pull-right"><div id="s_details" class="col-md-11"></div></div>
-						<div id="filler_div" class="col-md-2 pull-right"></div>
-						<div id="outer_e_and_i"  style="background-color:white;"  class="col-md-7 pull-right">
-							<div id="outer_e" class="col-md-6"><div id="e_details"class="col-md-10"></div></div>
-							<div id="outer_i" class="col-md-6"><div id="i_details" class="col-md-10"></div></div>
+						<div id="outer_e_and_i_and_s" style="width: 75%; padding: 25px !important;" class="pull-right">
+							<div id="outer_s" style="background-color:white;  padding: 0 !important;"  class="col-md-12 pull-right"><div id="s_details" class="col-md-11"></div></div>
+							<!-- <div id="filler_div" class="col-md-2 pull-right"></div> -->
+							<div id="outer_e_and_i"  style="background-color:white; padding: 0 !important;"  class="col-md-12 pull-right">
+								<div id="outer_e" class="col-md-6"><div id="e_details"class="col-md-10"></div></div>
+								<div id="outer_i" class="col-md-6"><div id="i_details" class="col-md-10"></div></div>
+							</div>
 						</div>
 						<div id="outer_top" class="col-md-9 pull-right" style="margin-top: 50px;">
 							<div id="back_to_top" class="col-md-9">
