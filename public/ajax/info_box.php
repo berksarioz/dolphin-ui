@@ -23,8 +23,14 @@ if($p == "experiments"){
 			<br><br>
 			If you have permissions, you can change the information within the table by clicking on the cell you want to alter, altering the information
 			and then pressing enter to save the change.  To cancel the alterations, simply hit the 'esc' key.";
-}else if($p == "lanes"){
-	$data = "This table represents all of the Imports you have access to viewing.
+}else if($p == "lanes" || $p == "lanes_filtered"){
+	if($p == "lanes"){
+		$lane_str_extra = "all of the Imports you have access to viewing.";
+	} else {
+		$lane_str_extra = "the Imports that belong to the last experiment link you clicked on.";
+	}
+
+	$data = "This table represents $lane_str_extra
 			<br><br>
 			You can select all of the samples within a specific import by clicking on the checkbox to the right.
 			<br><br>
@@ -40,8 +46,14 @@ if($p == "experiments"){
 			<br><br>
 			If you have permissions, you can alter the information within a specific cell by clicking on the cell you want to alter, altering the information
 			and then pressing enter to save the change.  To cancel the alterations, simply hit the 'esc' key.";
-}else if ($p == "samples"){
-	$data = "This table represents all of the Samples you have access to viewing.
+}else if ($p == "samples" || $p == "samples_filtered"){
+	if($p == "lanes"){
+		$sample_str_extra = "all of the Samples you have access to viewing.";
+	} else {
+		$sample_str_extra = "the Samples that belong to the last experiment or import link you clicked on.";
+	}
+
+	$data = "This table represents $sample_str_extra
 			<br><br>
 			You can select a sample by clicking on the checkbox to the right.
 			<br><br>

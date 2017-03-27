@@ -704,6 +704,8 @@ function manageChecklistsBulk(names){
 function manageChecklistsModified(name, type){
 	fillSampleTable();
 	manageChecklists(name, type);
+	var check_id = '#filtered_' + type + '_' + name;
+	$(check_id).prop('checked', !$(check_id).prop('checked'));
 }
 
 function manageChecklists(name, type){
@@ -1055,6 +1057,9 @@ function clearBasket(){
 	manageChecklistsBulk(basket_array);
 	flushBasketInfo();
 	$('.editMultipleSelected').remove();
+	  $('input:checkbox:checked').each(function () {
+	    $(this).prop('checked', false);
+	  });
 }
 
 function addToEditSelectedSamples($sample_id, $samplename){

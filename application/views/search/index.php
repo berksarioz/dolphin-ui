@@ -153,7 +153,7 @@
 											$title_all_import = "Imports";
 											$table_all_import = "lanes";
 											$table_filtered_import = "lanes_filtered";
-											$title_filtered_import = "Imports";
+											$title_filtered_import = "<div style='color: #367fa9;'>Imports</div>";
 											$fields_basic_import = ["id","Import Name","Facility","Total Reads","Total Samples","Selected"];
 											$tableKeys_basic_import = ["id","name","facility", "total_reads", "total_samples",""];
 											$fields_extended_import = ["id","Import Name","Facility","Total Reads","Total Samples", "Cost", "Phix Requested", "Phix in Lane", "Notes", "Selected"];
@@ -182,11 +182,11 @@
 											$title_all_sample = "Samples";
 											$table_all_sample = "samples";
 											$table_filtered_sample = "samples_filtered";
-											$title_filtered_sample = "Samples";
+											$title_filtered_sample = "<div style='color: #367fa9;'>Samples</div>";
 											$fields_basic_sample = ["id","Sample Name","Title","Source","Organism","Molecule","Backup","Selected"];
 											$tableKeys_basic_sample = ["id","name","title","source","organism","molecule","backup","total_reads"];
-											$fields_extended_sample = ["id","Sample Name","Title","Source","Organism","Molecule", "Barcode", 
-												"Backup", "Description", "Avg Insert Size", "Read Length", "Concentration", "Time", 
+											$fields_extended_sample = ["id","Sample Name","Title","Source","Organism","Molecule", "Backup", 
+												"Barcode", "Description", "Avg Insert Size", "Read Length", "Concentration", "Time", 
 												"Biological Replica", "Technical Replica", "Spike-ins", "Adapter", "Notebook Ref", "Notes", 
 												"Genotype", "Library Type", "Biosample Type", "Instrument Model", "Treatment Manufacturer","Selected"];
 											$tableKeys_extended_sample = ["id","name","title","source","organism","molecule","backup","total_reads",
@@ -253,7 +253,7 @@
 						</div>
 						<div id="outer_top" class="col-md-9 pull-right" style="margin-top: 50px;">
 							<div id="back_to_top" class="col-md-9">
-								<a href="#">Back to top</a>
+								<a href="javascript:" id="return-to-top"><i class="glyphicon glyphicon-chevron-up"></i></a>
 							</div>
 						</div>
 					</div><!-- /.row -->

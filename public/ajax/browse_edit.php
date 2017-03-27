@@ -35,7 +35,7 @@ if($p == 'postInsertDatabase')
 	if (isset($_POST['value'])){$value = $_POST['value'];}
 	if (isset($_POST['sample_ids'])){$sample_ids = $_POST['sample_ids'];}
 	if($type != '' && $table != '' && $value != '' && $sample_ids != ''){
-		$data=$query->runSQL("UPDATE $table SET $type = $value  WHERE id IN ($sample_ids)");
+		$data=$query->runSQL("UPDATE $table SET $type = \"$value\"  WHERE id IN ($sample_ids)");
 	}
 }
 
@@ -164,6 +164,17 @@ if($p == 'getFilteredSampleData')
 	}
 	if (isset($_GET['id'])){$id = $_GET['id'];}
 
+	$left_join_str = "";
+
+	$fields_to_left_join = ["source", "organism", "molecule", "genotype", "library_type",
+	    "biosample_type", "instrument_model", "treatment_manufacturer"];
+	              
+	foreach( $fields_to_left_join as $field_join){
+	    $left_join_str .= "LEFT JOIN `ngs_$field`
+			ON ngs_samples." . $field_join . "_id = ngs_" . $field_join . ".id
+			";
+	}
+
 
 
 	$amazon_str = "AND ngs_fastq_files.dir_id = (SELECT ngs_dirs.id FROM ngs_dirs WHERE ngs_fastq_files.dir_id = ngs_dirs.id AND (ngs_dirs.amazon_bucket LIKE '%s3://%'))";
@@ -181,7 +192,7 @@ if($p == 'getFilteredSampleData')
 
 
 	$data=$query->queryTable("
-		SELECT ngs_samples.id, ngs_samples.samplename, ngs_samples.title, ngs_source.source, ngs_organism.organism, ngs_molecule.molecule, $sampleBackup
+		SELECT ngs_samples.id, ngs_samples.samplename, ngs_samples.title, ngs_source.source, ngs_organism.organism, ngs_molecule.molecule, $sampleBackup, barcode, description, avg_insert_size, read_length, concentration, time, biological_replica, technical_replica, spike_ins, adapter, notebook_ref, notes, ngs_genotype.genotype, ngs_library_type.library_type, ngs_biosample_type.biosample_type, ngs_instrument_model.instrument_model, ngs_treatment_manufacturer.treatment_manufacturer
 		FROM `ngs_samples`
 		LEFT JOIN `ngs_source`
 		ON ngs_samples.source_id = ngs_source.id
@@ -189,7 +200,17 @@ if($p == 'getFilteredSampleData')
 		ON ngs_samples.organism_id = ngs_organism.id
 		LEFT JOIN `ngs_molecule`
 		ON ngs_samples.molecule_id = ngs_molecule.id
-		WHERE $where_variable = $id
+		LEFT JOIN `ngs_genotype`
+		ON ngs_samples.genotype_id = ngs_genotype.id
+		LEFT JOIN `ngs_library_type`
+		ON ngs_samples.library_type_id = ngs_library_type.id
+		LEFT JOIN `ngs_biosample_type`
+		ON ngs_samples.biosample_type_id = ngs_biosample_type.id
+		LEFT JOIN `ngs_instrument_model`
+		ON ngs_samples.instrument_model_id = ngs_instrument_model.id
+		LEFT JOIN `ngs_treatment_manufacturer`
+		ON ngs_samples.treatment_manufacturer_id = ngs_treatment_manufacturer.id
+		WHERE " . $where_variable . " = $id
 		");
 }
 
@@ -197,7 +218,8 @@ if($p == 'getFilteredImportData')
 {
 	if (isset($_GET['experiment_id'])){$experiment_id = $_GET['experiment_id'];}
 	$data=$query->queryTable("
-		SELECT ngs_lanes.id, ngs_lanes.name as import_name, ngs_facility.facility, ngs_lanes.total_reads, ngs_lanes.total_samples
+		SELECT ngs_lanes.id, ngs_lanes.name as import_name, ngs_facility.facility, ngs_lanes.total_reads, ngs_lanes.total_samples,
+			ngs_lanes.cost, ngs_lanes.phix_requested, ngs_lanes.phix_in_lane, ngs_lanes.notes
 		FROM `ngs_lanes`
 		LEFT JOIN `groups`
 		ON ngs_lanes.group_id = groups.id
@@ -293,7 +315,7 @@ if($p == 'updateDatabase')
 	if (isset($_GET['parent_id'])){$parent_id = $_GET['parent_id'];}
 	if (isset($_GET['parent_child'])){$parent_child = $_GET['parent_child'];}
 	if(in_array($type, $normalized)){
-		$type_list = json_decode($query->queryTable("SELECT id FROM ".$table." WHERE $type = '$value'"));
+		$type_list = json_decode($query->queryTable("SELECT id FROM ngs_".$type." WHERE $type = \"$value\""));
 		if($type_list != array()){
 			$data=$query->runSQL("UPDATE $table SET ".$type."_id = ".$type_list[0]->id." WHERE id = '$id'");
 		}else if ($value = ''){
@@ -395,6 +417,11 @@ else if($p == 'getDropdownValuesWithID')
 {
 	if (isset($_GET['type'])){$type = $_GET['type'];}
 	$data=$query->queryTable("SELECT id, $type FROM ngs_".$type);
+}
+else if($p == 'getDirectDropdownValues')
+{
+	if (isset($_GET['type'])){$type = $_GET['type'];}
+	$data=$query->queryTable("SELECT $type FROM `ngs_samples` GROUP BY $type");
 }
 else if($p == 'getDropdownValuesPerms')
 {

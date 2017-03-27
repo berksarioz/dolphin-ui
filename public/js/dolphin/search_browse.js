@@ -21,6 +21,13 @@
 // });
 
 
+$('#return-to-top').click(function() {      // When arrow is clicked
+    $('body,html').animate({
+        scrollTop : 0                       // Scroll to top of body
+    }, 500);
+});
+
+
 $(function() { 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         localStorage.setItem('focustab', $(e.target).attr('href'));
@@ -44,6 +51,13 @@ $(function() {
 //     var anchor = location.hash || $("a[data-toggle='tab']").first().attr("href");
 //     $("a[href='" + anchor + "']").tab("show");
 // });
+
+
+function selectAllCurrentTab(){
+    $("input:checkbox:visible:not(:checked)").each(function(i, obj) {
+        $(this).click();
+    });
+}
 
 function showAllSamplesAndImports(){
     $('#imports_filtered_by_selection').hide();
@@ -69,8 +83,17 @@ function fillSampleTable(){
   }
 }
 
+function changeUnfilteredCheckbox(id, type){
+  console.log('checkbox change id: ' + id + ' and type: ' + type);
+  var check_id = '#filtered_' + type + '_' + id;
+
+  if($(check_id).prop('checked') != $('#' + type + '_' + id).prop('checked')){
+    $('#' + type + '_' + id).click();
+    $(check_id).prop('checked', !$(check_id).prop('checked'));
+  }
+}
+
 function createFilteredSample($experiment_or_import, $id){
-  var $fields_to_check = ['molecule', 'source', 'organism'];
   $.ajax({ type: "GET",
     url: BASE_PATH+"/public/ajax/browse_edit.php",
     data: { p: 'getFilteredSampleData', experiment_or_import: $experiment_or_import, id: $id },
@@ -79,15 +102,21 @@ function createFilteredSample($experiment_or_import, $id){
     {
       for(var i = 0; i < s.length; i++ ){
         s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' +
-          s[i].id + '" id="sample_checkbox_' + s[i].id +
-          '" onclick="manageChecklists(this.name, \'sample_checkbox\')">';
+          s[i].id + '" id="filtered_sample_checkbox_' + s[i].id +
+          '" onclick="changeUnfilteredCheckbox(this.name, \'sample_checkbox\')">';
         s[i].samplename = '<a href="#" onclick="displaySampleDetails(' + s[i].id +
           ', \'s_details\');event.preventDefault();">' + s[i].samplename + '</a>';
-        for(var j = 0; j < $fields_to_check.length; j++){
-          if(s[i][$fields_to_check[j]] == null){
-            s[i][$fields_to_check[j]] = '';
+        // replace nulls with empty strings
+        for (var field_to_check in s[i]) {
+          if (s[i].hasOwnProperty(field_to_check) && s[i][field_to_check] == null) {
+            s[i][field_to_check] = '';
           }
         }
+
+        if($('#avg_insert_size').length == 0){
+          s[i] = (({ id, samplename, title, source, organism, molecule, backup, options }) => ({ id, samplename, title, source, organism, molecule, backup, options }))(s[i]);
+        }
+
       }
       console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
       console.log(s);
@@ -97,13 +126,14 @@ function createFilteredSample($experiment_or_import, $id){
 
       $('#samples_filtered_by_selection').show();
       $('#browse_sample_data_table').hide();
+      checkAllFilteredBoxes();
+
     }
   });
 }
 
 
 function createFilteredImport($experiment_id){
-  var $fields_to_check = ['total_reads', 'total_samples', 'facility'];
   $.ajax({ type: "GET",
     url: BASE_PATH+"/public/ajax/browse_edit.php",
     data: { p: 'getFilteredImportData', 'experiment_id': $experiment_id },
@@ -112,15 +142,20 @@ function createFilteredImport($experiment_id){
     {
       for(var i = 0; i < s.length; i++ ){
         s[i].options = '<input type="checkbox" class="ngs_checkbox" name="' +
-          s[i].id + '" id="lane_checkbox_' + s[i].id +
-          '" onclick="manageChecklists(this.name, \'lane_checkbox\')">';
+          s[i].id + '" id="lfiltered_ane_checkbox_' + s[i].id +
+          '" onclick="changeUnfilteredCheckbox(this.name, \'lane_checkbox\')">';
         s[i].import_name = '<a href="#" onclick="displayImportDetails(' + s[i].id +
           ', \'i_details\');event.preventDefault();">' + s[i].import_name + '</a>';
-        for(var j = 0; j < $fields_to_check.length; j++){
-          if(s[i][$fields_to_check[j]] == null){
-            s[i][$fields_to_check[j]] = '';
+        // replace nulls with empty strings
+        for (var field_to_check in s[i]) {
+          if (s[i].hasOwnProperty(field_to_check) && s[i][field_to_check] == null) {
+            s[i][field_to_check] = '';
           }
         }
+        if($('#phix_requested').length == 0){
+          s[i] = (({ id, import_name, facility, total_reads, total_samples, options }) => ({ id, import_name, facility, total_reads, total_samples, options }))(s[i]);
+        }
+
       }
       console.log("+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-+++-");
       console.log(s);
@@ -131,6 +166,7 @@ function createFilteredImport($experiment_id){
 
       $('#imports_filtered_by_selection').show();
       $('#browse_import_data_table').hide();
+      checkAllFilteredBoxes();
     }
   });
 }
@@ -146,6 +182,16 @@ function hideFilteredTables(){
       $('#samples_filtered_by_selection').hide();
 }
 hideFilteredTables();
+
+
+function checkAllFilteredBoxes(){
+  $('input:checkbox:checked').each(function () {
+    var check_id = "#filtered_" + $(this).attr('id');
+    console.log(check_id);
+    $(check_id).prop('checked', true);
+    console.log( $(check_id).prop('checked'));
+  });
+}
 
 function displayExperimentDetails($experiment_id, $div_id, $called_from_import = false){
   clearAllDetails();
@@ -205,7 +251,6 @@ function displayImportDetails($import_id, $div_id, $called_from_sample = false){
   });
   $('#' + $div_id).html($html_to_return);
   if(!$called_from_sample){
-    console.log("I'm here.")
     createFilteredSample('import', $import_id);
   }
 }
@@ -257,7 +302,7 @@ function addRDirectoryInfoToSampleDetails($sample_id, $directory_div_id){
   $.ajax({ type: "GET",
       url: BASE_PATH+"/public/ajax/browse_edit.php",
       data: { p: 'getDirectoryInfoForSample', sample_id: '' + $sample_id},
-      async: false,
+      // async: false,
       complete : function(s)
       {
         console.log(s);
