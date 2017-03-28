@@ -110,11 +110,11 @@
 				<div class="box-group" id="accordion">
 					<!-- we are adding the .panel class so bootstrap.js collapse plugin detects it -->
 					<?php echo $html->sendJScript("index", "", "", "", $uid, $gids); ?>
-					<?php echo $html->getAccordion("Assay", $assay, "")?>
-					<?php echo $html->getAccordion("Organism", $organism, "")?>
-					<?php echo $html->getAccordion("Molecule", $molecule, "")?>
-					<?php echo $html->getAccordion("Source", $source, "")?>
-					<?php echo $html->getAccordion("Genotype", $genotype, "")?>
+					<?php echo $html->getAccordion("Assay", $assay, "", $gids)?>
+					<?php echo $html->getAccordion("Organism", $organism, "", $gids)?>
+					<?php echo $html->getAccordion("Molecule", $molecule, "", $gids)?>
+					<?php echo $html->getAccordion("Source", $source, "", $gids)?>
+					<?php echo $html->getAccordion("Genotype", $genotype, "", $gids)?>
 				</div>
 				</div><!-- /.box-body -->
 		</div><!-- /.box -->
@@ -140,11 +140,31 @@
 							<div class="tab-content">
 								<div class="tab-pane active" id="browse_experiments">
 									<div id="browse_experiment_data_table" class="margin">
-										<?php if(!isset($_SESSION['ngs_experiments']) || ($_SESSION['ngs_experiments'] == '') ){
-											echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Selected"], ["id","experiment_name","summary","design", ""]);
+										<?php
+											$title_all_experiment = "Experiments";
+											$table_all_experiment = "experiments";
+											$table_filtered_experiment = "experiments_filtered";
+											$title_filtered_experiment = "<div style='color: #367fa9;'>Experiments</div>";
+											$fields_basic_experiment = ["id","Series Name","Summary","Design", "Selected"];
+											$tableKeys_basic_experiment = ["id","experiment_name","summary","design", ""];
+											$fields_extended_experiment = ["id","Series Name","Summary","Design", "Lab","Organization","Grant", "Selected"];
+											$tableKeys_extended_experiment = ["id","experiment_name","summary","design", "lab","organization","grant", ""];
+
+
+										 if(!isset($_SESSION['ngs_experiments']) || ($_SESSION['ngs_experiments'] == '') ){
+											echo $html->getRespBoxTableStream($title_all_experiment, $table_all_experiment, $fields_basic_experiment, $tableKeys_basic_experiment);
 										} else{
-											echo $html->getRespBoxTableStream("Experiments", "experiments", ["id","Series Name","Summary","Design", "Lab","Organization","Grant", "Selected"], ["id","experiment_name","summary","design", "lab","organization","grant", ""]);
+											echo $html->getRespBoxTableStream($title_all_experiment, $table_all_experiment, $fields_extended_experiment, $tableKeys_extended_experiment);
 										}?>
+									</div>
+									<div id="experiments_filtered_by_selection" class="margin" style="display:none;">
+										<?php 
+										if(!isset($_SESSION['ngs_experiments']) || ($_SESSION['ngs_experiments'] == '') ){
+											echo $html->getRespBoxTableStreamNoExpand($title_filtered_experiment, $table_filtered_experiment, $fields_basic_experiment, $tableKeys_basic_experiment);
+										} else{
+											echo $html->getRespBoxTableStreamNoExpand($title_filtered_experiment, $table_filtered_experiment, $fields_extended_experiment, $tableKeys_extended_experiment);
+										}
+										 ?>
 									</div>
 								</div>
 								<div class="tab-pane" id="browse_imports">

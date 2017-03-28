@@ -62,8 +62,19 @@ function selectAllCurrentTab(){
 function showAllSamplesAndImports(){
     $('#imports_filtered_by_selection').hide();
     $('#samples_filtered_by_selection').hide();
+    $('#experiments_filtered_by_selection').hide();
     $('#browse_import_data_table').show();
     $('#browse_sample_data_table').show();
+    $('#browse_experiment_data_table').show();
+}
+
+function showAllFilteredTables(){
+    $('#imports_filtered_by_selection').show();
+    $('#samples_filtered_by_selection').show();
+    $('#experiments_filtered_by_selection').show();
+    $('#browse_import_data_table').hide();
+    $('#browse_sample_data_table').hide();
+    $('#browse_experiment_data_table').hide();
 }
 
 function fillSampleTable(){
@@ -84,13 +95,9 @@ function fillSampleTable(){
 }
 
 function changeUnfilteredCheckbox(id, type){
-  console.log('checkbox change id: ' + id + ' and type: ' + type);
   var check_id = '#filtered_' + type + '_' + id;
 
-  if($(check_id).prop('checked') != $('#' + type + '_' + id).prop('checked')){
-    $('#' + type + '_' + id).click();
-    $(check_id).prop('checked', !$(check_id).prop('checked'));
-  }
+  manageChecklists(id, type);
 }
 
 function createFilteredSample($experiment_or_import, $id){
@@ -178,6 +185,7 @@ function clearAllDetails(){
 }
 
 function hideFilteredTables(){
+      $('#experiments_filtered_by_selection').hide();
       $('#imports_filtered_by_selection').hide();
       $('#samples_filtered_by_selection').hide();
 }

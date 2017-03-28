@@ -366,7 +366,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	';
 	return $html;
 	}
-	function getAccordion($name, $object, $search)
+	function getAccordion($name, $object, $search, $gids)
 	{
 	 $html='	<div class="panel box box-primary">
 					<div class="box-header with-border">
@@ -384,9 +384,7 @@ e range"><i class="fa fa-calendar"></i></button>
 				else{ $adjName = $name; }
 				if($search == ""){
 				foreach ($object as $obj):
-					$html.='<li><a href="'.BASE_PATH.'/search/browse/'
-					.$name."/".$obj['name']."/".strtolower($adjName)."=".$obj['name']."".
-					'">'.$obj['name'].' ('.$obj['count'].')</a></li>';
+					$html.='<li><a href="#" onclick="loadAllFromSidebarBrowse(\'' .$_SESSION['uid'].'\', \''.$gids.'\', \''.$name.'\', \''.$obj['name'].'\', \''.strtolower($adjName)."=".$obj['name'].'\');event.preventDefault();">'.$obj['name'].' ('.$obj['count'].')</a></li>';
 				endforeach;
 				}
 				else

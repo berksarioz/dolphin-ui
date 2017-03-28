@@ -742,6 +742,75 @@ function editMultipleSamples(){
 
 }
 
+function loadAllFromSidebarBrowse(uid, gids, qvar, rvar, theSearch){
+	var type = 'samples';
+	var queryType = 'getSamples';
+	var segment = 'browse';
+
+	var e_save = $('#table_div_experiments table').detach();
+	$('#table_div_experiments').empty().append(e_save);
+	var i_save = $('#table_div_lanes table').detach();
+	$('#table_div_lanes').empty().append(i_save);
+	var s_save = $('#table_div_samples table').detach();
+	$('#table_div_samples').empty().append(s_save);
+
+	loadSamplesFromSidebarBrowse(type, queryType, rvar, qvar, segment, theSearch, uid, gids);
+	loadImportsFromSidebarBrowse(rvar, qvar, segment, theSearch, uid, gids);
+	loadExperimentsFromSidebarBrowse(rvar, qvar, segment, theSearch, uid, gids);
+
+	// showAllFilteredTables();
+}
+
+function loadSamplesFromSidebarBrowse(type, queryType, rvar, qvar, segment, theSearch, uid, gids){
+
+	$.ajax({ type: "GET",
+	url: BASE_PATH+"/public/ajax/ngs_tables.php",
+	data: { p: queryType, q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
+	async: false,
+		success : function(s)
+		{
+			generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+		}
+	});
+
+}
+
+function loadImportsFromSidebarBrowse(rvar, qvar, segment, theSearch, uid, gids){ 
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/ngs_tables.php",
+		data: { p: "getLanes", q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
+		async: false,
+		success : function(s)
+		{
+			lane_data = s;
+			var type = 'lanes';
+			var queryType = "getLanes";
+			if (window.location.href.split("/").indexOf('search') > -1) {
+				generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+			}
+		}
+	});
+}
+
+function loadExperimentsFromSidebarBrowse(rvar, qvar, segment, theSearch, uid, gids){ 
+
+	$.ajax({ type: "GET",
+		url: BASE_PATH+"/public/ajax/ngs_tables.php",
+		data: { p: "getExperimentSeries", q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
+		async: false,
+		success : function(s)
+		{
+			experiment_series_data = s;
+			var type = 'experiments';
+			var queryType = "getExperimentSeries";
+			if (window.location.href.split("/").indexOf('search') > -1) {
+				generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
+			}
+		}
+	});
+
+}
+
 function comboBoxScript(){    
 	$( function() {
 	  $.widget( "custom.combobox", {
