@@ -118,23 +118,20 @@
 				</div>
 				</div><!-- /.box-body -->
 		</div><!-- /.box -->
-		<div>
-			<?php echo $html->getDolphinBasket()?>
-		</div>
 		<!-- END ACCORDION & CAROUSEL-->
 			</div><!-- /.col (LEFT) -->
 			<?php echo $html->getSubmitBrowserButton()?>
 
-						<div id="top_search_section" class="col-md-9">
+						<div id="top_search_section" class="col-md-6">
 							<ul id="tabList" class="nav nav-tabs">
 					          <li class="active">
-					            <a href="#browse_experiments" data-toggle="tab" aria-expanded="true">Experiments</a>
+					            <a id="browse_experiments_a" href="#browse_experiments" data-toggle="tab" aria-expanded="true">Experiments</a>
 					          </li>
 					          <li class>
-					            <a href="#browse_imports" data-toggle="tab" aria-expanded="true">Imports</a>
+					            <a id="browse_imports_a" href="#browse_imports" data-toggle="tab" aria-expanded="true">Imports</a>
 					          </li>
 					          <li class>
-					            <a href="#browse_samples" onclick="fillSampleTable();" data-toggle="tab" aria-expanded="true">Samples</a>
+					            <a id="browse_samples_a" href="#browse_samples" onclick="fillSampleTable();" data-toggle="tab" aria-expanded="true">Samples</a>
 					          </li>
 					        </ul>
 							<div class="tab-content">
@@ -247,7 +244,7 @@
 													<div id="selectedSamplesList">
 														<label>Selected Samples:</label>
 													</div>
-													<div id="selectFieldsToModify"></div>
+													<div id="selectFieldsToModify" style="margin-top: 15px;"></div>
 													<div id="editMultipleSamplesAdd">
 
 													</div>
@@ -263,6 +260,14 @@
 								</div>
 							</div><!-- End Edit Selected modal -->
 						</div><!-- /.col (RIGHT) -->
+
+						<div id="dolphin_basket_sidebar" class="col-md-3">
+							<button type="button" id="toggleBasketSidebar" class="btn btn-primary" onclick="toggleDolphinBasket()">Toggle</button>
+							<div id="dolphin_basket_only">
+								<?php echo $html->getDolphinBasket()?>
+							</div>
+						</div>
+
 						<div id="outer_e_and_i_and_s" style="width: 75%; padding: 25px !important;" class="pull-right">
 							<div id="outer_s" style="background-color:white;  padding: 0 !important;"  class="col-md-12 pull-right"><div id="s_details" class="col-md-11"></div></div>
 							<!-- <div id="filler_div" class="col-md-2 pull-right"></div> -->

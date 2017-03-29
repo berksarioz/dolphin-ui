@@ -701,7 +701,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	function getSubmitBrowserButton()
 	{
 	$html = '';
-	$html.= '<div class="col-md-9">
+	$html.= '<div id="top_of_search_table" class="col-md-6">
 				<div class="margin pull-left btn-group">
 					<button id="dso_menu" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Data Selection Options <span class="fa fa-caret-down"></span></button>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dso_menu">
@@ -725,10 +725,11 @@ e range"><i class="fa fa-calendar"></i></button>
 	$html.= 		'</ul>';
 	$html.= '	</div>
 				<div class="margin pull-right">
-					<button class="btn btn-info" type="button" onClick="editMultipleSamples()"><i class="glyphicon glyphicon-edit"></i></button>
+					<button id="editMultipleSamplesButton" style="display:none;" class="btn btn-info" type="button" onClick="editMultipleSamples()"><i class="glyphicon glyphicon-edit"></i></button>
 					<button class="btn btn-success" type="button" onClick="showAllSamplesAndImports()"><i class="glyphicon glyphicon-refresh"></i></button>
 					<button class="btn btn-warning" type="button" onClick="selectAllCurrentTab()"><i class="glyphicon glyphicon-check"></i></button>
 					<button class="btn btn-danger" type="button" onclick="deleteButton('.$_SESSION['uid'].')"><i class="glyphicon glyphicon-remove-sign"></i></button>
+					<p id="editMultipleSamplesMessage" style="display:none;">Please select samples.</p>
 				</div>
 			</div>';
 	return $html;

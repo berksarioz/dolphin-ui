@@ -60,12 +60,22 @@ function selectAllCurrentTab(){
 }
 
 function showAllSamplesAndImports(){
-    $('#imports_filtered_by_selection').hide();
-    $('#samples_filtered_by_selection').hide();
-    $('#experiments_filtered_by_selection').hide();
+  var $filtered_i = '#imports_filtered_by_selection';
+  var $filtered_e = '#experiments_filtered_by_selection';
+  var $filtered_s = '#samples_filtered_by_selection';
+
+
+  if($($filtered_i).is(':visible') || $($filtered_e).is(':visible') || $($filtered_s).is(':visible') ){
+    $($filtered_i).hide();
+    $($filtered_s).hide();
+    $($filtered_e).hide();
     $('#browse_import_data_table').show();
     $('#browse_sample_data_table').show();
     $('#browse_experiment_data_table').show();
+  }
+  else {
+    location = "";
+  }
 }
 
 function showAllFilteredTables(){
@@ -139,6 +149,13 @@ function createFilteredSample($experiment_or_import, $id){
   });
 }
 
+function toggleDolphinBasket(){
+  $('#dolphin_basket_only').toggle();
+  $('#top_search_section').toggleClass("col-md-6").toggleClass("col-md-8");
+  $('#top_of_search_table').toggleClass("col-md-6").toggleClass("col-md-8");
+  $('#dolphin_basket_sidebar').toggleClass("col-md-3").toggleClass("col-md-1");
+
+}
 
 function createFilteredImport($experiment_id){
   $.ajax({ type: "GET",
@@ -178,11 +195,36 @@ function createFilteredImport($experiment_id){
   });
 }
 
+function displayOrHideEditSamplesButton(){
+
+  document.onreadystatechange = function(){
+    if(document.readyState === 'complete'){
+      if($('div.active').attr('id') == "browse_samples"){
+        $('#editMultipleSamplesButton').show();
+      }
+    }
+  }
+
+  $('#browse_samples_a').click(function(){
+    $('#editMultipleSamplesButton').show();
+  });
+  
+  $('#browse_imports_a').click(function(){
+    $('#editMultipleSamplesButton').hide();
+  });
+
+  $('#browse_experiments_a').click(function(){
+    $('#editMultipleSamplesButton').hide();
+  });
+}
+displayOrHideEditSamplesButton();
+
 function clearAllDetails(){
   $('#e_details').html('');
   $('#i_details').html('');
   $('#s_details').html('');
 }
+
 
 function hideFilteredTables(){
       $('#experiments_filtered_by_selection').hide();
@@ -223,14 +265,16 @@ function displayExperimentDetails($experiment_id, $div_id, $called_from_import =
       if(!$called_from_import){
         createFilteredImport($experiment_id);
         createFilteredSample('experiment', $experiment_id);
-        var scroll_to = "#back_to_top";
-      } else {
-        var scroll_to = "#back_to_top";
-      }
+        $('#browse_imports_a').click();
+        $('body,html').animate({
+            scrollTop : 0  
+        }, 0);
+      } 
 
-      $('html, body').animate({
-          scrollTop: $(scroll_to).offset().top - 500
-      }, 2000);
+      // var scroll_to = "#back_to_top";
+      // $('html, body').animate({
+      //     scrollTop: $(scroll_to).offset().top - 500
+      // }, 2000);
 
   }
 
@@ -260,6 +304,10 @@ function displayImportDetails($import_id, $div_id, $called_from_sample = false){
   $('#' + $div_id).html($html_to_return);
   if(!$called_from_sample){
     createFilteredSample('import', $import_id);
+    $('#browse_samples_a').click();
+    $('body,html').animate({
+        scrollTop : 0  
+    }, 0);
   }
 }
 
@@ -303,7 +351,12 @@ function displaySampleDetails($sample_id, $div_id){
   addRDirectoryInfoToSampleDetails($sample_id, 'directory_of_sample');
   // Runs and Tables to Sample Details
   addRunsToSampleDetails($sample_id, 'runs_of_sample');
-  
+
+  var scroll_to = "#back_to_top";
+  $('html, body').animate({
+      scrollTop: $(scroll_to).offset().top - 500
+  }, 2000);
+
 }
 
 function addRDirectoryInfoToSampleDetails($sample_id, $directory_div_id){

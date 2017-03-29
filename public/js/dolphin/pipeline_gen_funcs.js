@@ -999,15 +999,13 @@ function reloadBasket(){
 function addToDolphinBasket(sampleID){
 	var sample_info = storedSampleSearch(sampleID);
 	var table = $('#dolphin_basket').dataTable();
-	console.log(sample_info.samplename)
 	if (table != null && sample_info.samplename != undefined) {
 		table.fnAddData([
 			sampleID,
 			sample_info.samplename,
-			'<button id="remove_basket_'+sampleID+'" class="btn btn-danger btn-xs pull-right" onclick="manageChecklists(\''+sampleID+'\', \'sample_checkbox\')"><i class="fa fa-times"></i></button>'
+			'<button id="remove_basket_'+sampleID+'" class="btn btn-danger btn-xs pull-right remove_basket_button id_' + sampleID + ' name_' + sample_info.samplename.split(" ").join("_") + '" onclick="manageChecklists(\''+sampleID+'\', \'sample_checkbox\')"><i class="fa fa-times"></i></button>'
 		])
 	}
-	addToEditSelectedSamples(sampleID, sample_info.samplename);
 }
 
 function storedSampleSearch(sample){
@@ -1034,7 +1032,6 @@ function removeFromDolphinBasket(sampleID){
 		table.fnClearTable();
 	}
 	removeBasketInfo(sampleID);
-	removeFromEditSelectedSamples(sampleID);
 }
 
 function removeFromDolphinBasketBulk(ids) {
@@ -1066,14 +1063,36 @@ function clearBasket(){
 	  });
 }
 
-function addToEditSelectedSamples($sample_id, $samplename){
-	$('#selectedSamplesList').append('<div class="inner"><div id="' + 
-		$sample_id + '" class="editMultipleSelected">'
-		+ $samplename + '&ensp;</div></div>');
-}
+function addToEditSelectedSamples(){
+	var $sample_list_html = '';
 
-function removeFromEditSelectedSamples($sample_id){
-	$('#' + $sample_id).remove();
+	$('#dolphin_basket').DataTable().rows().every(function(){
+		var $sample_id = this.data()[0];
+		var $samplename = this.data()[1];
+    	$sample_list_html += '<div class="inner"><div id="' + 
+			$sample_id + '" class="editMultipleSelected">'
+			+ $samplename + '&ensp;</div></div>';
+	});
+
+
+	// $('.remove_basket_button').each(function() {
+	//   var classList = $( this ).attr('class').split(/\s+/);
+	//   for (var i = 0; i < classList.length; i++) {
+	//     if (classList[i].startsWith("id")) {
+	//         var $sample_id = classList[i].substring(3);
+	//     }
+	//     if (classList[i].startsWith("name")) {
+	//         var $samplename = classList[i].substring(5);
+	//     }
+	//     if($samplename){
+	//       $sample_list_html += '<div class="inner"><div id="' + 
+	// 		$sample_id + '" class="editMultipleSelected">'
+	// 		+ $samplename + '&ensp;</div></div>';
+	//     }
+	//   }
+	// });
+	var $label = '<label>Selected Samples:</label>&ensp;';
+	$('#selectedSamplesList').html($label + $sample_list_html);
 }
 
 

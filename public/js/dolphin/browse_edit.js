@@ -651,95 +651,110 @@ function normalizeName($str){
 	return $str;
 }
 
+// function editSamplesHover(){
+// 	$("#editMultipleSamplesButton").hover(function() {
+//         $(this).css('cursor','pointer').attr('title', 'Please select samples.');
+//     }, function() {
+//         $(this).css('cursor','auto');
+//     });
+// }
+// editSamplesHover();
+
 function editMultipleSamples(){
-	var $editable_fields_i = getEditableFields();
-	var $directly_editable_fields = getDirectlyEditableFields();
-	var $editable_fields = $editable_fields_i.concat($directly_editable_fields);
-	$editable_fields.sort();
+	if($('.remove_basket_button').length == 0){
+		$("#editMultipleSamplesMessage").show();
+		setTimeout( "$('#editMultipleSamplesMessage').hide();", 4000);
+	} 
+	else{
+		addToEditSelectedSamples();
+		var $editable_fields_i = getEditableFields();
+		var $directly_editable_fields = getDirectlyEditableFields();
+		var $editable_fields = $editable_fields_i.concat($directly_editable_fields);
+		$editable_fields.sort();
 
-	var combobox_list_string = '';
-	var combobox_select_field_string ='<div id="select_fields_div"><div class="inner"><div class="combobox"><div class="ui-widget"><label>Fields To Add&ensp;</label><select id="select_fields_combobox"><option value="">Select one...</option></select></div></div></div></div>';
-	$('#selectFieldsToModify').html(combobox_select_field_string);
-	$('#select_fields_div').append('<div class="inner"><input type="button" class="btn btn-success" value="Add Field" onClick="addNewFieldCombobox()"/></div><br/><hr><br/>');
+		var combobox_list_string = '';
+		var combobox_select_field_string ='<div id="select_fields_div"><div class="inner"><div class="combobox"><div class="ui-widget"><label>Fields To Add&ensp;</label><select id="select_fields_combobox"><option value="">Select one...</option></select></div></div></div></div>';
+		$('#selectFieldsToModify').html(combobox_select_field_string);
+		$('#select_fields_div').append('<div class="inner"><input type="button" class="btn btn-success" value="Add Field" onClick="addNewFieldCombobox()"/></div><br/><hr><br/>');
 
-	for (i = 0; i < $editable_fields.length; i++) {
-      combobox_list_string += '<div id="' + $editable_fields[i] + 
-        '_div" style="display:none"><div class="inner"><div class="combobox"><div class="ui-widget"><label>Select ' +
-        normalizeName($editable_fields[i]) + '&ensp;</label><select id="' + $editable_fields[i] +
-        '_combobox"><option value="">Select one...</option></select></div></div></div>' +
-        '<div class="inner"><input type="button" class="btn btn-danger btn-xs" value="X" onClick="removeCombobox(\'' +
-        $editable_fields[i] + '\')"/></div>' + '</div>';
+		for (i = 0; i < $editable_fields.length; i++) {
+	      combobox_list_string += '<div id="' + $editable_fields[i] + 
+	        '_div" style="display:none"><div class="inner"><div class="combobox"><div class="ui-widget"><label>Select ' +
+	        normalizeName($editable_fields[i]) + '&ensp;</label><select id="' + $editable_fields[i] +
+	        '_combobox"><option value="">Select one...</option></select></div></div></div>' +
+	        '<div class="inner"><input type="button" class="btn btn-danger btn-xs" value="X" onClick="removeCombobox(\'' +
+	        $editable_fields[i] + '\')"/></div>' + '</div>';
 
-     $('#select_fields_combobox').append('<option id="' + $editable_fields[i] +
-				  '" value="' + $editable_fields[i] + '">' + normalizeName($editable_fields[i]) +
-					'</option>');
-	}
-
-	$('#editMultipleSamplesAdd').html(combobox_list_string);
-
-	$('#editMultipleSamplesModal').modal({
-		show: true
-	});
-	comboBoxScript();
-
-
-	for (i = 0; i < $editable_fields.length; i++) {
-		$( "#" + $editable_fields[i] + "_combobox" ).combobox();
-		$( "#toggle" ).on( "click", function() {
-		    $( "#" + $editable_fields[i] + "_combobox" ).toggle();
-		});
-	}
-	$( "#select_fields_combobox" ).combobox();
-
-
-	$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative', 'max-width' : '25em'});
-	$('.ui-icon-triangle-1-s').css({'z-index' : 9999999, 'position' : 'relative'});
-
-	$('.ui-state-default').css({'background-color':'#fff'});
-	$('.inner').css({'display': 'inline-block'});
-	$('.btn-xs').css({'margin': '10px 20px'});
-
-
-	for (i = 0; i < $editable_fields_i.length; i++) {
-    	$type = $editable_fields_i[i];
-
-    	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/browse_edit.php",
-			data: { p: 'getDropdownValuesWithID', type: $type},
-			async: false,
-			success : function(s)
-			{
-				for(var x = 0; x < s.length; x++){
-	    			$( "#" + $type + "_combobox"  ).append('<option id="' + s[x]['id'] +
-					  '" value="' + s[x]['id'] + '">' + s[x][$type] +
+	     $('#select_fields_combobox').append('<option id="' + $editable_fields[i] +
+					  '" value="' + $editable_fields[i] + '">' + normalizeName($editable_fields[i]) +
 						'</option>');
-				}
-			}
+		}
+
+		$('#editMultipleSamplesAdd').html(combobox_list_string);
+
+		$('#editMultipleSamplesModal').modal({
+			show: true
 		});
-	}
+		comboBoxScript();
 
-	for (i = 0; i < $directly_editable_fields.length; i++) {
-    	$type = $directly_editable_fields[i];
 
-    	$.ajax({ type: "GET",
-			url: BASE_PATH+"/public/ajax/browse_edit.php",
-			data: { p: 'getDirectDropdownValues', type: $type},
-			async: false,
-			success : function(s)
-			{
-				for(var x = 0; x < s.length; x++){
-	    			$( "#" + $type + "_combobox"  ).append('<option id="' + s[x][$type] +
-					  '" value="' + s[x][$type] + '">' + s[x][$type] +
-						'</option>');
+		for (i = 0; i < $editable_fields.length; i++) {
+			$( "#" + $editable_fields[i] + "_combobox" ).combobox();
+			$( "#toggle" ).on( "click", function() {
+			    $( "#" + $editable_fields[i] + "_combobox" ).toggle();
+			});
+		}
+		$( "#select_fields_combobox" ).combobox();
+
+
+		$('ul.ui-widget').css({'z-index' : 999999, 'position' : 'relative', 'max-width' : '25em'});
+		$('.ui-icon-triangle-1-s').css({'z-index' : 9999999, 'position' : 'relative'});
+
+		$('.ui-state-default').css({'background-color':'#fff'});
+		$('.inner').css({'display': 'inline-block'});
+		$('.btn-xs').css({'margin': '10px 20px'});
+
+
+		for (i = 0; i < $editable_fields_i.length; i++) {
+	    	$type = $editable_fields_i[i];
+
+	    	$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/browse_edit.php",
+				data: { p: 'getDropdownValuesWithID', type: $type},
+				async: false,
+				success : function(s)
+				{
+					for(var x = 0; x < s.length; x++){
+		    			$( "#" + $type + "_combobox"  ).append('<option id="' + s[x]['id'] +
+						  '" value="' + s[x]['id'] + '">' + s[x][$type] +
+							'</option>');
+					}
 				}
-			}
-		});
+			});
+		}
+
+		for (i = 0; i < $directly_editable_fields.length; i++) {
+	    	$type = $directly_editable_fields[i];
+
+	    	$.ajax({ type: "GET",
+				url: BASE_PATH+"/public/ajax/browse_edit.php",
+				data: { p: 'getDirectDropdownValues', type: $type},
+				async: false,
+				success : function(s)
+				{
+					for(var x = 0; x < s.length; x++){
+		    			$( "#" + $type + "_combobox"  ).append('<option id="' + s[x][$type] +
+						  '" value="' + s[x][$type] + '">' + s[x][$type] +
+							'</option>');
+					}
+				}
+			});
+		}
+
+		$('.ui-icon-triangle-1-s').replaceWith('<span class="caret" style="margin:8px"></span>');
+		$('.ui-button-text').remove();
+		$('.ui-button-icon-only').css({'background-color':'#eee'});
 	}
-
-	$('.ui-icon-triangle-1-s').replaceWith('<span class="caret" style="margin:8px"></span>');
-	$('.ui-button-text').remove();
-	$('.ui-button-icon-only').css({'background-color':'#eee'});
-
 }
 
 function loadAllFromSidebarBrowse(uid, gids, qvar, rvar, theSearch){
@@ -928,7 +943,7 @@ function comboBoxScript(){
 
 
 
-	      var current_div_id = this.input.parents(':eq(4)').attr('id');
+	      current_div_id = this.input.parents(':eq(4)').attr('id');
 	      var $value = this.input.val();
 	      var $type = current_div_id.slice(0, -4);
 		  var last_id = this.input.parents(':eq(1)').children('select').children('option').last().attr('id');
@@ -943,6 +958,7 @@ function comboBoxScript(){
 	    	if($directly_editable_fields.includes($type)){
 				var to_add = '<option id="' + $value + '" value="' + $value+ '">' + $value + '</option>';
 	    		$temp_msg = " is added as a choice. Please type or select the choice if you would like to update.";
+	    		return;
 	    	} else {
 		    	$.ajax({ type: "POST",
 						url: BASE_PATH+"/public/ajax/browse_edit.php",
@@ -982,5 +998,5 @@ function comboBoxScript(){
 
 
 	} );
-
+// $("#" + current_div_id).find('input').val('barcode test try here');
 }
