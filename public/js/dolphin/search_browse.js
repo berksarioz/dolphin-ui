@@ -54,9 +54,20 @@ $(function() {
 
 
 function selectAllCurrentTab(){
+  // all boxes are checked
+  if($('body').find('input.ngs_checkbox:checked').length >= parseInt($('#st_num_search_samples').val())){
+    $("input:checkbox:visible:checked").each(function(i, obj) {
+        $(this).click();
+    });
+
+  } else {
+    // some boxes aren't checked
     $("input:checkbox:visible:not(:checked)").each(function(i, obj) {
         $(this).click();
     });
+  }
+
+
 }
 
 function showAllSamplesAndImports(){
@@ -151,9 +162,9 @@ function createFilteredSample($experiment_or_import, $id){
 
 function toggleDolphinBasket(){
   $('#dolphin_basket_only').toggle();
-  $('#top_search_section').toggleClass("col-md-6").toggleClass("col-md-8");
-  $('#top_of_search_table').toggleClass("col-md-6").toggleClass("col-md-8");
-  $('#dolphin_basket_sidebar').toggleClass("col-md-3").toggleClass("col-md-1");
+  $('#top_search_section').toggleClass("col-md-7").toggleClass("col-md-8");
+  $('#top_of_search_table').toggleClass("col-md-7").toggleClass("col-md-8");
+  $('#dolphin_basket_sidebar').toggleClass("col-md-2").toggleClass("col-md-1");
 
 }
 
@@ -349,8 +360,12 @@ function displaySampleDetails($sample_id, $div_id){
   
   // Directory Info to Sample Details
   addRDirectoryInfoToSampleDetails($sample_id, 'directory_of_sample');
-  // Runs and Tables to Sample Details
-  addRunsToSampleDetails($sample_id, 'runs_of_sample');
+
+  setTimeout(function(){
+    // Runs and Tables to Sample Details
+    addRunsToSampleDetails($sample_id, 'runs_of_sample');
+  },2500); 
+
 
   var scroll_to = "#back_to_top";
   $('html, body').animate({

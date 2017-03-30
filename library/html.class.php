@@ -701,7 +701,7 @@ e range"><i class="fa fa-calendar"></i></button>
 	function getSubmitBrowserButton()
 	{
 	$html = '';
-	$html.= '<div id="top_of_search_table" class="col-md-6">
+	$html.= '<div id="top_of_search_table" class="col-md-7">
 				<div class="margin pull-left btn-group">
 					<button id="dso_menu" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Data Selection Options <span class="fa fa-caret-down"></span></button>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dso_menu">

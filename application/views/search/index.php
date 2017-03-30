@@ -122,7 +122,7 @@
 			</div><!-- /.col (LEFT) -->
 			<?php echo $html->getSubmitBrowserButton()?>
 
-						<div id="top_search_section" class="col-md-6">
+						<div id="top_search_section" class="col-md-7">
 							<ul id="tabList" class="nav nav-tabs">
 					          <li class="active">
 					            <a id="browse_experiments_a" href="#browse_experiments" data-toggle="tab" aria-expanded="true">Experiments</a>
@@ -261,8 +261,8 @@
 							</div><!-- End Edit Selected modal -->
 						</div><!-- /.col (RIGHT) -->
 
-						<div id="dolphin_basket_sidebar" class="col-md-3">
-							<button type="button" id="toggleBasketSidebar" class="btn btn-primary" onclick="toggleDolphinBasket()">Toggle</button>
+						<div id="dolphin_basket_sidebar" class="col-md-2">
+							<button type="button" id="toggleBasketSidebar" class="btn btn-primary" onclick="toggleDolphinBasket()">Selected</button>
 							<div id="dolphin_basket_only">
 								<?php echo $html->getDolphinBasket()?>
 							</div>

@@ -115,7 +115,9 @@ function reportSelection(){
 	});
 	
 	var multi_box = document.getElementById('report_multi_box');
-	multi_box.innerHTML = '';
+	if(multi_box){
+		multi_box.innerHTML = '';
+	}
 	var run_cohesion_check = [];
 	var run_cohesion_count_check = [];
 	var genome_check = '';
@@ -138,7 +140,9 @@ function reportSelection(){
 					option.disabled = false;
 					option.style.opacity = 1;
 				}
-				multi_box.add(option);
+				if(multi_box){
+					multi_box.add(option);
+				}
 			}else{
 				run_cohesion_count_check[run_cohesion_check.indexOf(reports[y].file)]++;
 				if (wkey_count != run_cohesion_count_check[run_cohesion_check.indexOf(reports[y].file)] || genome_check != reports[y].json_parameters.split(",")[0]) {

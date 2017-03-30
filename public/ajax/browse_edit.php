@@ -415,13 +415,23 @@ else if($p == 'getDropdownValues')
 }
 else if($p == 'getDropdownValuesWithID')
 {
-	if (isset($_GET['type'])){$type = $_GET['type'];}
-	$data=$query->queryTable("SELECT id, $type FROM ngs_".$type);
+	if (isset($_GET['fields'])){$fields = $_GET['fields'];}
+	$data_arr = [];
+	$field_arr = explode("&field&", $fields);
+	foreach($field_arr as $field){
+		$data_arr[$field] = $query->queryTable("SELECT id, $field FROM ngs_".$field);
+	}
+	$data = json_encode($data_arr);
 }
 else if($p == 'getDirectDropdownValues')
 {
-	if (isset($_GET['type'])){$type = $_GET['type'];}
-	$data=$query->queryTable("SELECT $type FROM `ngs_samples` GROUP BY $type");
+	if (isset($_GET['fields'])){$fields = $_GET['fields'];}
+	$data_arr = [];
+	$field_arr = explode("&field&", $fields);
+	foreach($field_arr as $field){
+		$data_arr[$field] = $query->queryTable("SELECT $field FROM `ngs_samples` GROUP BY $field");
+	}
+	$data = json_encode($data_arr);
 }
 else if($p == 'getDropdownValuesPerms')
 {

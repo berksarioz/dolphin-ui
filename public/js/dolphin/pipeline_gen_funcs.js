@@ -996,13 +996,23 @@ function reloadBasket(){
 	}
 }
 
+function trimSampleName(samplename){
+	if(samplename.length < 12){
+		return samplename;
+	} else {
+		return samplename.substr(0, 9) + '..';
+	}
+
+}
+
+
 function addToDolphinBasket(sampleID){
 	var sample_info = storedSampleSearch(sampleID);
 	var table = $('#dolphin_basket').dataTable();
 	if (table != null && sample_info.samplename != undefined) {
 		table.fnAddData([
 			sampleID,
-			sample_info.samplename,
+			trimSampleName(sample_info.samplename),
 			'<button id="remove_basket_'+sampleID+'" class="btn btn-danger btn-xs pull-right remove_basket_button id_' + sampleID + ' name_' + sample_info.samplename.split(" ").join("_") + '" onclick="manageChecklists(\''+sampleID+'\', \'sample_checkbox\')"><i class="fa fa-times"></i></button>'
 		])
 	}

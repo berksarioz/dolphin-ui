@@ -787,7 +787,7 @@ $(function() {
 			samplesType = "getSamples";
 		}
 		console.log(basket_info);
-		console.log('samplesType: ' + samplesType + ' qvar: ' + qvar +  ' rvar: ' + rvar+  ' segment: ' + segment+  ' theSearch: ' + theSearch+  ' uid: ' + uid+  ' gids: ' + gids );
+		// console.log('samplesType: ' + samplesType + ' qvar: ' + qvar +  ' rvar: ' + rvar+  ' segment: ' + segment+  ' theSearch: ' + theSearch+  ' uid: ' + uid+  ' gids: ' + gids );
 		$.ajax({ type: "GET",
 			url: BASE_PATH+"/public/ajax/ngs_tables.php",
 			data: { p: samplesType, q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
@@ -866,7 +866,7 @@ $(function() {
 					basket = basket.filter(function(e){return e}); 
 					manageChecklistsBulk(basket);
 				}else{
-					console.log('type: ' + type + ' queryType: ' + queryType +  ' rvar: ' + rvar+  ' qvar: ' + qvar+  ' segment: ' + segment+  ' uid: ' + uid+  ' gids: ' + gids + ' theSearch: ' + theSearch);
+					// console.log('type: ' + type + ' queryType: ' + queryType +  ' rvar: ' + rvar+  ' qvar: ' + qvar+  ' segment: ' + segment+  ' uid: ' + uid+  ' gids: ' + gids + ' theSearch: ' + theSearch);
 					generateStreamTable(type, s, queryType, qvar, rvar, segment, theSearch, uid, gids);
 				}
 			}

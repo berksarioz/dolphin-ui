@@ -715,41 +715,45 @@ function editMultipleSamples(){
 		$('.btn-xs').css({'margin': '10px 20px'});
 
 
-		for (i = 0; i < $editable_fields_i.length; i++) {
-	    	$type = $editable_fields_i[i];
 
-	    	$.ajax({ type: "GET",
-				url: BASE_PATH+"/public/ajax/browse_edit.php",
-				data: { p: 'getDropdownValuesWithID', type: $type},
-				async: false,
-				success : function(s)
-				{
+		$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/browse_edit.php",
+			data: { p: 'getDropdownValuesWithID', fields: $editable_fields_i.join("&field&")},
+			async: false,
+			success : function(s_list)
+			{
+				console.log(s_list);
+				for(var j= 0; j < $editable_fields_i.length; j++){
+					var $type = $editable_fields_i[j];
+					var s = JSON.parse(s_list[$type]);
 					for(var x = 0; x < s.length; x++){
 		    			$( "#" + $type + "_combobox"  ).append('<option id="' + s[x]['id'] +
 						  '" value="' + s[x]['id'] + '">' + s[x][$type] +
 							'</option>');
 					}
 				}
-			});
-		}
+			}
+		});
 
-		for (i = 0; i < $directly_editable_fields.length; i++) {
-	    	$type = $directly_editable_fields[i];
 
-	    	$.ajax({ type: "GET",
-				url: BASE_PATH+"/public/ajax/browse_edit.php",
-				data: { p: 'getDirectDropdownValues', type: $type},
-				async: false,
-				success : function(s)
-				{
+    	$.ajax({ type: "GET",
+			url: BASE_PATH+"/public/ajax/browse_edit.php",
+			data: { p: 'getDirectDropdownValues', fields: $directly_editable_fields.join("&field&")},
+			async: false,
+			success : function(s_list)
+			{
+				console.log(s_list);
+				for(var j= 0; j < $directly_editable_fields.length; j++){
+					var $type = $directly_editable_fields[j];
+					var s = JSON.parse(s_list[$type]);
 					for(var x = 0; x < s.length; x++){
 		    			$( "#" + $type + "_combobox"  ).append('<option id="' + s[x][$type] +
 						  '" value="' + s[x][$type] + '">' + s[x][$type] +
 							'</option>');
 					}
 				}
-			});
-		}
+			}
+		});
 
 		$('.ui-icon-triangle-1-s').replaceWith('<span class="caret" style="margin:8px"></span>');
 		$('.ui-button-text').remove();
@@ -953,11 +957,35 @@ function comboBoxScript(){
 	    	var $temp_msg = " is not a valid option.";
 	    } else {
 	    	var $directly_editable_fields = getDirectlyEditableFields();
-	    	var $temp_msg = " is now added to the database.";
+	    	var $temp_msg = " is now added to the options.";
 
 	    	if($directly_editable_fields.includes($type)){
+	    		console.log('2321');
 				var to_add = '<option id="' + $value + '" value="' + $value+ '">' + $value + '</option>';
-	    		$temp_msg = " is added as a choice. Please type or select the choice if you would like to update.";
+				$('select[id="' + $type + '_combobox"]').find('option[value="' + $value + '"]').attr("selected",true);
+
+				var $sample_list = [];
+				$('.editMultipleSelected').each(function(i, obj) {
+			    	$sample_list.push($(this).attr('id'));
+				});
+
+				var $table = 'ngs_samples';
+
+				$.ajax({ type: "POST",
+						url: BASE_PATH+"/public/ajax/browse_edit.php",
+						data: { p: 'postInsertDatabase', type: $type, table: $table, 
+							value: $value, sample_ids: $sample_list.join()},
+						async: false,
+						complete : function(s)
+						{
+							console.log('type:' + $type + ' table: ' + $table + 
+							' value: ' + $value + ' sample_ids: ' + $sample_list.join());
+							console.log(s);
+						}
+				});
+
+	    		// $('#' + $type + '_combobox').val($value).change();
+	    		console.log($('#' + $type + '_combobox').val());
 	    		return;
 	    	} else {
 		    	$.ajax({ type: "POST",
