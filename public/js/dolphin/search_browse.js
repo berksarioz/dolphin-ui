@@ -700,7 +700,7 @@ function ngsTrackCopy(){
   		$.ajax({ type: "GET",
   			url: BASE_PATH+"/public/ajax/ngs_tables.php",
   			data: { p: samplesType, q: qvar, r: rvar, seg: segment, search: theSearch, uid: uid, gids: gids },
-  			async: false,
+  			// async: false,
   			success : function(s)
   			{
   				console.log(s);

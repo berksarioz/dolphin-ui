@@ -1012,7 +1012,7 @@ function addToDolphinBasket(sampleID){
 	if (table != null && sample_info.samplename != undefined) {
 		table.fnAddData([
 			sampleID,
-			trimSampleName(sample_info.samplename),
+			'<div title="' + sample_info.samplename + '">' + trimSampleName(sample_info.samplename) + '</div>',
 			'<button id="remove_basket_'+sampleID+'" class="btn btn-danger btn-xs pull-right remove_basket_button id_' + sampleID + ' name_' + sample_info.samplename.split(" ").join("_") + '" onclick="manageChecklists(\''+sampleID+'\', \'sample_checkbox\')"><i class="fa fa-times"></i></button>'
 		])
 	}

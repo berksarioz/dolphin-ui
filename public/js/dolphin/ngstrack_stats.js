@@ -440,7 +440,8 @@ function shiftColumns(id){
 }
 
 function expandTable(table){
-	var toggle = tableToggle(table);
+	var modified_table = table.split("_")[0];
+	var toggle = tableToggle(modified_table);
 	location.reload();
 }
 

@@ -186,9 +186,9 @@
 									<div id="imports_filtered_by_selection" class="margin">
 										<?php 
 										if(!isset($_SESSION['ngs_lanes']) || ($_SESSION['ngs_lanes'] == '') ){
-											echo $html->getRespBoxTableStreamNoExpand($title_filtered_import, $table_filtered_import, $fields_basic_import, $tableKeys_basic_import);
+											echo $html->getRespBoxTableStream($title_filtered_import, $table_filtered_import, $fields_basic_import, $tableKeys_basic_import);
 										} else{
-											echo $html->getRespBoxTableStreamNoExpand($title_filtered_import, $table_filtered_import, $fields_extended_import, $tableKeys_extended_import);
+											echo $html->getRespBoxTableStream($title_filtered_import, $table_filtered_import, $fields_extended_import, $tableKeys_extended_import);
 										}
 										 ?>
 									</div>
@@ -221,9 +221,9 @@
 									<div id="samples_filtered_by_selection" class="margin">
 										<?php 
 										if(!isset($_SESSION['ngs_samples']) || ($_SESSION['ngs_samples'] == '') ){
-											echo $html->getRespBoxTableStreamNoExpand($title_filtered_sample, $table_filtered_sample, $fields_basic_sample, $tableKeys_basic_sample);
+											echo $html->getRespBoxTableStream($title_filtered_sample, $table_filtered_sample, $fields_basic_sample, $tableKeys_basic_sample);
 										} else{
-											echo $html->getRespBoxTableStreamNoExpand($title_filtered_sample, $table_filtered_sample, $fields_extended_sample, $tableKeys_extended_sample);
+											echo $html->getRespBoxTableStream($title_filtered_sample, $table_filtered_sample, $fields_extended_sample, $tableKeys_extended_sample);
 										}
 										 ?>										
 									</div>
